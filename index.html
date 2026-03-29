@@ -510,46 +510,39 @@
       }
 
       return (
-        <div style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-            <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 18, fontWeight: 700, color: firm, fontFamily: sans, padding: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke={firm} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Back
-            </button>
-            <button onClick={onNewNDA} style={{ fontSize: 15, fontWeight: 700, color: autumn, background: firm, border: "none", borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontFamily: sans }}>+ New NDA</button>
-          </div>
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: firm, marginBottom: 10 }}>
+        <div style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh", background: "#0a0f23" }}>
+          <div style={{ textAlign: "center", marginBottom: 24, paddingTop: 8 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "rgba(250,228,207,.06)", marginBottom: 10 }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             </div>
-            <h1 style={{ fontSize: 35, fontWeight: 400, color: firm, margin: "0 0 4px", fontFamily: "'Anton', sans-serif", textTransform: "uppercase", letterSpacing: ".02em" }}>Vault</h1>
-            <p style={{ fontSize: 18, color: "rgba(10,15,35,.4)", margin: 0, fontFamily: sans }}>{ndas.length} signed agreement{ndas.length !== 1 ? "s" : ""}</p>
+            <h1 style={{ fontSize: 35, fontWeight: 400, color: autumn, margin: "0 0 4px", fontFamily: "'Anton', sans-serif", textTransform: "uppercase", letterSpacing: ".02em" }}>Vault</h1>
+            <p style={{ fontSize: 18, color: "rgba(250,228,207,.3)", margin: 0, fontFamily: sans }}>{ndas.length} signed agreement{ndas.length !== 1 ? "s" : ""}</p>
           </div>
-          {loading && <div style={{ textAlign: "center", padding: 40, fontSize: 18, color: "rgba(10,15,35,.4)", fontFamily: sans }}>Loading...</div>}
+          {loading && <div style={{ textAlign: "center", padding: 40, fontSize: 18, color: "rgba(250,228,207,.3)", fontFamily: sans }}>Loading...</div>}
           {!loading && ndas.length === 0 && (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
               <div style={{ fontSize: 60, marginBottom: 12, opacity: 0.2 }}>&#128274;</div>
-              <p style={{ fontSize: 19, color: "rgba(10,15,35,.35)", fontFamily: sans, margin: "0 0 16px", lineHeight: 1.6 }}>No agreements yet.<br/>Signed NDAs will appear here automatically.</p>
-              <button onClick={onNewNDA} style={{ fontSize: 19, fontWeight: 700, color: autumn, background: firm, border: "none", borderRadius: 14, padding: "14px 32px", cursor: "pointer", fontFamily: sans, boxShadow: "0 4px 18px rgba(10,15,35,.35)" }}>Create Your First NDA</button>
+              <p style={{ fontSize: 19, color: "rgba(250,228,207,.3)", fontFamily: sans, margin: "0 0 16px", lineHeight: 1.6 }}>No agreements yet.<br/>Signed NDAs will appear here automatically.</p>
+              <button onClick={onNewNDA} style={{ fontSize: 19, fontWeight: 700, color: firm, background: autumn, border: "none", borderRadius: 14, padding: "14px 32px", cursor: "pointer", fontFamily: sans, boxShadow: "0 4px 18px rgba(250,228,207,.15)" }}>Create Your First NDA</button>
             </div>
           )}
           {!loading && ndas.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {ndas.map(nda => (
-                <div key={nda.id} onClick={() => setViewing(nda)} style={{ background: "#fff", borderRadius: 14, padding: "16px 18px", border: "1px solid rgba(10,15,35,.08)", boxShadow: "0 2px 12px rgba(10,15,35,.04)", cursor: "pointer", transition: "transform .1s", display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "#edfaf4" : autumn, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <div key={nda.id} onClick={() => setViewing(nda)} style={{ background: "rgba(250,228,207,.04)", borderRadius: 14, padding: "16px 18px", border: "1px solid rgba(250,228,207,.08)", cursor: "pointer", transition: "transform .1s", display: "flex", alignItems: "center", gap: 14 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "rgba(52,211,153,.1)" : "rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     {nda.bioVerified ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a7a5a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={firm} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: firm, fontFamily: sans, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.party1} &amp; {nda.party2}</div>
-                    <div style={{ fontSize: 15, color: "rgba(10,15,35,.4)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
-                    <div style={{ fontSize: 14, color: "rgba(10,15,35,.25)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: autumn, fontFamily: sans, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.party1} &amp; {nda.party2}</div>
+                    <div style={{ fontSize: 15, color: "rgba(250,228,207,.4)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.2)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
                   </div>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.25 }}><path d="M6 3l5 5-5 5" stroke={firm} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.25 }}><path d="M6 3l5 5-5 5" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               ))}
             </div>
@@ -720,8 +713,28 @@
       const [view, setView] = useState("home");
 
       if (verifyId) return React.createElement(VerifyScreen, { sessionId: verifyId });
-      if (view === "vault") return React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home") });
-      return React.createElement(NDA, { onOpenVault: () => setView("vault") });
+
+      const tabBar = (
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#0a0f23", borderTop: "1px solid rgba(250,228,207,.08)", paddingBottom: "env(safe-area-inset-bottom)", display: "flex" }}>
+          <button onClick={() => setView("home")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.3)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.3)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
+          </button>
+          <button onClick={() => setView("vault")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.3)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.3)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
+          </button>
+        </div>
+      );
+
+      return (
+        <div>
+          <div style={{ paddingBottom: 70 }}>
+            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home") }) : React.createElement(NDA, { onOpenVault: () => setView("vault") })}
+          </div>
+          {tabBar}
+        </div>
+      );
     }
 
     function NDA({ onOpenVault }) {
@@ -1158,15 +1171,6 @@
 
       if (step === 0) return (
         <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
-          {vaultCount > 0 && (
-            <button onClick={onOpenVault} style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(250,228,207,.03)", border: "1px solid rgba(250,228,207,.08)", borderRadius: 12, padding: "12px 16px", cursor: "pointer", fontFamily: sans, marginBottom: 20, width: "100%", transition: "background .2s" }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(250,228,207,.06)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-              </div>
-              <span style={{ flex: 1, textAlign: "left", fontSize: 16, fontWeight: 500, color: autumn }}>{vaultCount} Signed Agreement{vaultCount !== 1 ? "s" : ""}</span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="rgba(250,228,207,.25)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-          )}
           {progress}
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
@@ -1472,13 +1476,7 @@
               ))}
             </div>
             <div style={{ display: "flex", gap: 10 }}>
-              <button style={{ ...btnO, flex: 1, background: firm, color: autumn, border: "none" }} onClick={onOpenVault}>
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                  Vault
-                </span>
-              </button>
-              <button style={{ ...btnO, flex: 2 }} onClick={() => {
+              <button style={{ ...btnP, flex: 1 }} onClick={() => {
                 if (videoURL) URL.revokeObjectURL(videoURL);
                 if (bioSessionId && bioListenerRef.current) db.ref("sessions/" + bioSessionId).off("value", bioListenerRef.current);
                 setStep(0); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
