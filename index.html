@@ -854,8 +854,12 @@
         generateImage();
       }, [recording]);
 
-      const startBioSession = useCallback(() => {
+      function startBioSession() {
         const f = formRef.current;
+        const p1 = f.party1 || "";
+        const p2 = f.party2 || "";
+        const pu = f.purpose || "";
+        console.log("PAKT startBioSession:", { p1, p2, pu, formRef: f });
         const sessionId = generateSessionId();
         setBioSessionId(sessionId);
         setBioStatus("waiting");
@@ -867,9 +871,9 @@
         const sessionRef = db.ref("sessions/" + sessionId);
         sessionRef.set({
           status: "pending",
-          party1: f.party1,
-          party2: f.party2,
-          purpose: f.purpose,
+          party1: p1,
+          party2: p2,
+          purpose: pu,
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
@@ -889,7 +893,7 @@
             }, 2000);
           }
         });
-      }, [form.party1, form.party2, form.purpose]);
+      }
 
       const skipBiometric = useCallback(() => {
         if (bioSessionId && bioListenerRef.current) {
@@ -1087,7 +1091,23 @@
             ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
-          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3); startBioSession();
+          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3);
+          const _sid = generateSessionId();
+          setBioSessionId(_sid);
+          setBioStatus("waiting");
+          setBioResult(null);
+          setBioQRImage(generateQRDataURL(window.location.origin + window.location.pathname + "?verify=" + _sid));
+          const _ref = db.ref("sessions/" + _sid);
+          _ref.set({ status: "pending", party1: form.party1, party2: form.party2, purpose: form.purpose, createdAt: firebase.database.ServerValue.TIMESTAMP });
+          bioListenerRef.current = _ref.on("value", (snap) => {
+            const data = snap.val();
+            if (data && data.status === "verified") {
+              setBioStatus("verified");
+              setBioResult({ verifiedAt: data.verifiedAt, credentialId: data.credentialId, authenticatorType: data.authenticatorType || "platform", userAgent: data.userAgent || "unknown" });
+              _ref.off("value", bioListenerRef.current);
+              setTimeout(() => { _ref.update({ status: "completed" }); }, 2000);
+            }
+          });
         }, 100);
       }, [form, sections]);
 
