@@ -1,4 +1,4 @@
-const CACHE = 'pakt-v10';
+const CACHE = 'pakt-v11';
 const SHELL = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const SHELL = [
   './app-icon-192x192.png',
   './app-icon-512x512.png',
   './apple-touch-icon.png',
+  './pakt-logo.png',
 ];
 
 self.addEventListener('install', e => {
