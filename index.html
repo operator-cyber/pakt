@@ -852,7 +852,7 @@
       const handleComplete = useCallback(() => {
         stopAndSave();
         generateImage();
-      }, [recording]);
+      }, [recording, generateImage]);
 
       function startBioSession() {
         const f = formRef.current;
@@ -1098,7 +1098,7 @@
           setBioResult(null);
           setBioQRImage(generateQRDataURL(window.location.origin + window.location.pathname + "?verify=" + _sid));
           const _ref = db.ref("sessions/" + _sid);
-          _ref.set({ status: "pending", party1: form.party1 || "EMPTY_P1", party2: form.party2 || "EMPTY_P2", purpose: form.purpose || "EMPTY_PU", codeVersion: "v7", createdAt: firebase.database.ServerValue.TIMESTAMP });
+          _ref.set({ status: "pending", party1: form.party1, party2: form.party2, purpose: form.purpose, createdAt: firebase.database.ServerValue.TIMESTAMP });
           bioListenerRef.current = _ref.on("value", (snap) => {
             const data = snap.val();
             if (data && data.status === "verified") {
