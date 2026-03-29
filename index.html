@@ -588,42 +588,51 @@
         try {
           const challengeBytes = new Uint8Array(32);
           crypto.getRandomValues(challengeBytes);
-          const challengeHex = Array.from(challengeBytes).map(b => b.toString(16).padStart(2, "0")).join("");
 
-          const keyPair = await crypto.subtle.generateKey(
-            { name: "ECDSA", namedCurve: "P-256" },
-            false,
-            ["sign", "verify"]
-          );
-
-          const encoder = new TextEncoder();
-          const dataToSign = encoder.encode(
-            `PAKT_VERIFY:${sessionId}:${sessionData.party2}:${challengeHex}:${Date.now()}`
-          );
-
-          const signature = await crypto.subtle.sign(
-            { name: "ECDSA", hash: "SHA-256" },
-            keyPair.privateKey,
-            dataToSign
-          );
-
-          const sigHex = Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, "0")).join("");
-
-          const pubKeyData = await crypto.subtle.exportKey("raw", keyPair.publicKey);
-          const pubKeyHex = Array.from(new Uint8Array(pubKeyData)).map(b => b.toString(16).padStart(2, "0")).join("");
-
-          await db.ref("sessions/" + sessionId).update({
-            status: "verified",
-            verifiedAt: firebase.database.ServerValue.TIMESTAMP,
-            credentialId: pubKeyHex.substring(0, 40),
-            signature: sigHex.substring(0, 40),
-            challenge: challengeHex,
-            authenticatorType: "device-crypto",
-            userAgent: navigator.userAgent
+          const credential = await navigator.credentials.create({
+            publicKey: {
+              challenge: challengeBytes,
+              rp: { name: "Pakt NDA", id: window.location.hostname },
+              user: {
+                id: new Uint8Array(16).map(() => Math.floor(Math.random() * 256)),
+                name: (sessionData && sessionData.party2) || "signer",
+                displayName: (sessionData && sessionData.party2) || "NDA Signer"
+              },
+              pubKeyCredParams: [
+                { alg: -7, type: "public-key" },
+                { alg: -257, type: "public-key" }
+              ],
+              authenticatorSelection: {
+                authenticatorAttachment: "platform",
+                residentKey: "discouraged",
+                userVerification: "required"
+              },
+              timeout: 60000,
+              attestation: "direct"
+            }
           });
-          setStatus("done");
+
+          if (credential) {
+            const credIdArray = new Uint8Array(credential.rawId);
+            const credIdHex = Array.from(credIdArray).map(b => b.toString(16).padStart(2, "0")).join("");
+
+            await db.ref("sessions/" + sessionId).update({
+              status: "verified",
+              verifiedAt: firebase.database.ServerValue.TIMESTAMP,
+              credentialId: credIdHex,
+              authenticatorType: credential.authenticatorAttachment || "platform",
+              userAgent: navigator.userAgent
+            });
+            setStatus("done");
+          }
         } catch (err) {
-          setError("Verification failed: " + err.message);
+          if (err.name === "NotAllowedError") {
+            setError("Verification was cancelled. Tap the button and then tap 'Continue' on the prompt to verify with Face ID.");
+          } else if (err.name === "NotSupportedError") {
+            setError("Your device does not support biometric authentication.");
+          } else {
+            setError("Verification failed: " + err.message);
+          }
           setStatus("ready");
         }
       }
@@ -678,7 +687,7 @@
               <button onClick={handleVerify} style={{ width: "100%", padding: "18px", fontSize: 17, fontWeight: 700, border: "none", borderRadius: 14, cursor: "pointer", fontFamily: sans, color: autumn, background: firm, boxShadow: "0 4px 18px rgba(10,15,35,.35)", letterSpacing: ".01em" }}>
                 Verify My Identity
               </button>
-              <p style={{ fontSize: 12, color: "rgba(10,15,35,.35)", textAlign: "center", marginTop: 12, lineHeight: 1.5, fontFamily: sans }}>This will prompt Face ID, Touch ID, or your device passcode to confirm your identity.</p>
+              <p style={{ fontSize: 12, color: "rgba(10,15,35,.35)", textAlign: "center", marginTop: 12, lineHeight: 1.6, fontFamily: sans }}>Your phone will ask to save a passkey.<br/>Tap <strong style={{ color: firm }}>"Continue"</strong> to verify with Face ID.</p>
             </div>
           )}
 
@@ -719,6 +728,8 @@
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
       const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
+      const formRef = useRef(form);
+      useEffect(() => { formRef.current = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
       const [sig2Done, setSig2Done] = useState(false);
       const [ndaImage, setNdaImage] = useState(null);
@@ -843,7 +854,8 @@
         generateImage();
       }, [recording]);
 
-      const startBioSession = useCallback((p1, p2, purp) => {
+      const startBioSession = useCallback(() => {
+        const f = formRef.current;
         const sessionId = generateSessionId();
         setBioSessionId(sessionId);
         setBioStatus("waiting");
@@ -855,9 +867,9 @@
         const sessionRef = db.ref("sessions/" + sessionId);
         sessionRef.set({
           status: "pending",
-          party1: p1 || form.party1,
-          party2: p2 || form.party2,
-          purpose: purp || form.purpose,
+          party1: f.party1,
+          party2: f.party2,
+          purpose: f.purpose,
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
@@ -1075,7 +1087,7 @@
             ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
-          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3); startBioSession(form.party1, form.party2, form.purpose);
+          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3); startBioSession();
         }, 100);
       }, [form, sections]);
 
