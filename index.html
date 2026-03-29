@@ -1212,7 +1212,7 @@
                 {STATES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
-            <div><label style={labelStyle}>Start Date</label><input style={{ ...inputStyle, WebkitAppearance: "none", appearance: "none", maxWidth: "100%" }} type="date" value={form.date} onChange={up("date")} /></div>
+            <div><label style={labelStyle}>Start Date</label><input style={{ ...inputStyle, WebkitAppearance: "none", appearance: "none", maxWidth: "100%", textAlign: "left" }} type="date" value={form.date} onChange={up("date")} /></div>
           </div>
           <button style={{ ...btnP, marginTop: 24, opacity: canProceed ? 1 : .4, pointerEvents: canProceed ? "auto" : "none" }} onClick={() => setStep(1)}>Review Agreement &rarr;</button>
         </div>
