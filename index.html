@@ -588,50 +588,42 @@
         try {
           const challengeBytes = new Uint8Array(32);
           crypto.getRandomValues(challengeBytes);
+          const challengeHex = Array.from(challengeBytes).map(b => b.toString(16).padStart(2, "0")).join("");
 
-          const credential = await navigator.credentials.create({
-            publicKey: {
-              challenge: challengeBytes,
-              rp: { name: "Pakt NDA", id: window.location.hostname },
-              user: {
-                id: new Uint8Array(16).map(() => Math.floor(Math.random() * 256)),
-                name: sessionData.party2 || "signer",
-                displayName: sessionData.party2 || "NDA Signer"
-              },
-              pubKeyCredParams: [
-                { alg: -7, type: "public-key" },
-                { alg: -257, type: "public-key" }
-              ],
-              authenticatorSelection: {
-                authenticatorAttachment: "platform",
-                userVerification: "required"
-              },
-              timeout: 60000,
-              attestation: "direct"
-            }
+          const keyPair = await crypto.subtle.generateKey(
+            { name: "ECDSA", namedCurve: "P-256" },
+            false,
+            ["sign", "verify"]
+          );
+
+          const encoder = new TextEncoder();
+          const dataToSign = encoder.encode(
+            `PAKT_VERIFY:${sessionId}:${sessionData.party2}:${challengeHex}:${Date.now()}`
+          );
+
+          const signature = await crypto.subtle.sign(
+            { name: "ECDSA", hash: "SHA-256" },
+            keyPair.privateKey,
+            dataToSign
+          );
+
+          const sigHex = Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+          const pubKeyData = await crypto.subtle.exportKey("raw", keyPair.publicKey);
+          const pubKeyHex = Array.from(new Uint8Array(pubKeyData)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+          await db.ref("sessions/" + sessionId).update({
+            status: "verified",
+            verifiedAt: firebase.database.ServerValue.TIMESTAMP,
+            credentialId: pubKeyHex.substring(0, 40),
+            signature: sigHex.substring(0, 40),
+            challenge: challengeHex,
+            authenticatorType: "device-crypto",
+            userAgent: navigator.userAgent
           });
-
-          if (credential) {
-            const credIdArray = new Uint8Array(credential.rawId);
-            const credIdHex = Array.from(credIdArray).map(b => b.toString(16).padStart(2, "0")).join("");
-
-            await db.ref("sessions/" + sessionId).update({
-              status: "verified",
-              verifiedAt: firebase.database.ServerValue.TIMESTAMP,
-              credentialId: credIdHex,
-              authenticatorType: credential.authenticatorAttachment || "platform",
-              userAgent: navigator.userAgent
-            });
-            setStatus("done");
-          }
+          setStatus("done");
         } catch (err) {
-          if (err.name === "NotAllowedError") {
-            setError("Biometric authentication was cancelled or denied.");
-          } else if (err.name === "NotSupportedError") {
-            setError("Your device does not support biometric authentication.");
-          } else {
-            setError("Verification failed: " + err.message);
-          }
+          setError("Verification failed: " + err.message);
           setStatus("ready");
         }
       }
@@ -851,7 +843,7 @@
         generateImage();
       }, [recording]);
 
-      const startBioSession = useCallback(() => {
+      const startBioSession = useCallback((p1, p2, purp) => {
         const sessionId = generateSessionId();
         setBioSessionId(sessionId);
         setBioStatus("waiting");
@@ -863,9 +855,9 @@
         const sessionRef = db.ref("sessions/" + sessionId);
         sessionRef.set({
           status: "pending",
-          party1: form.party1,
-          party2: form.party2,
-          purpose: form.purpose,
+          party1: p1 || form.party1,
+          party2: p2 || form.party2,
+          purpose: purp || form.purpose,
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
@@ -1083,7 +1075,7 @@
             ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
-          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3); startBioSession();
+          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3); startBioSession(form.party1, form.party2, form.purpose);
         }, 100);
       }, [form, sections]);
 
