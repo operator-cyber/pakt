@@ -729,7 +729,7 @@
       const [vaultCount, setVaultCount] = useState(0);
       const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
       const formRef = useRef(form);
-      useEffect(() => { formRef.current = form; }, [form]);
+      useEffect(() => { formRef.current = form; window._paktForm = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
       const [sig2Done, setSig2Done] = useState(false);
       const [ndaImage, setNdaImage] = useState(null);
@@ -792,7 +792,7 @@
 
       useEffect(() => {
         if (step !== 3) return;
-        const f = formRef.current;
+        const f = window._paktForm || formRef.current;
         const sid = generateSessionId();
         setBioSessionId(sid);
         setBioStatus("waiting");
