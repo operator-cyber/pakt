@@ -790,6 +790,34 @@
 
       useEffect(() => { vaultGetAll().then(all => setVaultCount(all.length)).catch(() => {}); }, []);
 
+      useEffect(() => {
+        if (step !== 3) return;
+        const f = formRef.current;
+        const sid = generateSessionId();
+        setBioSessionId(sid);
+        setBioStatus("waiting");
+        setBioResult(null);
+        setBioQRImage(generateQRDataURL(window.location.origin + window.location.pathname + "?verify=" + sid));
+        const sessionRef = db.ref("sessions/" + sid);
+        sessionRef.set({
+          status: "pending",
+          party1: f.party1,
+          party2: f.party2,
+          purpose: f.purpose,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        bioListenerRef.current = sessionRef.on("value", (snap) => {
+          const data = snap.val();
+          if (data && data.status === "verified") {
+            setBioStatus("verified");
+            setBioResult({ verifiedAt: data.verifiedAt, credentialId: data.credentialId, authenticatorType: data.authenticatorType || "platform", userAgent: data.userAgent || "unknown" });
+            sessionRef.off("value", bioListenerRef.current);
+            setTimeout(() => { sessionRef.update({ status: "completed" }); }, 2000);
+          }
+        });
+        return () => { sessionRef.off("value", bioListenerRef.current); };
+      }, [step]);
+
       const saveToVault = useCallback(async (finalNdaImage, finalReceiptImage, finalBioResult, finalVideoURL) => {
         const record = {
           id: generateSessionId(),
@@ -1092,22 +1120,6 @@
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
           setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3);
-          const _sid = generateSessionId();
-          setBioSessionId(_sid);
-          setBioStatus("waiting");
-          setBioResult(null);
-          setBioQRImage(generateQRDataURL(window.location.origin + window.location.pathname + "?verify=" + _sid));
-          const _ref = db.ref("sessions/" + _sid);
-          _ref.set({ status: "pending", party1: form.party1, party2: form.party2, purpose: form.purpose, createdAt: firebase.database.ServerValue.TIMESTAMP });
-          bioListenerRef.current = _ref.on("value", (snap) => {
-            const data = snap.val();
-            if (data && data.status === "verified") {
-              setBioStatus("verified");
-              setBioResult({ verifiedAt: data.verifiedAt, credentialId: data.credentialId, authenticatorType: data.authenticatorType || "platform", userAgent: data.userAgent || "unknown" });
-              _ref.off("value", bioListenerRef.current);
-              setTimeout(() => { _ref.update({ status: "completed" }); }, 2000);
-            }
-          });
         }, 100);
       }, [form, sections]);
 
