@@ -1,4 +1,4 @@
-const CACHE = 'pakt-v7';
+const CACHE = 'pakt-v8';
 const SHELL = [
   './',
   './index.html',

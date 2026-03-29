@@ -756,6 +756,7 @@
 
       const sig1Ref = useRef(null);
       const sig2Ref = useRef(null);
+      const [savedSigs, setSavedSigs] = useState([null, null]);
 
       const up = (f) => (e) => setForm(prev => ({ ...prev, [f]: e.target.value }));
       const toggleCat = (key) => setForm(prev => ({ ...prev, categories: prev.categories.includes(key) ? prev.categories.filter(k => k !== key) : [...prev.categories, key] }));
@@ -967,29 +968,41 @@
         ctx.font = `italic ${11 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#444";
         wrapText(ctx, "IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first above written.", textW).forEach(line => { ctx.fillText(line, margin, y); y += lineH; }); y += 20 * scale;
         const sigW = (textW - 20 * scale) / 2, sigH = 50 * scale;
-        [sig1Ref, sig2Ref].forEach((ref, i) => {
+        let sigsDrawn = 0;
+        const finishAfterSigs = () => {
+          sigsDrawn++;
+          if (sigsDrawn < 2) return;
+          if (bio) {
+            y += sigH + 70 * scale;
+            ctx.strokeStyle = "#1a7a5a"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 20 * scale;
+            ctx.font = `bold ${11 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#1a7a5a";
+            ctx.fillText("BIOMETRIC IDENTITY VERIFICATION", margin, y); y += lineH;
+            ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#333";
+            const bioDate = new Date(bio.verifiedAt).toLocaleString();
+            ctx.fillText(`Verified Party: ${form.party2} (Party B)`, margin, y); y += lineH;
+            ctx.fillText(`Verification Method: Face ID / Touch ID (Platform Authenticator)`, margin, y); y += lineH;
+            ctx.fillText(`Verification Time: ${bioDate}`, margin, y); y += lineH;
+            ctx.fillText(`Credential ID: ${bio.credentialId || "N/A"}`, margin, y); y += lineH;
+            ctx.font = `italic ${9 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#888";
+            ctx.fillText("Biometric attestation recorded via WebAuthn (FIDO2) protocol. Full verification receipt available separately.", margin, y);
+          }
+          setNdaImage(c.toDataURL("image/png"));
+        };
+        savedSigs.forEach((dataUrl, i) => {
           const xPos = margin + i * (sigW + 20 * scale);
-          if (ref.current) { try { ctx.drawImage(ref.current, xPos, y, sigW, sigH); } catch (e) {} }
+          if (dataUrl) {
+            const img = new Image();
+            img.onload = () => { ctx.drawImage(img, xPos, y, sigW, sigH); drawSigLabel(i, xPos); finishAfterSigs(); };
+            img.onerror = () => { drawSigLabel(i, xPos); finishAfterSigs(); };
+            img.src = dataUrl;
+          } else { drawSigLabel(i, xPos); finishAfterSigs(); }
+        });
+        function drawSigLabel(i, xPos) {
           ctx.strokeStyle = "#888"; ctx.lineWidth = scale; ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();
           ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
           ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
-        });
-        if (bio) {
-          y += sigH + 70 * scale;
-          ctx.strokeStyle = "#1a7a5a"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 20 * scale;
-          ctx.font = `bold ${11 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#1a7a5a";
-          ctx.fillText("BIOMETRIC IDENTITY VERIFICATION", margin, y); y += lineH;
-          ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#333";
-          const bioDate = new Date(bio.verifiedAt).toLocaleString();
-          ctx.fillText(`Verified Party: ${form.party2} (Party B)`, margin, y); y += lineH;
-          ctx.fillText(`Verification Method: Face ID / Touch ID (Platform Authenticator)`, margin, y); y += lineH;
-          ctx.fillText(`Verification Time: ${bioDate}`, margin, y); y += lineH;
-          ctx.fillText(`Credential ID: ${bio.credentialId || "N/A"}`, margin, y); y += lineH;
-          ctx.font = `italic ${9 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#888";
-          ctx.fillText("Biometric attestation recorded via WebAuthn (FIDO2) protocol. Full verification receipt available separately.", margin, y);
         }
-        setNdaImage(c.toDataURL("image/png"));
-      }, [form, sections]);
+      }, [form, sections, savedSigs]);
 
       const generateReceipt = useCallback((bio) => {
         const scale = 3, W = 650 * scale, margin = 50 * scale, textW = W - margin * 2;
@@ -1119,6 +1132,7 @@
             ctx.font = `${10 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
+          setSavedSigs([sig1Ref.current ? sig1Ref.current.toDataURL() : null, sig2Ref.current ? sig2Ref.current.toDataURL() : null]);
           setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3);
         }, 100);
       }, [form, sections]);
