@@ -417,7 +417,7 @@
       return (
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: firm, opacity: 0.5, letterSpacing: ".04em", textTransform: "uppercase", fontFamily: sans }}>{label}</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: firm, opacity: 0.7, letterSpacing: ".04em", textTransform: "uppercase", fontFamily: sans }}>{label}</span>
             {hasDrawn && <button onClick={clear} style={{ fontSize: 15, color: "#c0392b", background: "none", border: "none", cursor: "pointer", fontWeight: 700, fontFamily: sans }}>Clear</button>}
           </div>
           <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: "2px dashed rgba(10,15,35,.2)", background: "#fdf6ef", touchAction: "none" }}>
@@ -503,7 +503,7 @@
                 </div>
               </div>
             ) : (
-              <button onClick={() => setConfirmDelete(viewing.id)} style={{ width: "100%", padding: 14, fontSize: 18, fontWeight: 700, border: "none", borderRadius: 14, cursor: "pointer", fontFamily: sans, color: "#c0392b", background: "rgba(192,57,43,.06)", marginTop: 16 }}>Delete NDA</button>
+              <button onClick={() => setConfirmDelete(viewing.id)} style={{ width: "100%", padding: 14, fontSize: 18, fontWeight: 700, border: "none", borderRadius: 14, cursor: "pointer", fontFamily: sans, color: "#80011F", background: "#9E9A8D", marginTop: 16 }}>Delete NDA</button>
             )}
           </div>
         );
@@ -530,9 +530,9 @@
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {ndas.map(nda => (
                 <div key={nda.id} onClick={() => setViewing(nda)} style={{ background: "rgba(250,228,207,.04)", borderRadius: 14, padding: "16px 18px", border: "1px solid rgba(250,228,207,.08)", cursor: "pointer", transition: "transform .1s", display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "rgba(1,37,30,.1)" : "rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "rgba(250,228,207,.15)" : "rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     {nda.bioVerified ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#01251E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     ) : (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     )}
@@ -692,10 +692,10 @@
 
           {status === "done" && (
             <div style={{ textAlign: "center" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 72, height: 72, borderRadius: "50%", background: "#01251E", boxShadow: "0 6px 28px rgba(1,37,30,.3)", marginBottom: 14 }}>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 72, height: 72, borderRadius: "50%", background: "#2B4230", boxShadow: "0 6px 28px rgba(43,66,48,.3)", marginBottom: 14 }}>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <h3 style={{ fontSize: 25, fontWeight: 700, color: "#01251E", margin: "0 0 8px" }}>Identity Verified</h3>
+              <h3 style={{ fontSize: 25, fontWeight: 700, color: "#2B4230", margin: "0 0 8px" }}>Identity Verified</h3>
               <p style={{ fontSize: 18, color: "rgba(10,15,35,.45)", fontFamily: sans, margin: 0, lineHeight: 1.6 }}>Your biometric verification has been recorded.<br/>You can close this page now.</p>
             </div>
           )}
@@ -983,8 +983,8 @@
           if (sigsDrawn < 2) return;
           if (bio) {
             y += sigH + 70 * scale;
-            ctx.strokeStyle = "#01251E"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 20 * scale;
-            ctx.font = `bold ${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#01251E";
+            ctx.strokeStyle = "#BBBFEC"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 20 * scale;
+            ctx.font = `bold ${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#BBBFEC";
             ctx.fillText("BIOMETRIC IDENTITY VERIFICATION", margin, y); y += lineH;
             ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#333";
             const bioDate = new Date(bio.verifiedAt).toLocaleString();
@@ -1020,12 +1020,12 @@
         const lineH = 20 * scale, headH = 28 * scale;
         c.width = W; c.height = 900 * scale;
         ctx.fillStyle = "#f8faf9"; ctx.fillRect(0, 0, W, c.height);
-        ctx.fillStyle = "#01251E"; ctx.fillRect(0, 0, W, 6 * scale);
+        ctx.fillStyle = "#BBBFEC"; ctx.fillRect(0, 0, W, 6 * scale);
         let y = margin + 10 * scale;
-        ctx.fillStyle = "#01251E"; ctx.textAlign = "center";
+        ctx.fillStyle = "#BBBFEC"; ctx.textAlign = "center";
         ctx.font = `bold ${20 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("BIOMETRIC VERIFICATION RECEIPT", W / 2, y); y += headH;
         ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#666"; ctx.fillText("Pakt NDA Signing Platform", W / 2, y); y += headH + 10 * scale;
-        ctx.strokeStyle = "#01251E"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 24 * scale;
+        ctx.strokeStyle = "#BBBFEC"; ctx.lineWidth = 2 * scale; ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke(); y += 24 * scale;
         ctx.textAlign = "left"; ctx.fillStyle = "#0a0f23";
         const fd = fmtDate(form.date);
         const bioDate = new Date(bio.verifiedAt).toLocaleString();
@@ -1056,7 +1056,7 @@
         rows.forEach(([label, value]) => {
           if (value === "" && label !== "") {
             y += 8 * scale;
-            ctx.font = `bold ${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#01251E";
+            ctx.font = `bold ${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#BBBFEC";
             ctx.fillText(label, margin, y); y += lineH;
           } else if (label === "" && value === "") {
             y += 4 * scale;
@@ -1075,7 +1075,7 @@
         ctx.fillText("This receipt was generated by Pakt NDA at the time of signing and should be retained with the signed agreement.", W / 2, y); y += 14 * scale;
         ctx.fillText("Biometric verification performed via WebAuthn (FIDO2) using the signer's device-native authenticator.", W / 2, y); y += 14 * scale;
         ctx.fillText(`Generated: ${new Date().toLocaleString()}`, W / 2, y); y += 24 * scale;
-        ctx.font = `bold ${13 * scale}px 'Outfit', sans-serif`; ctx.fillStyle = "#01251E";
+        ctx.font = `bold ${13 * scale}px 'Outfit', sans-serif`; ctx.fillStyle = "#BBBFEC";
         ctx.fillText("Long-press this image to save or share", W / 2, y);
         const trimmed = document.createElement("canvas");
         trimmed.width = W; trimmed.height = y + margin;
@@ -1162,8 +1162,8 @@
         <div style={{ display: "flex", gap: 4, marginBottom: 28 }}>
           {["Details", "Review", "Sign", "Verify"].map((s, i) => (
             <div key={s} style={{ flex: 1, textAlign: "center" }}>
-              <div style={{ height: 2, borderRadius: 1, background: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.08)", marginBottom: 6, transition: "background .4s ease" }} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.15)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
+              <div style={{ height: 2, borderRadius: 1, background: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.15)", marginBottom: 6, transition: "background .4s ease" }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.35)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
             </div>
           ))}
         </div>
@@ -1356,15 +1356,15 @@
 
             {bioStatus === "verified" && (
               <div style={{ textAlign: "center", marginBottom: 16 }}>
-                <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 72, height: 72, borderRadius: "50%", background: "#01251E", boxShadow: "0 6px 28px rgba(1,37,30,.3)", marginBottom: 14, animation: "bioSuccess .4s ease-out" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 72, height: 72, borderRadius: "50%", background: "#2B4230", boxShadow: "0 6px 28px rgba(43,66,48,.3)", marginBottom: 14, animation: "bioSuccess .4s ease-out" }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 style={{ fontSize: 23, fontWeight: 700, color: "#01251E", margin: "0 0 4px" }}>Identity Verified</h3>
+                <h3 style={{ fontSize: 23, fontWeight: 700, color: autumn, margin: "0 0 4px" }}>Identity Verified</h3>
                 <p style={{ fontSize: 16, color: "rgba(10,15,35,.45)", fontFamily: sans, margin: "0 0 6px" }}>{form.party2} verified via biometric authentication</p>
                 {bioResult && (
-                  <div style={{ background: "rgba(1,37,30,.08)", borderRadius: 12, padding: "12px 16px", display: "inline-block", marginTop: 8 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#01251E", fontFamily: sans, letterSpacing: ".04em", textTransform: "uppercase" }}>Biometric Attestation Recorded</div>
-                    <div style={{ fontSize: 14, color: "rgba(1,37,30,.6)", fontFamily: sans, marginTop: 2 }}>
+                  <div style={{ background: "rgba(250,228,207,.06)", borderRadius: 12, padding: "12px 16px", display: "inline-block", marginTop: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".04em", textTransform: "uppercase" }}>Biometric Attestation Recorded</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>
                       {new Date(bioResult.verifiedAt).toLocaleString()}
                     </div>
                   </div>
@@ -1400,13 +1400,13 @@
         return (
           <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: "#0a0f23", minHeight: "100dvh" }}>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: "50%", background: "#01251E", boxShadow: "0 4px 20px rgba(1,37,30,.3)", marginBottom: 12 }}>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 64, height: 64, borderRadius: "50%", background: "#2B4230", boxShadow: "0 4px 20px rgba(43,66,48,.3)", marginBottom: 12 }}>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <h2 style={{ fontSize: 28, fontWeight: 400, color: autumn, margin: "0 0 8px", fontFamily: "'Instrument Serif', Georgia, serif" }}>Agreement Signed</h2>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(1,37,30,.1)", borderRadius: 20, padding: "6px 14px", marginBottom: 4, border: "1px solid rgba(1,37,30,.15)" }}>
-                <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="#01251E"/><polyline points="3 6 5 8 9 4" fill="none" stroke="#0a0f23" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#01251E", fontFamily: sans, letterSpacing: ".04em" }}>Saved to Vault</span>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(250,228,207,.08)", borderRadius: 20, padding: "6px 14px", marginBottom: 4, border: "1px solid rgba(250,228,207,.12)" }}>
+                <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="#fae4cf"/><polyline points="3 6 5 8 9 4" fill="none" stroke="#0a0f23" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <span style={{ fontSize: 14, fontWeight: 600, color: autumn, fontFamily: sans, letterSpacing: ".04em" }}>Saved to Vault</span>
               </div>
               <p style={{ fontSize: 15, color: "rgba(250,228,207,.25)", margin: "6px 0 0", fontFamily: sans }}>Stored securely in the app. Long-press any image to export.</p>
             </div>
@@ -1418,9 +1418,9 @@
                     <div style={{ fontSize: 13, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".08em", textTransform: "uppercase" }}>Witness Recording</div>
                     <div style={{ fontSize: 14, color: "rgba(250,228,207,.25)", fontFamily: sans, marginTop: 2 }}>{form.party2} &middot; {fd}</div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(1,37,30,.1)", borderRadius: 20, padding: "4px 10px", border: "1px solid rgba(1,37,30,.12)" }}>
-                    <svg width="8" height="8" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#01251E"/></svg>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: "#01251E", fontFamily: sans, letterSpacing: ".08em" }}>CAPTURED</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(250,228,207,.08)", borderRadius: 20, padding: "4px 10px", border: "1px solid rgba(250,228,207,.12)" }}>
+                    <svg width="8" height="8" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#fae4cf"/></svg>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".08em" }}>CAPTURED</span>
                   </div>
                 </div>
                 <video src={videoURL} controls playsInline style={{ width: "100%", display: "block", background: "#050810", maxHeight: 230 }} />
@@ -1433,25 +1433,25 @@
               </div>
             )}
             {bioStatus === "verified" && bioResult && (
-              <div style={{ background: "rgba(1,37,30,.04)", borderRadius: 16, border: "1px solid rgba(1,37,30,.1)", overflow: "hidden", marginBottom: 16 }}>
-                <div style={{ padding: "13px 16px 11px", borderBottom: "1px solid rgba(1,37,30,.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ background: "rgba(250,228,207,.04)", borderRadius: 16, border: "1px solid rgba(250,228,207,.1)", overflow: "hidden", marginBottom: 16 }}>
+                <div style={{ padding: "13px 16px 11px", borderBottom: "1px solid rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#01251E", fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase" }}>Biometric Verification</div>
-                    <div style={{ fontSize: 14, color: "rgba(1,37,30,.5)", fontFamily: sans, marginTop: 2 }}>{form.party2} &middot; {new Date(bioResult.verifiedAt).toLocaleString()}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase" }}>Biometric Verification</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>{form.party2} &middot; {new Date(bioResult.verifiedAt).toLocaleString()}</div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 5, background: "#d4f0e3", borderRadius: 20, padding: "4px 10px" }}>
-                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#01251E"/><polyline points="2.5 5 4 6.5 7.5 3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#01251E", fontFamily: sans, letterSpacing: ".05em" }}>VERIFIED</span>
+                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#2B4230"/><polyline points="2.5 5 4 6.5 7.5 3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#2B4230", fontFamily: sans, letterSpacing: ".05em" }}>VERIFIED</span>
                   </div>
                 </div>
                 <div style={{ padding: "10px 16px 14px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 15, fontFamily: sans }}>
-                    <span style={{ color: "rgba(1,37,30,.45)" }}>Method</span>
-                    <span style={{ color: "#01251E", fontWeight: 600 }}>Face ID / Touch ID</span>
+                    <span style={{ color: "rgba(250,228,207,.4)" }}>Method</span>
+                    <span style={{ color: autumn, fontWeight: 600 }}>Face ID / Touch ID</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 15, fontFamily: sans }}>
-                    <span style={{ color: "rgba(1,37,30,.45)" }}>Credential</span>
-                    <span style={{ color: "#01251E", fontWeight: 600, fontSize: 13, fontFamily: "monospace" }}>{bioResult.credentialId ? bioResult.credentialId.substring(0, 16) + "..." : "N/A"}</span>
+                    <span style={{ color: "rgba(250,228,207,.4)" }}>Credential</span>
+                    <span style={{ color: autumn, fontWeight: 600, fontSize: 13, fontFamily: "monospace" }}>{bioResult.credentialId ? bioResult.credentialId.substring(0, 16) + "..." : "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -1463,9 +1463,9 @@
                     <div style={{ fontSize: 14, fontWeight: 700, color: firm, fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase" }}>Verification Receipt</div>
                     <div style={{ fontSize: 14, color: "rgba(10,15,35,.35)", fontFamily: sans, marginTop: 2 }}>Full cryptographic audit trail</div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(1,37,30,.08)", borderRadius: 20, padding: "4px 10px" }}>
-                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#01251E"/><polyline points="2.5 5 4 6.5 7.5 3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#01251E", fontFamily: sans, letterSpacing: ".05em" }}>READY</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(43,66,48,.12)", borderRadius: 20, padding: "4px 10px" }}>
+                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#2B4230"/><polyline points="2.5 5 4 6.5 7.5 3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#2B4230", fontFamily: sans, letterSpacing: ".05em" }}>READY</span>
                   </div>
                 </div>
                 <div style={{ padding: 10, background: "#f8faf9" }}>
