@@ -88,7 +88,7 @@ function getWorkplaceDisclosureSection(state, sectionNum) {
     const verbatim = specifics[state] || specifics["California"];
     return {
       t: `${sectionNum}. Permitted Disclosures Regarding Unlawful Conduct`,
-      b: `${verbatim} This Agreement does not limit any party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
+      b: `${verbatim} This Agreement does not limit the Receiving Party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
     };
   }
 
@@ -108,13 +108,13 @@ function getWorkplaceDisclosureSection(state, sectionNum) {
     const ref = statRefs[state] || "applicable state law";
     return {
       t: `${sectionNum}. Permitted Disclosures Regarding Unlawful Conduct`,
-      b: `Nothing in this Agreement prevents or restricts either party, or any individual bound by this Agreement, from discussing or disclosing information about unlawful acts in the workplace, such as harassment, discrimination, or any other conduct that the individual has reason to believe is unlawful. This provision is included in accordance with ${ref}. This Agreement does not limit any party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
+      b: `Nothing in this Agreement prevents or restricts the Receiving Party, or any individual bound by this Agreement, from discussing or disclosing information about unlawful acts in the workplace, such as harassment, discrimination, or any other conduct that the individual has reason to believe is unlawful. This provision is included in accordance with ${ref}. This Agreement does not limit the Receiving Party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
     };
   }
 
   return {
     t: `${sectionNum}. Permitted Disclosures and Government Reporting`,
-    b: `Nothing in this Agreement shall be construed to prevent or restrict either party, or any individual bound by this Agreement, from: (a) reporting suspected violations of law to any federal, state, or local governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local law enforcement agency; (b) participating in or cooperating with any governmental investigation or proceeding; (c) filing a charge or complaint with any governmental agency; or (d) making disclosures that are protected under applicable whistleblower provisions of federal, state, or local law. No prior authorization from the Disclosing Party is required for any such reporting or cooperation.`
+    b: `Nothing in this Agreement shall be construed to prevent or restrict the Receiving Party, or any individual bound by this Agreement, from: (a) reporting suspected violations of law to any federal, state, or local governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local law enforcement agency; (b) participating in or cooperating with any governmental investigation or proceeding; (c) filing a charge or complaint with any governmental agency; or (d) making disclosures that are protected under applicable whistleblower provisions of federal, state, or local law. No prior authorization from the Disclosing Party is required for any such reporting or cooperation.`
   };
 }
 
@@ -136,7 +136,7 @@ function getRemediesSection(state, sectionNum) {
 }
 
 const INFO_CATEGORIES = [
-  { key: "trade_secrets", label: "Trade Secrets & Formulas", hint: "secret sauce, methods", legal: "trade secrets, proprietary formulas, and processes not generally known to the public" },
+  { key: "trade_secrets", label: "Trade Secrets & Formulas", hint: "proprietary methods, recipes", legal: "trade secrets, proprietary formulas, and processes not generally known to the public" },
   { key: "source_code", label: "Source Code & Tech Specs", hint: "software, apps", legal: "proprietary source code, algorithms, software architectures, technical specifications, and system designs" },
   { key: "business_strategy", label: "Strategy & Marketing", hint: "rollout plans, strategy", legal: "non-public business strategies, marketing plans, competitive analyses, and strategic roadmaps" },
   { key: "financial", label: "Financial Data & Projections", hint: "budgets, pricing, deals", legal: "financial statements, projections, budgets, pricing models, profit margins, and valuation data" },
@@ -165,7 +165,7 @@ function buildSections(state, categories, customCategory) {
 
   sections.push({
     t: `${n}. Definition of Confidential Information`,
-    b: `"Confidential Information" means any non-public information disclosed by either party (the "Disclosing Party") to the other party (the "Receiving Party") in connection with the Purpose (defined above), whether orally, in writing, electronically, or by any other means, that is either: (i) marked or designated as "confidential," "proprietary," or with a similar legend at the time of disclosure; or (ii) if disclosed orally or visually, identified as confidential at the time of disclosure and summarized in writing within fifteen (15) business days thereafter. ${catClause} Notwithstanding the foregoing, "Confidential Information" expressly excludes: (a) general professional skills, training, knowledge, and experience that the Receiving Party possessed prior to or develops independently of this Agreement; (b) information that constitutes general industry knowledge readily ascertainable by professionals in the relevant field; and (c) any individual's right to use their education, professional competence, and accumulated expertise in their trade or profession. This Agreement shall not be construed to restrict or limit any party's ability to engage in any lawful profession, trade, or business.`
+    b: `"Confidential Information" means any non-public information disclosed by the Disclosing Party to the Receiving Party in connection with the Purpose (defined above), whether orally, in writing, electronically, or by any other means, that is either: (i) marked or designated as "confidential," "proprietary," or with a similar legend at the time of disclosure; or (ii) if disclosed orally or visually, identified as confidential at the time of disclosure and summarized in writing within fifteen (15) business days thereafter. ${catClause} Notwithstanding the foregoing, "Confidential Information" expressly excludes: (a) general professional skills, training, knowledge, and experience that the Receiving Party possessed prior to or develops independently of this Agreement; (b) information that constitutes general industry knowledge readily ascertainable by professionals in the relevant field; and (c) any individual's right to use their education, professional competence, and accumulated expertise in their trade or profession. This Agreement shall not be construed to restrict or limit any party's ability to engage in any lawful profession, trade, or business.`
   });
   n++;
 
@@ -183,7 +183,7 @@ function buildSections(state, categories, customCategory) {
 
   sections.push({
     t: `${n}. Restriction on Use (Non-Use Obligation)`,
-    b: `Each party acknowledges that the Confidential Information is disclosed solely for the Purpose identified in this Agreement. The Receiving Party shall not use any Confidential Information for any purpose other than the Purpose, including but not limited to: (a) developing, manufacturing, marketing, or selling any product or service that competes with those of the Disclosing Party; (b) reverse engineering, decompiling, or disassembling any Confidential Information; (c) improving the Receiving Party's own internal processes, products, or services outside the scope of the Purpose; or (d) gaining any commercial advantage not expressly contemplated by this Agreement. Any use of Confidential Information outside the scope of the Purpose shall constitute a material breach of this Agreement.`
+    b: `The Receiving Party acknowledges that the Confidential Information is disclosed solely for the Purpose identified in this Agreement. The Receiving Party shall not use any Confidential Information for any purpose other than the Purpose, including but not limited to: (a) developing, manufacturing, marketing, or selling any product or service that competes with those of the Disclosing Party; (b) reverse engineering, decompiling, or disassembling any Confidential Information; (c) improving the Receiving Party's own internal processes, products, or services outside the scope of the Purpose; or (d) gaining any commercial advantage not expressly contemplated by this Agreement. Any use of Confidential Information outside the scope of the Purpose shall constitute a material breach of this Agreement.`
   });
   n++;
 
@@ -214,7 +214,7 @@ function buildSections(state, categories, customCategory) {
 
   sections.push({
     t: `${n}. No License or Ownership Transfer`,
-    b: `Nothing in this Agreement shall be construed as granting, by implication, estoppel, or otherwise, any license or right to the Receiving Party under any patent, copyright, trademark, trade secret, or other intellectual property right of the Disclosing Party. All Confidential Information remains the exclusive property of the Disclosing Party. Neither the execution of this Agreement nor the disclosure of any Confidential Information hereunder shall constitute or imply any promise, commitment, or obligation by either party to enter into any further agreement, transaction, or business relationship.`
+    b: `Nothing in this Agreement shall be construed as granting, by implication, estoppel, or otherwise, any license or right to the Receiving Party under any patent, copyright, trademark, trade secret, or other intellectual property right of the Disclosing Party. All Confidential Information remains the exclusive property of the Disclosing Party. Neither the execution of this Agreement nor the disclosure of any Confidential Information hereunder shall constitute or imply any promise, commitment, or obligation by the Disclosing Party to enter into any further agreement, transaction, or business relationship with the Receiving Party.`
   });
   n++;
 
@@ -548,7 +548,7 @@ export default function NDA() {
       measuredH += headH * 2 + gapH * 3;
 
       const fd = fmtDate(form.date);
-      const introText = `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each party may disclose Confidential Information to the other party in connection with the Purpose, and each party may act as both a Disclosing Party and a Receiving Party under this Agreement.`;
+      const introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
       ctx.font = `${12 * scale}px Georgia, serif`;
       const introLines = wrapText(ctx, introText, textW);
       measuredH += introLines.length * lineH + gapH * 2;
@@ -572,7 +572,7 @@ export default function NDA() {
       ctx.fillStyle = "#0a0f23";
       ctx.textAlign = "center";
       ctx.font = `bold ${18 * scale}px Georgia, serif`;
-      ctx.fillText("MUTUAL NON-DISCLOSURE AGREEMENT", W / 2, y);
+      ctx.fillText("NON-DISCLOSURE AGREEMENT", W / 2, y);
       y += headH;
       ctx.font = `${11 * scale}px Georgia, serif`;
       ctx.fillStyle = "#666";
@@ -621,7 +621,7 @@ export default function NDA() {
         ctx.fillStyle = "#0a0f23";
         ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
         ctx.fillStyle = "#888";
-        ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale);
+        ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale);
         ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
       });
 
@@ -768,10 +768,10 @@ export default function NDA() {
         )}
 
         <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(10,15,35,.08)", padding: "22px 18px", boxShadow: "0 2px 16px rgba(10,15,35,.04)" }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, textAlign: "center", margin: "0 0 2px", color: firm }}>MUTUAL NON-DISCLOSURE AGREEMENT</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, textAlign: "center", margin: "0 0 2px", color: firm }}>NON-DISCLOSURE AGREEMENT</h2>
           <p style={{ textAlign: "center", fontSize: 13, color: "rgba(10,15,35,.35)", margin: "0 0 16px", fontFamily: sans }}>Effective {fd}</p>
           <p style={{ fontSize: 14, lineHeight: 1.7, color: "#1a1e30", marginBottom: 16 }}>
-            This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of <strong>{fd}</strong> by and between <strong>{form.party1}</strong> ("Party A") and <strong>{form.party2}</strong> ("Party B"), collectively referred to as the "Parties," for the purpose of: <strong>{form.purpose}</strong> (the "Purpose"). Each party may disclose Confidential Information to the other party in connection with the Purpose, and each party may act as both a Disclosing Party and a Receiving Party under this Agreement.
+            This Non-Disclosure Agreement ("Agreement") is entered into as of <strong>{fd}</strong> by and between <strong>{form.party1}</strong> ("Disclosing Party") and <strong>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.
           </p>
           {sections.map((s, i) => (
             <div key={i} style={{ marginBottom: 12 }}>
@@ -906,8 +906,8 @@ export default function NDA() {
 
         {/* Signature pads */}
         <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(10,15,35,.08)", padding: "18px 14px", boxShadow: "0 2px 16px rgba(10,15,35,.04)" }}>
-          <SignatureCanvas label={`${form.party1} (Party A)`} canvasRef={sig1Ref} onDraw={() => setSig1Done(true)} />
-          <SignatureCanvas label={`${form.party2} (Party B)`} canvasRef={sig2Ref} onDraw={() => setSig2Done(true)} />
+          <SignatureCanvas label={`${form.party1} (Disclosing Party)`} canvasRef={sig1Ref} onDraw={() => setSig1Done(true)} />
+          <SignatureCanvas label={`${form.party2} (Receiving Party)`} canvasRef={sig2Ref} onDraw={() => setSig2Done(true)} />
         </div>
 
         <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
@@ -1015,7 +1015,7 @@ export default function NDA() {
           {[
             ["Parties", `${form.party1} & ${form.party2}`],
             ["Purpose", form.purpose],
-            ["Type", "Mutual NDA"],
+            ["Type", "Unilateral NDA"],
             ["Duration", "2 years + 3 year survival"],
             ["Governing Law", `State of ${form.state}`],
             ["Sections", `${sections.length}`],
