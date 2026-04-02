@@ -1,0 +1,644 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red24\green24\blue24;\red246\green249\blue252;\red236\green241\blue247;
+\red109\green109\blue109;\red52\green55\blue54;\red228\green234\blue244;\red77\green80\blue85;\red111\green14\blue195;
+\red164\green69\blue11;\red24\green112\blue43;\red22\green79\blue199;}
+{\*\expandedcolortbl;;\cssrgb\c12157\c12157\c12157;\cssrgb\c97255\c98039\c99216;\cssrgb\c94118\c95686\c97647;
+\cssrgb\c50196\c50196\c50196;\cssrgb\c26667\c27843\c27451;\cssrgb\c91373\c93333\c96471;\cssrgb\c37255\c38824\c40784;\cssrgb\c51765\c18824\c80784;
+\cssrgb\c70980\c34902\c3137;\cssrgb\c9412\c50196\c21961;\cssrgb\c9804\c40392\c82353;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid1\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat0\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid301\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid4}
+{\list\listtemplateid5\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid401\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid5}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs48 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Architectural Framework for Secure Intent: Implementing Hardware-Backed Biometric Non-Repudiation in Hybrid iOS Applications\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The transition from traditional digital signatures to hardware-fortified biometric authentication represents a significant shift in the landscape of mobile security and legal non-repudiation. For applications such as the Pakt NDA platform, which require verifiable proof of user intent, the standard biometric "unlock" is often insufficient. The requirement for the "Confirm with Side Button" interaction\'97formally known within the Apple ecosystem as Secure Intent\'97introduces a physical layer of security that establishes a direct link between the human user and the device's Secure Enclave. This report provides an exhaustive technical analysis of the native frameworks, hybrid bridge implementations, and cryptographic attestation protocols required to deliver this specific confirmatory experience while ensuring legal enforceability.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 The Evolution and Hardware Foundations of Secure Intent\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 To understand the implementation of the "Confirm with Side Button" experience, one must first analyze the underlying architecture of Apple's Trusted Execution Environment (TEE). Secure Intent is not a software-based user interface trick but a hardware-enforced state machine designed to prevent "look-to-confirm" errors and spoofing attacks. On devices equipped with Face ID, the risk of accidental authorization is heightened because the biometric sensor operates passively; merely looking at the device can trigger a match. To mitigate this, Apple introduced the physical double-press requirement for high-value operations such as Apple Pay transactions and App Store purchases.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 The Secure Enclave and Physical Hardware Interrupts\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The Secure Enclave is a dedicated subsystem integrated into Apple\'92s System on a Chip (SoC), isolated from the main Application Processor (AP) to provide an additional layer of security even if the kernel is compromised. The Secure Enclave Processor (SEP) runs its own customized version of the L4 microkernel and manages its own Boot ROM, a hardware-based True Random Number Generator (TRNG), and a dedicated AES engine.\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2352\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth6146\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth5120\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Component
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Technical Role in Secure Intent
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Hardware Integration
+\f1\b0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2352\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth6146\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth5120\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Secure Enclave Processor (SEP)
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Manages the cryptographic state machine and evaluates biometric matches.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Isolated silicon with encrypted memory and anti-replay capabilities.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2352\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth6146\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth5120\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Physical Side Button
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Provides a direct, hardware-wired interrupt signal to the SEP.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Physically linked to the Secure Enclave, bypassing the operating system.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2352\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth6146\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth5120\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 TrueDepth Camera
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Projects 30,000+ infrared dots to create a 3D map of the user's face.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Data is routed via a dedicated channel to the SEP, never reaching the AP.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2352\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth6146\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth5120\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Secure Element (SE)
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 An industry-standard chip (Java Card) used for Apple Pay and high-security credentials.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Connected via a serial interface to the SEP for transaction authorization.\cell \lastrow\row
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 The "Secure Intent" mechanism relies on a physical link from the side button to the Secure Enclave. When a cryptographic operation requires Secure Intent, the SEP enters a "waiting for confirmation" state. It will only proceed if it receives the hardware interrupt from the side button within a strictly defined time window, typically 60 seconds for Apple Pay transactions. This ensures that no software-only process can simulate the confirmation gesture.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Native iOS Implementation: Security and LocalAuthentication Frameworks\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The implementation of the confirmatory Face ID flow requires a nuanced understanding of two primary Apple frameworks: \cf6 \cb7 \strokec6 LocalAuthentication\cf2 \cb1 \strokec2  and \cf6 \cb7 \strokec6 Security\cf2 \cb1 \strokec2 . While many developers believe \cf6 \cb7 \strokec6 LAContext\cf2 \cb1 \strokec2  is the entry point for all biometric needs, the specific "Confirm with Side Button" behavior for signing operations is often tied to the \cf6 \cb7 \strokec6 Security\cf2 \cb1 \strokec2  framework\'92s management of Keychain items and Secure Enclave keys.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Distinguishing LAContext from Secure Key Operations\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The \cf6 \cb7 \strokec6 LocalAuthentication\cf2 \cb1 \strokec2  framework is designed for simple user verification. Using \cf6 \cb7 \strokec6 LAContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)\cf2 \cb1 \strokec2 , an app can check if the user is present. This produces the standard Face ID HUD but does not typically trigger the "Confirm with Side Button" animation unless it is specifically configured in conjunction with Apple Pay or the newer NFC and Secure Element (SE) Platform.\
+In contrast, the \cf6 \cb7 \strokec6 Security\cf2 \cb1 \strokec2  framework allows for the generation of Elliptic Curve (ECC) keys directly within the Secure Enclave. By attaching specific Access Control flags to these keys, an application can mandate that the private key only be used for signing after a successful biometric match and a confirmation of user intent.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Specific API Calls and Access Control Flags\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 To achieve a confirmatory flow, the developer must utilize \cf6 \cb7 \strokec6 SecAccessControlCreateWithFlags\cf2 \cb1 \strokec2 . This function defines the conditions under which a keychain item or key can be accessed. The flags provided determine whether the UI will be a simple "look" or a more complex interaction.\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth4428\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4618\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth4573\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Access Control Flag
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Behavioral Impact on iOS
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Security Implication
+\f1\b0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth4428\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4618\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth4573\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 kSecAccessControlBiometryAny\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Allows any enrolled biometric (Face ID or Touch ID) to authorize access.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Adding new biometrics does not invalidate the key.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth4428\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4618\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth4573\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 kSecAccessControlBiometryCurrentSet\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Restricts access to the biometric set enrolled at the time of key creation.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Adding a new face invalidates the key, preventing "attacker enrollment".\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth4428\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4618\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth4573\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 kSecAccessControlUserPresence\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Allows either biometrics or the device passcode for authorization.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Provides a fallback for users with temporary biometric failures.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth4428\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4618\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth4573\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 kSecAccessControlPrivateKeyUsage\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Mandatory for using a key for cryptographic signing (ECDSA).\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Essential for the NDA signing flow.\cell \lastrow\row
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 For third-party applications, the "Confirm with Side Button" UI is traditionally a system-managed experience triggered by the \cf6 \cb7 \strokec6 Security\cf2 \cb1 \strokec2  framework when a key has the \cf6 \cb7 \strokec6 .privateKeyUsage\cf2 \cb1 \strokec2  constraint combined with specific system-level policies. However, there is a critical distinction: the exact UI used by the App Store and Apple Pay is part of a "high-trust" system sheet. For a third-party app to trigger a similar interaction for document signing, it must generate a hardware-bound key and call \cf6 \cb7 \strokec6 SecKeyCreateSignature\cf2 \cb1 \strokec2 .\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 The Implementation of ECDSA Signing in the Secure Enclave\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The Pakt application's signing process should involve the creation of a NIST P-256 elliptic curve key pair. The private key is generated and stored permanently within the Secure Enclave, while only the public key is ever exposed to the application.\
+\pard\pardeftab720\partightenfactor0
+\cf6 \cb4 \strokec6 Swift\cb1 \
+\pard\pardeftab720\qc\partightenfactor0
+
+\fs48 \cf6 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs29\fsmilli14875 \cf8 \cb4 \strokec8 // Swift implementation of Secure Enclave Key Generation with Biometric Confirmation\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf9 \strokec9 let\cf6 \strokec6  access \cf2 \strokec2 =\cf6 \strokec6  \cf9 \strokec9 SecAccessControlCreateWithFlags\cf6 \strokec6 (\
+    \cf10 \strokec10 nil\cf6 \strokec6 ,\
+    kSecAttrAccessibleWhenUnlockedThisDeviceOnly,\
+   , \cf8 \strokec8 // High-security constraints\cf6 \strokec6 \
+    \cf10 \strokec10 nil\cf6 \strokec6 \
+)\cf2 \strokec2 !\cf6 \strokec6 \
+\
+\cf9 \strokec9 let\cf6 \strokec6  attributes: \cf2 \strokec2 =\cf6 \strokec6 \
+\
+\cf9 \strokec9 var\cf6 \strokec6  error: \cf9 \strokec9 Unmanaged\cf6 \strokec6 <\cf9 \strokec9 CFError\cf6 \strokec6 >?\
+\cf9 \strokec9 guard\cf6 \strokec6  \cf9 \strokec9 let\cf6 \strokec6  privateKey \cf2 \strokec2 =\cf6 \strokec6  \cf9 \strokec9 SecKeyCreateRandomKey\cf6 \strokec6 (attributes \cf9 \strokec9 as\cf6 \strokec6  \cf9 \strokec9 CFDictionary\cf6 \strokec6 , \cf2 \strokec2 &\cf6 \strokec6 error) \cf9 \strokec9 else\cf6 \strokec6  \{\
+    \cf8 \strokec8 // Handle error\cf6 \strokec6 \
+    \cf9 \strokec9 return\cf6 \strokec6 \
+\}\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\fs24 \cf2 \cb1 \strokec2 When the user is ready to sign the NDA, the application must provide a hash of the document to the Secure Enclave for signing. This operation triggers the biometric authentication prompt. If the system policy determines that the context requires Secure Intent, it may present the confirmatory UI. It is important to note that as of iOS 18.1, Apple has opened the NFC and Secure Element Platform to third-party developers, which provides a more direct way to utilize the "double-click" gesture for authorized transactions.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Capacitor Integration: Bridging Web and Native Security\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 Since Pakt is a React application wrapped in Capacitor, the web layer cannot directly call the \cf6 \cb7 \strokec6 Security.framework\cf2 \cb1 \strokec2  or \cf6 \cb7 \strokec6 LocalAuthentication\cf2 \cb1 \strokec2  APIs. A native bridge or a specialized plugin is required to expose these capabilities to the JavaScript runtime.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Plugin Selection for Secure Signing\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The standard \cf6 \cb7 \strokec6 @capacitor/biometric-auth\cf2 \cb1 \strokec2  plugin is generally optimized for user login scenarios (returning a boolean success) and may not provide the low-level Secure Enclave key management required for legal NDA signing. For Pakt's specific needs, the \cf6 \cb7 \strokec6 @perfood/capacitor-crypto-api\cf2 \cb1 \strokec2  is a more robust choice, as it is designed for cryptographic authentication using hardware-backed keys.\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth3471\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2160
+\clvertalc \clcbpat3 \clwWidth867\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx4320
+\clvertalc \clcbpat3 \clwWidth4816\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx6480
+\clvertalc \clcbpat3 \clwWidth3655\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Capacitor Plugin
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Version
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 iOS Capability
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Evidence Support
+\f1\b0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth3471\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2160
+\clvertalc \clcbpat3 \clwWidth867\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx4320
+\clvertalc \clcbpat3 \clwWidth4816\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx6480
+\clvertalc \clcbpat3 \clwWidth3655\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 @perfood/capacitor-crypto-api\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 1.x / 2.x\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Secure Enclave ECDSA signing, key tagging.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Returns DER-encoded signatures.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth3471\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2160
+\clvertalc \clcbpat3 \clwWidth867\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx4320
+\clvertalc \clcbpat3 \clwWidth4816\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx6480
+\clvertalc \clcbpat3 \clwWidth3655\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 @capacitor/biometric-auth\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 8.0+\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Generic Face ID/Touch ID prompts.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Success/Failure only.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth3471\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2160
+\clvertalc \clcbpat3 \clwWidth867\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx4320
+\clvertalc \clcbpat3 \clwWidth4816\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx6480
+\clvertalc \clcbpat3 \clwWidth3655\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 capacitor-native-biometric\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 3.0+\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Generic prompts with custom title/reason.\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Basic boolean results.\cell \lastrow\row
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 The \cf6 \cb7 \strokec6 @perfood/capacitor-crypto-api\cf2 \cb1 \strokec2  plugin allows the web app to trigger key generation and signing. When \cf6 \cb7 \strokec6 Crypto.sign()\cf2 \cb1 \strokec2  is called, the native iOS side executes \cf6 \cb7 \strokec6 SecKeyCreateSignature\cf2 \cb1 \strokec2 , which automatically invokes the Face ID prompt. If the developer needs the specific "double-click" interaction, they may need to implement a custom Capacitor plugin that utilizes the \cf6 \cb7 \strokec6 DCAppAttestService\cf2 \cb1 \strokec2  or the NFC platform entitlements.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Implementing the Bridge in a React/Capacitor App\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f1\b0\fs24 \cf2 The workflow for the Pakt app involves registering Party B's device and then signing the NDA hash. The following sequence demonstrates the interaction from the TypeScript layer.\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa160\partightenfactor0
+\ls1\ilvl0
+\f0\b \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Check Capability
+\f1\b0 : Ensure the device supports biometrics and the Secure Enclave.\
+\ls1\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Generate Key
+\f1\b0 : Create a tagged key in the hardware.\
+\ls1\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	3	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Request Signature
+\f1\b0 : Send the document hash to the native bridge.\
+\pard\pardeftab720\partightenfactor0
+\cf6 \cb4 \strokec6 TypeScript\cb1 \
+\pard\pardeftab720\qc\partightenfactor0
+
+\fs48 \cf6 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs29\fsmilli14875 \cf9 \cb4 \strokec9 import\cf6 \strokec6  \{ Crypto \} \cf9 \strokec9 from\cf6 \strokec6  \cf11 \strokec11 '@perfood/capacitor-crypto-api'\cf6 \strokec6 ;\
+\
+\cf9 \strokec9 const\cf6 \strokec6  performHardwareSignature = \cf9 \strokec9 async\cf6 \strokec6  (documentHash: \cf12 \strokec12 string\cf6 \strokec6 ) => \{\
+  \cf9 \strokec9 try\cf6 \strokec6  \{\
+    \cf9 \strokec9 const\cf6 \strokec6  \{ isAvailable \} = \cf9 \strokec9 await\cf6 \strokec6  Crypto.isBiometricsEnabled();\
+    \cf9 \strokec9 if\cf6 \strokec6  (!isAvailable) \cf9 \strokec9 throw\cf6 \strokec6  \cf9 \strokec9 new\cf6 \strokec6  \cf12 \strokec12 Error\cf6 \strokec6 (\cf11 \strokec11 "Hardware biometrics unavailable"\cf6 \strokec6 );\
+\
+    \cf8 \strokec8 // This triggers the native Face ID / Secure Intent flow\cf6 \strokec6 \
+    \cf9 \strokec9 const\cf6 \strokec6  result = \cf9 \strokec9 await\cf6 \strokec6  Crypto.sign(\{\
+      \cf10 \strokec10 tag\cf6 \strokec6 : \cf11 \strokec11 'pakt-nda-signer-key'\cf6 \strokec6 ,\
+      \cf10 \strokec10 data\cf6 \strokec6 : documentHash, \cf8 \strokec8 // Base64 or Hex hash of the NDA\cf6 \strokec6 \
+      \cf10 \strokec10 type\cf6 \strokec6 : \cf11 \strokec11 'FACE_ID'\cf6 \strokec6 \
+    \});\
+\
+    \cf9 \strokec9 return\cf6 \strokec6  result.signature; \cf8 \strokec8 // ASN.1 DER encoded signature\cf6 \strokec6 \
+  \} \cf9 \strokec9 catch\cf6 \strokec6  (error) \{\
+    \cf12 \strokec12 console\cf6 \strokec6 .error(\cf11 \strokec11 "Biometric signature failed"\cf6 \strokec6 , error);\
+  \}\
+\};\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 \cb1 \strokec2 Required Configuration and Entitlements\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f1\b0\fs24 \cf2 For the Capacitor app to successfully use these APIs in the App Store, specific entries must be added to the \cf6 \cb7 \strokec6 Info.plist\cf2 \cb1 \strokec2  and the app's entitlements file. Without these, the app will crash upon calling the biometric APIs.\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa160\partightenfactor0
+\ls2\ilvl0
+\f0\b \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Face ID Description
+\f1\b0 : \cf6 \cb7 \strokec6 NSFaceIDUsageDescription\cf2 \cb1 \strokec2  must be a clear, user-facing string explaining why the app needs Face ID (e.g., "Pakt uses Face ID to securely sign NDAs and verify your identity").\
+\ls2\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Keychain Access Groups
+\f1\b0 : If sharing keys between apps or extensions.\
+\ls2\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 App Attest Capability
+\f1\b0 : Required for using the \cf6 \cb7 \strokec6 DeviceCheck\cf2 \cb1 \strokec2  framework to get cryptographic evidence.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Cryptographic Evidence and Legal Enforceability\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 For an NDA to be legally enforceable, the Pakt app must store proof that the specific device owner authenticated at a specific time. A simple "authenticated: true" flag in a database is insufficient, as it could be forged by a malicious backend or a compromised app instance.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Leveraging App Attest for Device Integrity\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f1\b0\fs24 \cf2 The \cf6 \cb7 \strokec6 DeviceCheck\cf2 \cb1 \strokec2  framework\'92s \cf6 \cb7 \strokec6 App Attest\cf2 \cb1 \strokec2  service provides a mechanism to verify that an app instance is genuine and running on an untampered Apple device. This service produces an "attestation object" that can be stored as evidence.\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa160\partightenfactor0
+\ls3\ilvl0
+\f0\b \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Attestation Object
+\f1\b0 : A CBOR-encoded object containing a public key and a certificate chain rooted in Apple\'92s root CA.\
+\ls3\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Verification
+\f1\b0 : The server verifies the attestation to ensure the public key was generated in the Secure Enclave of a real iPhone.\
+\ls3\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Assertion
+\f1\b0 : For every signature (signing an NDA), the app generates an "assertion object" using the attested key. This assertion includes a counter value to prevent replay attacks.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Data Clusters for the Evidence Chain\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The Pakt backend should store the following data points for every signed agreement to create a comprehensive audit trail:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Data Point
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Source
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Evidence Value
+\f1\b0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 ECDSA Signature
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 SecKeyCreateSignature\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Proof that the private key (which never leaves the hardware) signed the specific document hash.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 App Attest Certificate
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 DCAppAttestService\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Cryptographic proof that the device is a genuine Apple product and not an emulator.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Nonce / Challenge
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Server-side\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 A unique, one-time value included in the signature to prove the event occurred at a specific time.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Counter
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 authData\cf2 \cb1 \strokec2  in Assertion\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 An incremental value that proves the sequence of signings and prevents signature reuse.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2128\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth2815\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth8677\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Device Metadata
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 DCDevice\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Information about the device's security posture and integrity status.\cell \lastrow\row
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 This evidence chain aligns with the requirements of the Electronic Signatures in Global and National Commerce (ESIGN) Act and the eIDAS regulation in the EU, which often require "Advanced Electronic Signatures" to be uniquely linked to the signatory and created using data they can use under their sole control.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Fallback Strategies and UI Discrepancies\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 If the specific "Confirm with Side Button" animation is restricted to Apple's own system flows (like Apple Pay), the app must employ the closest possible alternative. In native third-party apps, the \cf6 \cb7 \strokec6 LAContext\cf2 \cb1 \strokec2  biometric prompt is the standard. While it lacks the double-press requirement, it remains a robust form of identity verification.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Differences in User Experience\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f1\b0\fs24 \cf2 The difference between the App Store experience and a third-party biometric prompt is primarily one of "active" versus "passive" confirmation.\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa160\partightenfactor0
+\ls4\ilvl0
+\f0\b \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 App Store / Apple Pay
+\f1\b0 : Requires a deliberate physical gesture (double-press) followed by a Face ID scan. This is used for "Intent to Pay" or "Intent to Install".\
+\ls4\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Standard LAContext
+\f1\b0 : Only requires the Face ID scan. This is used for "Identity Verification" or "Login".\
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 The \cf6 \cb7 \strokec6 LAContext\cf2 \cb1 \strokec2  prompt can be customized with a \cf6 \cb7 \strokec6 localizedReason\cf2 \cb1 \strokec2  string, which appears as a subtitle in the dialog. For Pakt, this reason should be explicit: "Please authenticate to sign the Pakt NDA and verify your identity."\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Mimicking High-Trust Interfaces\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 To bridge the gap in user perception, the Pakt app can implement a "confirmation sheet" in the React UI that mimics the layout of the Apple Pay sheet. This sheet should explain to the user that they are about to perform a hardware-secured signing operation. Once the user clicks a "Sign Now" button in the web UI, the app triggers the native Face ID prompt. This two-step process (React confirmation + Native biometric scan) provides a similar UX to the system's own confirmatory flows.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Cross-Device Flow and Relay Hardening\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The cross-device pattern (Party A displays a QR, Party B scans and authenticates) is inherently susceptible to relay attacks. The Pakt app currently uses Firebase Realtime Database as a relay, where Party B writes a result and Party A listens. This pattern must be hardened using a challenge-response mechanism.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 The Cryptographic Challenge-Response Pattern\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f1\b0\fs24 \cf2 Instead of Party B writing a "Success" flag, the interaction should follow a formal cryptographic protocol:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa160\partightenfactor0
+\ls5\ilvl0
+\f0\b \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	1	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Challenge Generation
+\f1\b0 : Party A's app requests a random nonce (challenge) from the Pakt server.\
+\ls5\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	2	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 QR Presentation
+\f1\b0 : Party A displays a QR code containing the session ID and the challenge.\
+\ls5\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	3	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Authentication
+\f1\b0 : Party B scans the QR, performs the Face ID/Secure Intent signing on the challenge, and generates a signature.\
+\ls5\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	4	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Relay
+\f1\b0 : Party B writes the signature and their \cf6 \cb7 \strokec6 App Attest\cf2 \cb1 \strokec2  assertion to the Firebase relay.\
+\ls5\ilvl0
+\f0\b \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	5	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Final Verification
+\f1\b0 : The Pakt server (not Party A's app) verifies the signature against Party B's public key and ensures the challenge matches. Only then is the relay considered complete.\
+\pard\pardeftab720\sa320\partightenfactor0
+\cf2 This ensures that even if an attacker intercepts the Firebase traffic, they cannot "fake" a successful signature without the physical device and the owner's biometric presence.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs36 \cf2 Synthesis of Implementation Requirements\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 To deploy the Pakt NDA signing experience, the technical team must execute on the following requirements across the native and hybrid layers.\
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Native Configuration Matrix\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\fs24 \cf2 Requirement
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Value / Selection
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Implementation Target
+\f1\b0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 OS Version
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 iOS 13.0+ (iOS 16+ for Managed Attestation)\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 Minimum Deployments\cf2 \cb1 \strokec2 .\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 API Framework
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 Security.framework\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Custom Native Bridge / Plugin.\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Biometric Permission
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 NSFaceIDUsageDescription\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 Info.plist\cf2 \cb1 \strokec2 .\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Entitlements
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 DeviceCheck\cf2 \cb1 \strokec2  / \cf6 \cb7 \strokec6 App Attest\cf2 \cb1 \strokec2 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf6 \cb7 \strokec6 App.entitlements\cf2 \cb1 \strokec2 .\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trcbpat4 \tamarb640 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat3 \clwWidth2467\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx2880
+\clvertalc \clcbpat3 \clwWidth4789\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx5760
+\clvertalc \clcbpat3 \clwWidth3268\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf2 \clbrdrl\brdrs\brdrw20\brdrcf2 \clbrdrb\brdrs\brdrw20\brdrcf2 \clbrdrr\brdrs\brdrw20\brdrcf2 \clpadt160 \clpadl240 \clpadb160 \clpadr240 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\f0\b \cf2 Key Type
+\f1\b0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 NIST P-256 (P-256)\cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Secure Enclave.\cell \lastrow\row
+\pard\pardeftab720\sa160\partightenfactor0
+
+\f0\b\fs28 \cf2 Conclusion and Recommendations\
+\pard\pardeftab720\sa320\partightenfactor0
+
+\f1\b0\fs24 \cf2 The "Confirm with Side Button" experience is a specialized implementation of Secure Intent, designed to link physical gestures to cryptographic operations. While the exact UI animation is a system-reserved asset for transaction-heavy contexts like Apple Pay, the underlying security architecture is accessible to third-party developers through the Secure Enclave and the \cf6 \cb7 \strokec6 Security\cf2 \cb1 \strokec2  framework. By utilizing hardware-bound ECC keys with strict \cf6 \cb7 \strokec6 SecAccessControl\cf2 \cb1 \strokec2  flags, the Pakt application can ensure that NDA signatures are only possible when the device owner is physically present and attentive.\
+Furthermore, for Pakt to withstand legal scrutiny, the implementation must transition from a simple biometric check to a robust attestation-based system. By storing the ASN.1 DER-encoded signatures and Apple-signed attestation objects, Pakt establishes a non-repudiable evidence chain that proves the identity of the signer and the integrity of the signing device. This combination of hardware-enforced intent and cryptographic proof represents the state of the art in mobile document execution.\
+}

@@ -1,0 +1,304 @@
+# iOS Face ID in Capacitor: a complete implementation guide for NDA signing
+
+The "Confirm with Side Button" double-press flow **cannot be triggered by third-party apps** — it is an Apple-exclusive hardware interaction reserved for Apple Pay and App Store purchases, wired directly to the Secure Enclave at the firmware level. Third-party apps instead use `LAContext` from the LocalAuthentication framework, which produces a simpler dialog-based Face ID prompt. For your Capacitor-based NDA signing app, the strongest achievable approach combines a Capacitor biometric plugin (triggering `LAContext` under the hood), a **biometric-gated Secure Enclave signing key** that creates cryptographic proof of authentication, and **Apple's App Attest API** for device integrity — all relayed through Firebase with challenge-response anti-replay protections.
+
+---
+
+## The double-press side button is hardware-locked to Apple's payment flows
+
+The animated "Double Click to [Install/Pay]" prompt seen in App Store purchases and Apple Pay is not produced by any public API available to third-party developers. It is a **system-level interaction** tied to PassKit (`PKPaymentAuthorizationController`) and StoreKit, where the physical double-click of the side button is wired at the hardware/firmware layer directly to the Secure Enclave. Apple introduced this gesture specifically because Face ID works passively — unlike Touch ID, where placing a finger served as both intent and biometric, Face ID needed a separate physical intent signal to prevent accidental purchases.
+
+When a third-party app calls `LAContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason:)`, the resulting UX is fundamentally different. Face ID activates **silently and automatically** — the TrueDepth camera scans without showing any dialog on the first attempt. If the scan succeeds, the callback fires immediately with no visible UI at all. Only on failure does a centered dialog appear with a Face ID icon and "Try Again" button. This contrasts sharply with the full-screen payment sheet shown by Apple Pay. There is no public API, private API, or entitlement that allows a third-party app to show the double-click animation or full payment sheet experience.
+
+The closest alternative for making biometric auth feel deliberate is a **two-step confirmation pattern**: display a custom in-app confirmation screen ("You are about to sign this NDA. Tap 'Confirm & Verify' to proceed"), then trigger `LAContext` only after the user explicitly taps. This mimics the intent-then-authenticate pattern of Apple Pay without requiring the hardware double-click. Combined with a biometric-gated Secure Enclave key (detailed below), this creates a architecturally strong signing flow.
+
+---
+
+## LAContext API: what third-party apps actually get
+
+The `LocalAuthentication` framework has been available since **iOS 8** (Touch ID) with Face ID support added in **iOS 11**. The core API surface is straightforward:
+
+```swift
+import LocalAuthentication
+
+let context = LAContext()
+context.localizedCancelTitle = "Cancel Signing"
+context.localizedFallbackTitle = ""  // Hide fallback button
+
+var error: NSError?
+if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+    context.evaluatePolicy(
+        .deviceOwnerAuthenticationWithBiometrics,
+        localizedReason: "Verify your identity to sign this NDA"
+    ) { success, authError in
+        DispatchQueue.main.async {
+            if success {
+                // Biometric matched — proceed
+            } else if let error = authError as? LAError {
+                switch error.code {
+                case .userCancel: break      // User cancelled
+                case .biometryLockout: break // Too many failures
+                case .userFallback: break    // User chose passcode
+                default: break
+                }
+            }
+        }
+    }
+}
+```
+
+The `localizedReason` parameter (e.g., "Verify your identity to sign this NDA") is customizable but has a critical Face ID nuance: **it is not displayed on the first scan attempt**. Face ID scans silently, and the reason string only appears on the retry dialog after a failed attempt. For Touch ID, it appears immediately. The app name is always displayed automatically at the top of the dialog and cannot be customized.
+
+Two policy types matter: `.deviceOwnerAuthenticationWithBiometrics` (biometric only, no passcode fallback) and `.deviceOwnerAuthentication` (biometric with passcode fallback). For NDA signing where you want strong identity binding, use biometrics-only.
+
+**The critical limitation**: `evaluatePolicy` returns only a **boolean** — `true` or `false`. No timestamp, no token, no attestation data, no cryptographic proof. The `evaluatedPolicyDomainState` property provides an opaque `Data` blob representing the current biometric enrollment state (it changes when fingerprints or faces are added/removed), useful for detecting enrollment changes between signing sessions, but it is not attestation evidence. Per OWASP's Mobile Application Security Testing Guide, the boolean result can be hooked by an attacker on jailbroken devices to always return `true`, making `LAContext` alone **insufficient for legally defensible authentication**.
+
+**Required Info.plist entry** (app crashes without it on Face ID devices):
+
+```xml
+<key>NSFaceIDUsageDescription</key>
+<string>We use Face ID to verify your identity when signing documents.</string>
+```
+
+---
+
+## Two Capacitor plugins worth considering
+
+The Capacitor plugin ecosystem for biometric auth has consolidated around two actively maintained options. The original `capacitor-native-biometric` by epicshaggy is **abandoned** (last updated 3 years ago, Capacitor 3 only).
+
+**`@capgo/capacitor-native-biometric`** is the actively maintained fork, currently at **v8.4.2** for Capacitor 8, with versions tracking each Capacitor major (v5.x for Cap 5, v6.x for Cap 6, v7.x for Cap 7). It provides biometric auth **plus** secure credential storage via the iOS Keychain. The key method for triggering Face ID is:
+
+```typescript
+import { NativeBiometric, BiometryType } from "@capgo/capacitor-native-biometric";
+
+// Check availability
+const result = await NativeBiometric.isAvailable({ useFallback: false });
+// result.isAvailable, result.biometryType (FACE_ID=2, TOUCH_ID=1), result.deviceIsSecure
+
+// Trigger Face ID
+try {
+  await NativeBiometric.verifyIdentity({
+    reason: "Verify your identity to sign this NDA",
+    useFallback: false,
+    fallbackTitle: "",  // Hide fallback button on iOS
+  });
+  // Promise resolved = SUCCESS (no data returned)
+} catch (error) {
+  // error.code: 16=userCancel, 10=authFailed, 2=lockout
+}
+```
+
+**`@aparajita/capacitor-biometric-auth`** (currently at **v10.0.0** for Capacitor 8, ~**28,400 weekly npm downloads**, **217 GitHub stars**) offers a more complete API with web simulation for development, strong/weak biometry distinction, and a resume listener. It uses a slightly different interface:
+
+```typescript
+import { BiometricAuth, BiometryErrorType } from "@aparajita/capacitor-biometric-auth";
+
+const biometry = await BiometricAuth.checkBiometry();
+// biometry.isAvailable, biometry.biometryType ("faceId"), biometry.biometryTypes
+
+try {
+  await BiometricAuth.authenticate({
+    reason: "Verify your identity to sign this NDA",
+    cancelTitle: "Cancel",
+    allowDeviceCredential: false,
+    iosFallbackTitle: "",
+  });
+  // Success — no data returned
+} catch (error) {
+  // error.code: "userCancel", "biometryLockout", "authenticationFailed"
+}
+```
+
+Both plugins return **`Promise<void>`** on success — no attestation data, no tokens, no cryptographic proof. They abstract away `LAContext` entirely. The biometry type (Face ID vs. Touch ID) is exposed, but the raw `evaluatedPolicyDomainState` is not. **Neither plugin alone provides server-verifiable proof** that biometric auth occurred. For legally defensible signing, you must combine these plugins with native Secure Enclave key operations.
+
+Installation for either plugin requires adding `NSFaceIDUsageDescription` to `ios/App/App/Info.plist` and running `npx cap sync`. No special Xcode entitlements are needed for basic biometric auth.
+
+---
+
+## Building cryptographic proof with Secure Enclave and App Attest
+
+Since `LAContext` and the Capacitor plugins return only a boolean, legally defensible NDA signing requires cryptographic proof layered on top. Three iOS technologies combine to create this evidence chain.
+
+### Biometric-gated Secure Enclave signing keys
+
+The Secure Enclave can generate a **P-256 elliptic curve key pair** where the private key never leaves the hardware and **every use requires Face ID authentication**. This is the strongest proof available: the signature itself is the attestation.
+
+```swift
+import Security
+import CryptoKit
+
+// Create biometric-protected key (one-time, during user registration)
+var accessError: Unmanaged<CFError>?
+let access = SecAccessControlCreateWithFlags(
+    kCFAllocatorDefault,
+    kSecAttrAccessibleWhenUnlockedThisDeviceOnly,  // Never backed up, never synced
+    [.privateKeyUsage, .biometryCurrentSet],        // Face ID required for EVERY signing operation
+    &accessError
+)!
+
+let attributes: [String: Any] = [
+    kSecAttrKeyType as String:       kSecAttrKeyTypeECSECPrimeRandom,
+    kSecAttrKeySizeInBits as String: 256,
+    kSecAttrTokenID as String:       kSecAttrTokenIDSecureEnclave,
+    kSecPrivateKeyAttrs as String: [
+        kSecAttrIsPermanent as String:      true,
+        kSecAttrApplicationTag as String:   "com.yourapp.nda-signing-key".data(using: .utf8)!,
+        kSecAttrAccessControl as String:    access
+    ]
+]
+
+var createError: Unmanaged<CFError>?
+let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &createError)!
+let publicKey = SecKeyCopyPublicKey(privateKey)!
+let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil)! as Data
+// Send publicKeyData (X9.63 format) to server and associate with user account
+```
+
+When the user signs an NDA, **calling `SecKeyCreateSignature` with this key automatically triggers the Face ID prompt** — no separate `LAContext` call needed:
+
+```swift
+// Sign NDA hash — this TRIGGERS Face ID automatically
+let documentHash = Data(SHA256.hash(data: ndaDocumentData))
+var signError: Unmanaged<CFError>?
+let signature = SecKeyCreateSignature(
+    privateKey,
+    .ecdsaSignatureDigestX962SHA256,
+    documentHash as CFData,
+    &signError
+) as Data?
+// signature is ECDSA P-256 in DER format — send to server for verification
+```
+
+Using `.biometryCurrentSet` (not `.biometryAny`) means the key is **invalidated if biometric enrollment changes** — if someone adds a new face, the key becomes inaccessible, preventing a device transfer from compromising prior signing keys.
+
+### App Attest for device and app integrity
+
+Apple's **App Attest API** (`DCAppAttestService`, iOS 14+) cryptographically proves a request came from a genuine Apple device running your unmodified app. The assertion can be bound directly to the NDA document hash:
+
+```swift
+import DeviceCheck
+import CryptoKit
+
+let service = DCAppAttestService.shared
+let keyId = try await service.generateKey()  // Key generated in Secure Enclave
+
+// Attestation (one-time per key — contacts Apple servers)
+let challenge = try await myServer.getChallenge()
+let attestation = try await service.attestKey(keyId, clientDataHash: Data(SHA256.hash(data: challenge)))
+// Send attestation to server for verification against Apple's root CA
+
+// Assertion (per NDA signing — on-device only, no Apple server contact)
+let payload = challenge + Data(SHA256.hash(data: ndaDocumentData))
+let clientDataHash = Data(SHA256.hash(data: payload))
+let assertion = try await service.generateAssertion(keyId, clientDataHash: clientDataHash)
+// Send assertion + payload to server; server verifies signature using stored public key
+```
+
+The server-side verification process involves decoding the CBOR-encoded attestation object, verifying the certificate chain against Apple's App Attestation Root CA, and checking that the RP ID hash matches `SHA256(teamID + "." + bundleID)`. Each assertion includes a monotonically increasing `signCount` — the server must verify it exceeds the previously stored count.
+
+### Complete attestation record for legal enforceability
+
+Under the **ESIGN Act** (US) and **eIDAS Regulation** (EU), electronic signatures require authentication, intent, integrity, and non-repudiation. For each signing event, store:
+
+```json
+{
+  "document": { "id": "nda-uuid", "sha256_hash": "a1b2c3..." },
+  "biometric_authentication": {
+    "method": "faceID",
+    "policy": "deviceOwnerAuthenticationWithBiometrics",
+    "evaluated_policy_domain_state": "base64-opaque-blob..."
+  },
+  "cryptographic_signature": {
+    "algorithm": "ecdsaSignatureDigestX962SHA256",
+    "public_key": "base64-x963-key...",
+    "signature": "base64-ecdsa-signature...",
+    "key_protected_by": "biometryCurrentSet",
+    "key_in_secure_enclave": true
+  },
+  "device_attestation": {
+    "app_attest_assertion": "base64-assertion...",
+    "app_attest_key_id": "key-id..."
+  },
+  "server_challenge": { "nonce": "random-32-bytes", "issued_at": "ISO-8601" },
+  "environment": { "os_version": "iOS 18.3", "app_version": "1.2.0" },
+  "timestamp": "2026-03-29T14:30:00.000Z"
+}
+```
+
+---
+
+## Cross-device QR relay stays the same, with critical security additions
+
+Using native iOS biometric auth via Capacitor **replaces only the client-side biometric prompt** on Party B's device. The Firebase relay pattern remains identical — the change is what gets sent as the verification payload.
+
+The core security problem: after `NativeBiometric.verifyIdentity()` resolves, the JavaScript layer constructs a "I verified successfully" message to send through Firebase. **This self-reported boolean is trivially forgeable on jailbroken devices.** The Capacitor plugin documentation explicitly warns that `verifyIdentity()` should not be the sole authentication mechanism. The cryptographic layers above are what make the result trustworthy.
+
+### Secure relay payload schema
+
+```json
+{
+  "verification_sessions": {
+    "<sessionId>": {
+      "request": {
+        "creatorUid": "party-a-firebase-uid",
+        "nonce": "crypto-random-32-byte-hex",
+        "documentHash": "sha256-of-nda-content",
+        "createdAt": { ".sv": "timestamp" },
+        "expiresAt": 1711723200000
+      },
+      "result": {
+        "signerUid": "party-b-firebase-uid",
+        "nonce": "echoed-nonce-from-request",
+        "documentHash": "echoed-sha256-of-nda",
+        "signature": "base64-ecdsa-from-secure-enclave",
+        "publicKey": "base64-der-public-key",
+        "attestationToken": "firebase-app-check-token",
+        "biometryType": "faceID",
+        "timestamp": { ".sv": "timestamp" }
+      },
+      "validated": {
+        "verifiedAt": { ".sv": "timestamp" },
+        "signatureValid": true,
+        "appCheckConsumed": true
+      }
+    }
+  }
+}
+```
+
+**Never transmit** raw biometric data (iOS prevents this by design), private keys, the bare boolean result of `verifyIdentity()`, or full NDA content (only the hash). **Firebase Realtime Database** is preferred over Firestore for this relay pattern due to lower latency (~600ms roundtrip vs ~1500ms).
+
+### Firebase security rules enforce one-time write and session binding
+
+```json
+{
+  "rules": {
+    "verification_sessions": {
+      "$sessionId": {
+        ".read": "auth != null && (data.child('request/creatorUid').val() === auth.uid || data.child('result/signerUid').val() === auth.uid)",
+        "request": {
+          ".write": "auth != null && !data.exists()",
+          ".validate": "newData.hasChildren(['creatorUid','nonce','documentHash','createdAt','expiresAt']) && newData.child('creatorUid').val() === auth.uid && newData.child('expiresAt').val() > now && newData.child('expiresAt').val() <= (now + 600000)"
+        },
+        "result": {
+          ".write": "auth != null && !data.exists() && root.child('verification_sessions').child($sessionId).child('request').exists() && root.child('verification_sessions').child($sessionId).child('request/expiresAt').val() > now && root.child('verification_sessions').child($sessionId).child('request/creatorUid').val() !== auth.uid",
+          ".validate": "newData.child('nonce').val() === root.child('verification_sessions').child($sessionId).child('request/nonce').val() && newData.child('documentHash').val() === root.child('verification_sessions').child($sessionId).child('request/documentHash').val()"
+        },
+        "validated": { ".write": false }
+      }
+    }
+  }
+}
+```
+
+Key protections: `!data.exists()` prevents replay by ensuring one-time write; nonce and document hash must match between request and result; `expiresAt` caps sessions at 10 minutes; `creatorUid !== auth.uid` prevents self-verification; the `validated` node is write-locked to clients — only Cloud Functions using Admin SDK can write it.
+
+### Cloud Functions as the trusted validator
+
+A callable Cloud Function with `enforceAppCheck: true` and `consumeAppCheckToken: true` serves as the authoritative verification layer. It verifies the ECDSA signature against Party B's registered public key, checks the App Check token (consuming it to prevent reuse), validates nonce freshness and document hash match, and writes the authoritative `validated` node via Admin SDK.
+
+---
+
+## Conclusion
+
+The implementation path for your NDA signing app has three layers of increasing strength. The **minimum viable approach** uses a Capacitor biometric plugin (`@capgo/capacitor-native-biometric` or `@aparajita/capacitor-biometric-auth`) to trigger Face ID, providing a good user experience but no cryptographic proof. The **recommended approach** adds a Secure Enclave P-256 signing key protected by `.biometryCurrentSet`, where signing the NDA hash inherently requires Face ID and produces verifiable ECDSA evidence. The **full defense-in-depth approach** layers in App Attest (via Firebase App Check) for device integrity, server-side signature verification via Cloud Functions, and an immutable audit trail with RFC 3161 timestamps. The Secure Enclave key path requires native Swift code exposed as a custom Capacitor plugin, since the existing biometric plugins abstract away `LAContext` and do not expose Keychain or Secure Enclave operations — but this native bridge is a one-time engineering investment that transforms your biometric verification from a forgeable boolean into cryptographic proof.

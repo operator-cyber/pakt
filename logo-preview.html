@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pakt Logo Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1a1a2e; min-height: 100vh; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 40px; padding: 40px 20px; font-family: 'Outfit', sans-serif; }
+    h2 { width: 100%; text-align: center; color: #fae4cf; font-size: 24px; font-weight: 300; letter-spacing: .1em; margin-bottom: 0; }
+    p.sub { width: 100%; text-align: center; color: rgba(250,228,207,.3); font-size: 13px; margin-bottom: 20px; }
+    .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .phone-label { color: rgba(250,228,207,.5); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .phone {
+      width: 280px; height: 606px;
+      border-radius: 40px;
+      border: 4px solid #333;
+      background: #0a0f23;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 22px;
+      background: #111;
+      border-radius: 12px;
+      z-index: 10;
+    }
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 70px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .progress {
+      display: flex; gap: 3px; width: 100%; margin-bottom: 24px;
+    }
+    .progress-step {
+      flex: 1; text-align: center;
+    }
+    .progress-bar {
+      height: 2px; border-radius: 1px; margin-bottom: 5px;
+    }
+    .progress-bar.active { background: #fae4cf; }
+    .progress-bar.inactive { background: rgba(250,228,207,.08); }
+    .progress-label {
+      font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em;
+    }
+    .progress-label.active { color: #fae4cf; }
+    .progress-label.inactive { color: rgba(250,228,207,.15); }
+    .logo-img {
+      width: 200px;
+      height: auto;
+      object-fit: contain;
+      margin: 20px 0 8px;
+    }
+    .divider {
+      width: 30px; height: 1px; background: rgba(250,228,207,.15); margin: 0 auto 8px;
+    }
+    .subtitle {
+      font-size: 11px; color: rgba(250,228,207,.25); letter-spacing: .06em; font-weight: 300; margin-bottom: 24px;
+    }
+    .field { width: 100%; margin-bottom: 10px; }
+    .field-label {
+      display: block; font-size: 8px; font-weight: 700; color: rgba(250,228,207,.35);
+      letter-spacing: .14em; text-transform: uppercase; margin-bottom: 5px;
+    }
+    .field-input {
+      width: 100%; padding: 11px 13px; border-radius: 8px;
+      background: rgba(250,228,207,.04); border: 1px solid rgba(250,228,207,.12);
+      color: rgba(250,228,207,.2); font-size: 11px; font-family: 'Instrument Serif', Georgia, serif;
+    }
+    .pick-label {
+      color: #fae4cf; font-size: 14px; font-weight: 600; letter-spacing: .04em;
+      background: rgba(250,228,207,.08); border: 1px solid rgba(250,228,207,.15);
+      padding: 8px 20px; border-radius: 8px; margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Pick Your Logo</h2>
+  <p class="sub">Each logo shown in context on the landing page</p>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="progress">
+          <div class="progress-step"><div class="progress-bar active"></div><span class="progress-label active">Details</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Review</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Sign</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Verify</span></div>
+        </div>
+        <img class="logo-img" src="Assets/Logo/PAKT Giaza white_transparent.png" alt="Giaza" />
+        <div class="divider"></div>
+        <div class="subtitle">Mutual Non-Disclosure Agreement</div>
+        <div class="field"><span class="field-label">Your Name</span><div class="field-input">e.g. John Smith</div></div>
+        <div class="field"><span class="field-label">Their Name</span><div class="field-input">e.g. Sarah Johnson</div></div>
+      </div>
+    </div>
+    <div class="pick-label">1 — Giaza</div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="progress">
+          <div class="progress-step"><div class="progress-bar active"></div><span class="progress-label active">Details</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Review</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Sign</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Verify</span></div>
+        </div>
+        <img class="logo-img" src="Assets/Logo/PAKT Kenjo 1 white_transparent.png" alt="Kenjo 1" />
+        <div class="divider"></div>
+        <div class="subtitle">Mutual Non-Disclosure Agreement</div>
+        <div class="field"><span class="field-label">Your Name</span><div class="field-input">e.g. John Smith</div></div>
+        <div class="field"><span class="field-label">Their Name</span><div class="field-input">e.g. Sarah Johnson</div></div>
+      </div>
+    </div>
+    <div class="pick-label">2 — Kenjo (small)</div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="progress">
+          <div class="progress-step"><div class="progress-bar active"></div><span class="progress-label active">Details</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Review</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Sign</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Verify</span></div>
+        </div>
+        <img class="logo-img" src="Assets/Logo/PAKT Kenjo 1_white_transparent.png" alt="Kenjo 1 large" />
+        <div class="divider"></div>
+        <div class="subtitle">Mutual Non-Disclosure Agreement</div>
+        <div class="field"><span class="field-label">Your Name</span><div class="field-input">e.g. John Smith</div></div>
+        <div class="field"><span class="field-label">Their Name</span><div class="field-input">e.g. Sarah Johnson</div></div>
+      </div>
+    </div>
+    <div class="pick-label">3 — Kenjo (large)</div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="progress">
+          <div class="progress-step"><div class="progress-bar active"></div><span class="progress-label active">Details</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Review</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Sign</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Verify</span></div>
+        </div>
+        <img class="logo-img" src="Assets/Logo/PAKT SOLAR VESTA_v2_white_transparent.png" alt="Solar Vesta" />
+        <div class="divider"></div>
+        <div class="subtitle">Mutual Non-Disclosure Agreement</div>
+        <div class="field"><span class="field-label">Your Name</span><div class="field-input">e.g. John Smith</div></div>
+        <div class="field"><span class="field-label">Their Name</span><div class="field-input">e.g. Sarah Johnson</div></div>
+      </div>
+    </div>
+    <div class="pick-label">4 — Solar Vesta</div>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="screen">
+        <div class="progress">
+          <div class="progress-step"><div class="progress-bar active"></div><span class="progress-label active">Details</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Review</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Sign</span></div>
+          <div class="progress-step"><div class="progress-bar inactive"></div><span class="progress-label inactive">Verify</span></div>
+        </div>
+        <img class="logo-img" src="Assets/Logo/PAKT Kenjo no Â white_transparent.png" alt="Kenjo no A" />
+        <div class="divider"></div>
+        <div class="subtitle">Mutual Non-Disclosure Agreement</div>
+        <div class="field"><span class="field-label">Your Name</span><div class="field-input">e.g. John Smith</div></div>
+        <div class="field"><span class="field-label">Their Name</span><div class="field-input">e.g. Sarah Johnson</div></div>
+      </div>
+    </div>
+    <div class="pick-label">5 — Kenjo (no Â)</div>
+  </div>
+
+</body>
+</html>

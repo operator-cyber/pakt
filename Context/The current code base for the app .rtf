@@ -1,0 +1,470 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 .AppleSystemUIFontMonospaced-Regular;}
+{\colortbl;\red255\green255\blue255;\red249\green248\blue242;\red36\green36\blue35;}
+{\*\expandedcolortbl;;\cssrgb\c98039\c97647\c96078;\cssrgb\c18824\c18824\c18039;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 import \{ useState, useRef, useEffect, useCallback \} from \'93react\'94;\
+\
+const SECTIONS = [\
+\{ t: \'931. Definition of Confidential Information\'94, b: `"Confidential Information" means any non-public information disclosed by either party to the other in connection with the Purpose (defined below), whether orally, in writing, or by any other means, including but not limited to: trade secrets, business plans, financial data, customer lists, technical data, product designs, software, marketing strategies, and any other proprietary information relating to the Purpose.` \},\
+\{ t: \'932. Obligations of Receiving Party\'94, b: \'93The Receiving Party agrees to: (a) hold all Confidential Information in strict confidence; (b) not disclose Confidential Information to any third party without prior written consent; (c) use Confidential Information solely for the purpose of evaluating or engaging in the business relationship between the parties; and (d) protect Confidential Information using the same degree of care used to protect its own confidential information, but no less than reasonable care.\'94 \},\
+\{ t: \'933. Exclusions\'94, b: \'93Confidential Information does not include information that: (a) is or becomes publicly available through no fault of the Receiving Party; (b) was already known to the Receiving Party prior to disclosure; (c) is independently developed without use of Confidential Information; or (d) is rightfully received from a third party without restriction.\'94 \},\
+\{ t: \'934. Term\'94, b: \'93This Agreement shall remain in effect for a period of two (2) years from the Effective Date, unless terminated earlier by either party with thirty (30) days written notice. Obligations of confidentiality shall survive termination for an additional two (2) years.\'94 \},\
+\{ t: \'935. Return of Materials\'94, b: \'93Upon termination or request, the Receiving Party shall promptly return or destroy all materials containing Confidential Information and certify such destruction in writing.\'94 \},\
+\{ t: \'936. Remedies\'94, b: \'93The parties acknowledge that a breach may cause irreparable harm for which monetary damages may be inadequate. The Disclosing Party shall be entitled to seek equitable relief, including injunction and specific performance, in addition to all other remedies available at law or in equity.\'94 \},\
+\{ t: \'937. Governing Law\'94, b: \'93This Agreement shall be governed by and construed in accordance with the laws of the State of **STATE**, without regard to its conflict of laws principles.\'94 \},\
+\{ t: \'938. Entire Agreement\'94, b: \'93This Agreement constitutes the entire agreement between the parties concerning the subject matter hereof and supersedes all prior agreements, understandings, negotiations, and discussions. This Agreement may only be amended in writing signed by both parties.\'94 \},\
+];\
+\
+function fmtDate(d) \{\
+return new Date(d + \'93T12:00:00\'94).toLocaleDateString(\'93en-US\'94, \{ year: \'93numeric\'94, month: \'93long\'94, day: \'93numeric\'94 \});\
+\}\
+\
+function wrapText(ctx, text, maxWidth) \{\
+const words = text.split(\'94 \'93);\
+const lines = [];\
+let current = \'93\'94;\
+for (const word of words) \{\
+const test = current ? current + \'93 \'93 + word : word;\
+if (ctx.measureText(test).width > maxWidth) \{\
+if (current) lines.push(current);\
+current = word;\
+\} else \{\
+current = test;\
+\}\
+\}\
+if (current) lines.push(current);\
+return lines;\
+\}\
+\
+/* \uc0\u9472 \u9472  Signature pad using NATIVE event listeners \u9472 \u9472  */\
+function SignatureCanvas(\{ label, canvasRef, onDraw \}) \{\
+const [hasDrawn, setHasDrawn] = useState(false);\
+const drawingRef = useRef(false);\
+\
+useEffect(() => \{\
+const canvas = canvasRef.current;\
+if (!canvas) return;\
+\
+```\
+// Size canvas\
+const rect = canvas.getBoundingClientRect();\
+canvas.width = rect.width * 2;\
+canvas.height = rect.height * 2;\
+const ctx = canvas.getContext("2d");\
+ctx.scale(2, 2);\
+ctx.lineCap = "round";\
+ctx.lineJoin = "round";\
+ctx.lineWidth = 2.5;\
+ctx.strokeStyle = "#0a0f23";\
+\
+function getPos(e) \{\
+  const r = canvas.getBoundingClientRect();\
+  const t = e.touches ? e.touches[0] : e;\
+  return \{ x: t.clientX - r.left, y: t.clientY - r.top \};\
+\}\
+\
+function onTouchStart(e) \{\
+  e.preventDefault();\
+  e.stopPropagation();\
+  drawingRef.current = true;\
+  setHasDrawn(true);\
+  onDraw();\
+  const p = getPos(e);\
+  ctx.beginPath();\
+  ctx.moveTo(p.x, p.y);\
+\}\
+\
+function onTouchMove(e) \{\
+  if (!drawingRef.current) return;\
+  e.preventDefault();\
+  e.stopPropagation();\
+  const p = getPos(e);\
+  ctx.lineTo(p.x, p.y);\
+  ctx.stroke();\
+\}\
+\
+function onTouchEnd(e) \{\
+  e.preventDefault();\
+  drawingRef.current = false;\
+\}\
+\
+function onMouseDown(e) \{\
+  drawingRef.current = true;\
+  setHasDrawn(true);\
+  onDraw();\
+  const p = getPos(e);\
+  ctx.beginPath();\
+  ctx.moveTo(p.x, p.y);\
+\}\
+\
+function onMouseMove(e) \{\
+  if (!drawingRef.current) return;\
+  const p = getPos(e);\
+  ctx.lineTo(p.x, p.y);\
+  ctx.stroke();\
+\}\
+\
+function onMouseUp() \{ drawingRef.current = false; \}\
+\
+// Attach native listeners with \{ passive: false \} \'97 this is the key\
+canvas.addEventListener("touchstart", onTouchStart, \{ passive: false \});\
+canvas.addEventListener("touchmove", onTouchMove, \{ passive: false \});\
+canvas.addEventListener("touchend", onTouchEnd, \{ passive: false \});\
+canvas.addEventListener("mousedown", onMouseDown);\
+canvas.addEventListener("mousemove", onMouseMove);\
+canvas.addEventListener("mouseup", onMouseUp);\
+canvas.addEventListener("mouseleave", onMouseUp);\
+\
+return () => \{\
+  canvas.removeEventListener("touchstart", onTouchStart);\
+  canvas.removeEventListener("touchmove", onTouchMove);\
+  canvas.removeEventListener("touchend", onTouchEnd);\
+  canvas.removeEventListener("mousedown", onMouseDown);\
+  canvas.removeEventListener("mousemove", onMouseMove);\
+  canvas.removeEventListener("mouseup", onMouseUp);\
+  canvas.removeEventListener("mouseleave", onMouseUp);\
+\};\
+```\
+\
+\}, []);\
+\
+const clear = () => \{\
+const c = canvasRef.current;\
+const ctx = c.getContext(\'932d\'94);\
+ctx.clearRect(0, 0, c.width, c.height);\
+setHasDrawn(false);\
+\};\
+\
+return (\
+<div style=\{\{ marginBottom: 18 \}\}>\
+<div style=\{\{ display: \'93flex\'94, justifyContent: \'93space-between\'94, alignItems: \'93center\'94, marginBottom: 6 \}\}>\
+<span style=\{\{ fontSize: 12, fontWeight: 700, color: \'93#0a0f23\'94, opacity: 0.5, letterSpacing: \'93.04em\'94, textTransform: \'93uppercase\'94, fontFamily: \'93system-ui, sans-serif\'94 \}\}>\{label\}</span>\
+\{hasDrawn && (\
+<button onClick=\{clear\} style=\{\{ fontSize: 12, color: \'93#c0392b\'94, background: \'93none\'94, border: \'93none\'94, cursor: \'93pointer\'94, fontWeight: 700, fontFamily: \'93system-ui, sans-serif\'94 \}\}>Clear</button>\
+)\}\
+</div>\
+<div style=\{\{ position: \'93relative\'94, borderRadius: 12, overflow: \'93hidden\'94, border: \'932px dashed rgba(10,15,35,.2)\'94, background: \'93#fdf6ef\'94, touchAction: \'93none\'94 \}\}>\
+<canvas\
+ref=\{canvasRef\}\
+style=\{\{ display: \'93block\'94, width: \'93100%\'94, height: 140, touchAction: \'93none\'94, cursor: \'93crosshair\'94 \}\}\
+/>\
+\{!hasDrawn && (\
+<div style=\{\{ position: \'93absolute\'94, inset: 0, display: \'93flex\'94, alignItems: \'93center\'94, justifyContent: \'93center\'94, pointerEvents: \'93none\'94, color: \'93rgba(10,15,35,.55)\'94, fontSize: 15, fontStyle: \'93italic\'94, fontFamily: \'93Georgia, serif\'94 \}\}>\
+Sign here\
+</div>\
+)\}\
+<div style=\{\{ position: \'93absolute\'94, bottom: 20, left: 20, right: 20, height: 1, background: \'93rgba(10,15,35,.15)\'94, pointerEvents: \'93none\'94 \}\} />\
+</div>\
+</div>\
+);\
+\}\
+\
+export default function NDA() \{\
+const [step, setStep] = useState(0);\
+const [form, setForm] = useState(\{ party1: \'93\'94, party2: \'93\'94, purpose: \'93\'94, state: \'93\'94, date: new Date().toISOString().split(\'93T\'94)[0] \});\
+const [sig1Done, setSig1Done] = useState(false);\
+const [sig2Done, setSig2Done] = useState(false);\
+const [ndaImage, setNdaImage] = useState(null);\
+const [generating, setGenerating] = useState(false);\
+const sig1Ref = useRef(null);\
+const sig2Ref = useRef(null);\
+\
+const up = (f) => (e) => setForm(\{ \'85form, [f]: e.target.value \});\
+const canProceed = form.party1.trim() && form.party2.trim() && form.purpose.trim() && form.state.trim();\
+const goTo = (s) => setStep(s);\
+\
+/* \uc0\u9472 \u9472  Load heavy condensed font \u9472 \u9472  */\
+useEffect(() => \{\
+const link = document.createElement(\'93link\'94);\
+link.href = \'93https://fonts.googleapis.com/css2?family=Anton&display=swap\'94;\
+link.rel = \'93stylesheet\'94;\
+document.head.appendChild(link);\
+\}, []);\
+\
+/* \uc0\u9472 \u9472  Lock body scroll on sign step \u9472 \u9472  */\
+useEffect(() => \{\
+if (step === 2) \{\
+document.body.style.overflow = \'93hidden\'94;\
+document.documentElement.style.overflow = \'93hidden\'94;\
+\} else \{\
+document.body.style.overflow = \'93\'94;\
+document.documentElement.style.overflow = \'93\'94;\
+\}\
+return () => \{\
+document.body.style.overflow = \'93\'94;\
+document.documentElement.style.overflow = \'93\'94;\
+\};\
+\}, [step]);\
+\
+const generateImage = useCallback(() => \{\
+setGenerating(true);\
+setTimeout(() => \{\
+const scale = 3;\
+const W = 650 * scale;\
+const margin = 50 * scale;\
+const textW = W - margin * 2;\
+const c = document.createElement(\'93canvas\'94);\
+const ctx = c.getContext(\'932d\'94);\
+const lineH = 16 * scale;\
+const headH = 22 * scale;\
+const gapH = 10 * scale;\
+const sectionGap = 14 * scale;\
+\
+```\
+  c.width = W;\
+  c.height = 6000 * scale;\
+  ctx.font = `$\{12 * scale\}px Georgia, serif`;\
+\
+  let measuredH = margin;\
+  measuredH += headH * 2 + gapH * 3;\
+\
+  const fd = fmtDate(form.date);\
+  const introText = `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of $\{fd\} by and between $\{form.party1\} ("Party A") and $\{form.party2\} ("Party B"), collectively referred to as the "Parties," for the purpose of: $\{form.purpose\} (the "Purpose").`;\
+  ctx.font = `$\{12 * scale\}px Georgia, serif`;\
+  const introLines = wrapText(ctx, introText, textW);\
+  measuredH += introLines.length * lineH + gapH * 2;\
+\
+  SECTIONS.forEach(s => \{\
+    const body = s.b.replace("__STATE__", form.state);\
+    ctx.font = `bold $\{12 * scale\}px Georgia, serif`;\
+    measuredH += lineH + 4 * scale;\
+    ctx.font = `$\{11 * scale\}px Georgia, serif`;\
+    const bLines = wrapText(ctx, body, textW);\
+    measuredH += bLines.length * lineH + sectionGap;\
+  \});\
+  measuredH += 60 * scale + 100 * scale + margin;\
+\
+  c.height = measuredH;\
+  c.width = W;\
+  ctx.fillStyle = "#ffffff";\
+  ctx.fillRect(0, 0, W, c.height);\
+\
+  let y = margin;\
+  ctx.fillStyle = "#0a0f23";\
+  ctx.textAlign = "center";\
+  ctx.font = `bold $\{18 * scale\}px Georgia, serif`;\
+  ctx.fillText("MUTUAL NON-DISCLOSURE AGREEMENT", W / 2, y);\
+  y += headH;\
+  ctx.font = `$\{11 * scale\}px Georgia, serif`;\
+  ctx.fillStyle = "#666";\
+  ctx.fillText("Effective " + fd, W / 2, y);\
+  y += headH + gapH;\
+\
+  ctx.textAlign = "left";\
+  ctx.fillStyle = "#0a0f23";\
+  ctx.font = `$\{12 * scale\}px Georgia, serif`;\
+  introLines.forEach(line => \{ ctx.fillText(line, margin, y); y += lineH; \});\
+  y += gapH * 2;\
+\
+  SECTIONS.forEach(s => \{\
+    const body = s.b.replace("__STATE__", form.state);\
+    ctx.font = `bold $\{12 * scale\}px Georgia, serif`;\
+    ctx.fillStyle = "#0a0f23";\
+    ctx.fillText(s.t, margin, y);\
+    y += lineH + 2 * scale;\
+    ctx.font = `$\{11 * scale\}px Georgia, serif`;\
+    ctx.fillStyle = "#333";\
+    const bLines = wrapText(ctx, body, textW);\
+    bLines.forEach(line => \{ ctx.fillText(line, margin, y); y += lineH; \});\
+    y += sectionGap;\
+  \});\
+\
+  y += 10 * scale;\
+  ctx.strokeStyle = "#ccc";\
+  ctx.lineWidth = scale;\
+  ctx.beginPath(); ctx.moveTo(margin, y); ctx.lineTo(W - margin, y); ctx.stroke();\
+  y += 20 * scale;\
+\
+  ctx.font = `italic $\{11 * scale\}px Georgia, serif`;\
+  ctx.fillStyle = "#444";\
+  const wLines = wrapText(ctx, "IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first above written.", textW);\
+  wLines.forEach(line => \{ ctx.fillText(line, margin, y); y += lineH; \});\
+  y += 20 * scale;\
+\
+  const sigW = (textW - 20 * scale) / 2;\
+  const sigH = 50 * scale;\
+  [sig1Ref, sig2Ref].forEach((ref, i) => \{\
+    const xPos = margin + i * (sigW + 20 * scale);\
+    if (ref.current) \{ try \{ ctx.drawImage(ref.current, xPos, y, sigW, sigH); \} catch (e) \{\} \}\
+    ctx.strokeStyle = "#888"; ctx.lineWidth = scale;\
+    ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();\
+    ctx.font = `$\{10 * scale\}px Georgia, serif`;\
+    ctx.fillStyle = "#0a0f23";\
+    ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);\
+    ctx.fillStyle = "#888";\
+    ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale);\
+    ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);\
+  \});\
+\
+  setNdaImage(c.toDataURL("image/png"));\
+  setGenerating(false);\
+  setStep(3);\
+\}, 100);\
+```\
+\
+\}, [form]);\
+\
+/* \uc0\u9472 \u9472  Styles \u9472 \u9472  */\
+const sans = \'93system-ui, -apple-system, sans-serif\'94;\
+const firm = \'93#0a0f23\'94;\
+const autumn = \'93#fae4cf\'94;\
+\
+const inputStyle = \{\
+width: \'93100%\'94, padding: \'9314px 16px\'94, fontSize: 16,\
+border: `2px solid rgba(10,15,35,.12)`, borderRadius: 12,\
+background: \'93#fff\'94, fontFamily: \'93Georgia, serif\'94, outline: \'93none\'94,\
+boxSizing: \'93border-box\'94,\
+\};\
+const labelStyle = \{\
+display: \'93block\'94, fontSize: 12, fontWeight: 700,\
+color: firm, opacity: 0.45, marginBottom: 6, letterSpacing: \'93.04em\'94,\
+textTransform: \'93uppercase\'94, fontFamily: sans,\
+\};\
+const btnBase = \{\
+width: \'93100%\'94, padding: \'9316px\'94, fontSize: 16, fontWeight: 700,\
+border: \'93none\'94, borderRadius: 14, cursor: \'93pointer\'94,\
+fontFamily: sans, letterSpacing: \'93.01em\'94, transition: \'93transform .1s\'94,\
+\};\
+const btnP = \{ \'85btnBase, color: autumn, background: firm, boxShadow: \'930 4px 18px rgba(10,15,35,.35)\'94 \};\
+const btnO = \{ \'85btnBase, color: firm, background: \'93transparent\'94, boxShadow: `inset 0 0 0 2px $\{firm\}` \};\
+const btnG = \{ \'85btnBase, color: \'93#fff\'94, background: \'93#1a7a5a\'94, boxShadow: \'930 4px 18px rgba(26,122,90,.3)\'94 \};\
+\
+const progress = (\
+<div style=\{\{ display: \'93flex\'94, gap: 6, marginBottom: 22 \}\}>\
+\{[\'93Details\'94, \'93Review\'94, \'93Sign\'94].map((s, i) => (\
+<div key=\{s\} style=\{\{ flex: 1, textAlign: \'93center\'94 \}\}>\
+<div style=\{\{ height: 4, borderRadius: 2, background: i <= Math.min(step, 2) ? firm : \'93rgba(10,15,35,.1)\'94, marginBottom: 5, transition: \'93background .3s\'94 \}\} />\
+<span style=\{\{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 2) ? firm : \'93rgba(10,15,35,.25)\'94, textTransform: \'93uppercase\'94, letterSpacing: \'93.06em\'94, fontFamily: sans \}\}>\{s\}</span>\
+</div>\
+))\}\
+</div>\
+);\
+\
+/* \uc0\u9472 \u9472  Step 0: Details \u9472 \u9472  */\
+if (step === 0) return (\
+<div style=\{\{ maxWidth: 500, margin: \'930 auto\'94, padding: \'9320px 16px\'94, fontFamily: \'93Georgia, serif\'94, background: autumn, minHeight: \'93100dvh\'94 \}\}>\
+\{progress\}\
+<div style=\{\{ textAlign: \'93center\'94, marginBottom: 26 \}\}>\
+<div style=\{\{ display: \'93inline-flex\'94, alignItems: \'93center\'94, justifyContent: \'93center\'94, width: 52, height: 52, borderRadius: 14, background: firm, marginBottom: 10 \}\}>\
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke=\{autumn\} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>\
+</div>\
+<h1 style=\{\{ fontSize: 28, fontWeight: 400, color: firm, margin: \'930 0 4px\'94, fontFamily: \'93\'91Anton\'92, sans-serif\'94, textTransform: \'93uppercase\'94, letterSpacing: \'93.02em\'94 \}\}>Non-Disclosure Agreement</h1>\
+<p style=\{\{ fontSize: 14, color: \'93rgba(10,15,35,.4)\'94, margin: 0, fontFamily: sans \}\}>Fill in details, review, then sign</p>\
+</div>\
+<div style=\{\{ display: \'93flex\'94, flexDirection: \'93column\'94, gap: 14 \}\}>\
+<div><label style=\{labelStyle\}>Disclosing Party</label><input style=\{inputStyle\} placeholder=\'93e.g. Acme Corp\'94 value=\{form.party1\} onChange=\{up(\'93party1\'94)\} /></div>\
+<div><label style=\{labelStyle\}>Receiving Party</label><input style=\{inputStyle\} placeholder=\'93e.g. Jane Smith\'94 value=\{form.party2\} onChange=\{up(\'93party2\'94)\} /></div>\
+<div><label style=\{labelStyle\}>Purpose / Subject Matter</label><input style=\{inputStyle\} placeholder=\'93e.g. Discussion of mobile app partnership\'94 value=\{form.purpose\} onChange=\{up(\'93purpose\'94)\} /></div>\
+<div><label style=\{labelStyle\}>Governing State</label><input style=\{inputStyle\} placeholder=\'93e.g. California\'94 value=\{form.state\} onChange=\{up(\'93state\'94)\} /></div>\
+<div><label style=\{labelStyle\}>Effective Date</label><input style=\{inputStyle\} type=\'93date\'94 value=\{form.date\} onChange=\{up(\'93date\'94)\} /></div>\
+</div>\
+<button style=\{\{ \'85btnP, marginTop: 24, background: firm, color: autumn, opacity: canProceed ? 1 : .4, pointerEvents: canProceed ? \'93auto\'94 : \'93none\'94 \}\} onClick=\{() => goTo(1)\}>Review Agreement \uc0\u8594 </button>\
+</div>\
+);\
+\
+/* \uc0\u9472 \u9472  Step 1: Review \u9472 \u9472  */\
+if (step === 1) \{\
+const fd = fmtDate(form.date);\
+return (\
+<div style=\{\{ maxWidth: 500, margin: \'930 auto\'94, padding: \'9320px 16px\'94, fontFamily: \'93Georgia, serif\'94 \}\}>\
+\{progress\}\
+<div style=\{\{ background: \'93#fff\'94, borderRadius: 16, border: \'931px solid rgba(10,15,35,.08)\'94, padding: \'9322px 18px\'94, boxShadow: \'930 2px 16px rgba(10,15,35,.04)\'94 \}\}>\
+<h2 style=\{\{ fontSize: 18, fontWeight: 700, textAlign: \'93center\'94, margin: \'930 0 2px\'94, color: firm \}\}>MUTUAL NON-DISCLOSURE AGREEMENT</h2>\
+<p style=\{\{ textAlign: \'93center\'94, fontSize: 13, color: \'93rgba(10,15,35,.35)\'94, margin: \'930 0 16px\'94, fontFamily: sans \}\}>Effective \{fd\}</p>\
+<p style=\{\{ fontSize: 14, lineHeight: 1.7, color: \'93#1a1e30\'94, marginBottom: 16 \}\}>\
+This Mutual Non-Disclosure Agreement (\'93Agreement\'94) is entered into as of <strong>\{fd\}</strong> by and between <strong>\{form.party1\}</strong> (\'93Party A\'94) and <strong>\{form.party2\}</strong> (\'93Party B\'94), collectively referred to as the \'93Parties,\'94 for the purpose of: <strong>\{form.purpose\}</strong> (the \'93Purpose\'94).\
+</p>\
+\{SECTIONS.map((s, i) => (\
+<div key=\{i\} style=\{\{ marginBottom: 12 \}\}>\
+<h3 style=\{\{ fontSize: 13, fontWeight: 700, margin: \'930 0 3px\'94, color: firm \}\}>\{s.t\}</h3>\
+<p style=\{\{ fontSize: 12.5, lineHeight: 1.65, color: \'93rgba(10,15,35,.6)\'94, margin: 0 \}\}>\{s.b.replace(\'94**STATE**\'94, form.state)\}</p>\
+</div>\
+))\}\
+</div>\
+<div style=\{\{ display: \'93flex\'94, gap: 10, marginTop: 22 \}\}>\
+<button style=\{\{ \'85btnO, flex: 1, background: firm, color: autumn, boxShadow: \'93none\'94, border: \'93none\'94 \}\} onClick=\{() => goTo(0)\}>\uc0\u8592  Back</button>\
+<button style=\{\{ \'85btnP, flex: 2, background: autumn, color: firm \}\} onClick=\{() => goTo(2)\}>Sign \uc0\u8594 </button>\
+</div>\
+</div>\
+);\
+\}\
+\
+/* \uc0\u9472 \u9472  Step 2: Sign (scroll-locked, native touch) \u9472 \u9472  */\
+if (step === 2) return (\
+<div style=\{\{ maxWidth: 500, margin: \'930 auto\'94, padding: \'9320px 16px\'94, fontFamily: \'93Georgia, serif\'94, touchAction: \'93none\'94, overscrollBehavior: \'93none\'94 \}\}>\
+\{progress\}\
+<div style=\{\{ textAlign: \'93center\'94, marginBottom: 20 \}\}>\
+<h2 style=\{\{ fontSize: 21, fontWeight: 700, color: firm, margin: \'930 0 4px\'94 \}\}>Sign the Agreement</h2>\
+<p style=\{\{ fontSize: 14, color: \'93rgba(10,15,35,.4)\'94, margin: 0, fontFamily: sans \}\}>Draw your signature below</p>\
+</div>\
+<div style=\{\{ background: \'93#fff\'94, borderRadius: 16, border: \'931px solid rgba(10,15,35,.08)\'94, padding: \'9318px 14px\'94, boxShadow: \'930 2px 16px rgba(10,15,35,.04)\'94 \}\}>\
+<SignatureCanvas label=\{`$\{form.party1\} (Party A)`\} canvasRef=\{sig1Ref\} onDraw=\{() => setSig1Done(true)\} />\
+<SignatureCanvas label=\{`$\{form.party2\} (Party B)`\} canvasRef=\{sig2Ref\} onDraw=\{() => setSig2Done(true)\} />\
+</div>\
+<div style=\{\{ display: \'93flex\'94, gap: 10, marginTop: 22 \}\}>\
+<button style=\{\{ \'85btnO, flex: 1, background: firm, color: autumn, boxShadow: \'93none\'94, border: \'93none\'94 \}\} onClick=\{() => goTo(1)\}>\uc0\u8592  Back</button>\
+<button style=\{\{ \'85btnG, flex: 2 \}\} onClick=\{generateImage\}>\
+\{generating ? \'93Generating\'85\'94 : \'93Complete \uc0\u10003 \'94\}\
+</button>\
+</div>\
+<p style=\{\{ fontSize: 11, color: \'93rgba(10,15,35,.3)\'94, textAlign: \'93center\'94, marginTop: 12, lineHeight: 1.5, fontFamily: sans \}\}>\
+By signing, both parties agree to be bound by the terms of this NDA.\
+</p>\
+</div>\
+);\
+\
+/* \uc0\u9472 \u9472  Step 3: Done \'97 saveable image \u9472 \u9472  */\
+if (step === 3) \{\
+const fd = fmtDate(form.date);\
+return (\
+<div style=\{\{ maxWidth: 500, margin: \'930 auto\'94, padding: \'9320px 16px\'94, fontFamily: \'93Georgia, serif\'94 \}\}>\
+<div style=\{\{ textAlign: \'93center\'94, marginBottom: 20 \}\}>\
+<div style=\{\{ display: \'93inline-flex\'94, alignItems: \'93center\'94, justifyContent: \'93center\'94, width: 64, height: 64, borderRadius: \'9350%\'94, background: \'93#1a7a5a\'94, boxShadow: \'930 4px 20px rgba(26,122,90,.3)\'94, marginBottom: 12 \}\}>\
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>\
+</div>\
+<h2 style=\{\{ fontSize: 22, fontWeight: 700, color: firm, margin: \'930 0 6px\'94 \}\}>Agreement Signed</h2>\
+<p style=\{\{ fontSize: 14, color: \'93rgba(10,15,35,.55)\'94, margin: \'930 0 4px\'94, lineHeight: 1.6, fontFamily: sans \}\}>\
+<strong style=\{\{ color: firm \}\}>Long-press the image below</strong> to save or share\
+</p>\
+<p style=\{\{ fontSize: 12, color: \'93rgba(10,15,35,.3)\'94, margin: 0, fontFamily: sans \}\}>\
+iOS: \'93Add to Photos\'94 or \'93Share\'94 \'a0|\'a0 Desktop: right-click \uc0\u8594  Save\
+</p>\
+</div>\
+\
+```\
+    \{ndaImage && (\
+      <div style=\{\{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(10,15,35,.08)", boxShadow: "0 2px 20px rgba(10,15,35,.06)", marginBottom: 20 \}\}>\
+        <img src=\{ndaImage\} alt="Signed NDA Document" style=\{\{ width: "100%", display: "block" \}\} />\
+      </div>\
+    )\}\
+\
+    <div style=\{\{ background: autumn, borderRadius: 14, padding: 18, marginBottom: 20, border: "1px solid rgba(10,15,35,.06)" \}\}>\
+      \{[\
+        ["Parties", `$\{form.party1\} & $\{form.party2\}`],\
+        ["Purpose", form.purpose],\
+        ["Type", "Mutual NDA"],\
+        ["Duration", "2 years"],\
+        ["Governing Law", `State of $\{form.state\}`],\
+        ["Date", fd],\
+      ].map(([k, v]) => (\
+        <div key=\{k\} style=\{\{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(10,15,35,.07)", fontSize: 13, fontFamily: sans \}\}>\
+          <span style=\{\{ color: "rgba(10,15,35,.4)" \}\}>\{k\}</span>\
+          <span style=\{\{ color: firm, fontWeight: 600, textAlign: "right", maxWidth: "60%" \}\}>\{v\}</span>\
+        </div>\
+      ))\}\
+    </div>\
+\
+    <button style=\{btnO\} onClick=\{() => \{ setStep(0); setForm(\{ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0] \}); setSig1Done(false); setSig2Done(false); setNdaImage(null); \}\}>\
+      Create Another NDA\
+    </button>\
+  </div>\
+);\
+```\
+\
+\}\
+\}}

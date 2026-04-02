@@ -243,7 +243,7 @@
         const verbatim = specifics[state] || specifics["California"];
         return {
           t: `${sectionNum}. Permitted Disclosures Regarding Unlawful Conduct`,
-          b: `${verbatim} This Agreement does not limit any party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
+          b: `${verbatim} This Agreement does not limit the Receiving Party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
         };
       }
 
@@ -263,13 +263,13 @@
         const ref = statRefs[state] || "applicable state law";
         return {
           t: `${sectionNum}. Permitted Disclosures Regarding Unlawful Conduct`,
-          b: `Nothing in this Agreement prevents or restricts either party, or any individual bound by this Agreement, from discussing or disclosing information about unlawful acts in the workplace, such as harassment, discrimination, or any other conduct that the individual has reason to believe is unlawful. This provision is included in accordance with ${ref}. This Agreement does not limit any party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
+          b: `Nothing in this Agreement prevents or restricts the Receiving Party, or any individual bound by this Agreement, from discussing or disclosing information about unlawful acts in the workplace, such as harassment, discrimination, or any other conduct that the individual has reason to believe is unlawful. This provision is included in accordance with ${ref}. This Agreement does not limit the Receiving Party's right to: (a) report suspected violations of law to any governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local agency; (b) participate in any governmental investigation; or (c) file a charge or complaint with any governmental agency.`
         };
       }
 
       return {
         t: `${sectionNum}. Permitted Disclosures and Government Reporting`,
-        b: `Nothing in this Agreement shall be construed to prevent or restrict either party, or any individual bound by this Agreement, from: (a) reporting suspected violations of law to any federal, state, or local governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local law enforcement agency; (b) participating in or cooperating with any governmental investigation or proceeding; (c) filing a charge or complaint with any governmental agency; or (d) making disclosures that are protected under applicable whistleblower provisions of federal, state, or local law. No prior authorization from the Disclosing Party is required for any such reporting or cooperation.`
+        b: `Nothing in this Agreement shall be construed to prevent or restrict the Receiving Party, or any individual bound by this Agreement, from: (a) reporting suspected violations of law to any federal, state, or local governmental agency or entity, including but not limited to the Equal Employment Opportunity Commission, the Department of Labor, the Securities and Exchange Commission, or any state or local law enforcement agency; (b) participating in or cooperating with any governmental investigation or proceeding; (c) filing a charge or complaint with any governmental agency; or (d) making disclosures that are protected under applicable whistleblower provisions of federal, state, or local law. No prior authorization from the Disclosing Party is required for any such reporting or cooperation.`
       };
     }
 
@@ -315,17 +315,17 @@
         ? `Confidential Information includes, but is not limited to, the following categories to the extent they relate to the Purpose: ${catText}.`
         : `Confidential Information includes any proprietary information relating to the Purpose.`;
 
-      sections.push({ t: `${n++}. Definition of Confidential Information`, b: `"Confidential Information" means any non-public information disclosed by either party (the "Disclosing Party") to the other party (the "Receiving Party") in connection with the Purpose (defined above), whether orally, in writing, electronically, or by any other means, that is either: (i) marked or designated as "confidential," "proprietary," or with a similar legend at the time of disclosure; or (ii) if disclosed orally or visually, identified as confidential at the time of disclosure and summarized in writing within fifteen (15) business days thereafter. ${catClause} Notwithstanding the foregoing, "Confidential Information" expressly excludes: (a) general professional skills, training, knowledge, and experience that the Receiving Party possessed prior to or develops independently of this Agreement; (b) information that constitutes general industry knowledge readily ascertainable by professionals in the relevant field; and (c) any individual's right to use their education, professional competence, and accumulated expertise in their trade or profession. This Agreement shall not be construed to restrict or limit any party's ability to engage in any lawful profession, trade, or business.` });
+      sections.push({ t: `${n++}. Definition of Confidential Information`, b: `"Confidential Information" means any non-public information disclosed by the Disclosing Party to the Receiving Party in connection with the Purpose (defined above), whether orally, in writing, electronically, or by any other means, that is either: (i) marked or designated as "confidential," "proprietary," or with a similar legend at the time of disclosure; or (ii) if disclosed orally or visually, identified as confidential at the time of disclosure and summarized in writing within fifteen (15) business days thereafter. ${catClause} Notwithstanding the foregoing, "Confidential Information" expressly excludes: (a) general professional skills, training, knowledge, and experience that the Receiving Party possessed prior to or develops independently of this Agreement; (b) information that constitutes general industry knowledge readily ascertainable by professionals in the relevant field; and (c) any individual's right to use their education, professional competence, and accumulated expertise in their trade or profession. This Agreement shall not be construed to restrict or limit any party's ability to engage in any lawful profession, trade, or business.` });
       sections.push({ t: `${n++}. Obligations of the Receiving Party`, b: `The Receiving Party agrees to: (a) hold all Confidential Information in strict confidence and treat it with at least the same degree of care it uses to protect its own confidential information, but in no event less than a reasonable standard of care; (b) not disclose Confidential Information to any third party without the prior written consent of the Disclosing Party; (c) limit internal access to Confidential Information to those employees, agents, or advisors who have a demonstrable need to know in connection with the Purpose and who are bound by written confidentiality obligations no less restrictive than those contained herein; (d) use Confidential Information solely for the Purpose stated in this Agreement and for no other purpose whatsoever; (e) promptly notify the Disclosing Party in writing upon discovery of any unauthorized use or disclosure of Confidential Information; and (f) cooperate with the Disclosing Party to remedy any such unauthorized use or disclosure. The Receiving Party shall be responsible for any breach of this Agreement by its employees, agents, or advisors.` });
       sections.push({ t: `${n++}. Exclusions from Confidential Information`, b: `Confidential Information does not include information that: (a) is or becomes publicly available through no fault, act, or omission of the Receiving Party; (b) was already in the Receiving Party's lawful possession prior to disclosure, as evidenced by written records predating receipt; (c) is independently developed by the Receiving Party without reference to or use of any Confidential Information, as demonstrated by contemporaneous documentation; (d) is rightfully received from a third party without any obligation of confidentiality and without restriction on disclosure; or (e) is required to be disclosed by law, regulation, or valid court order, provided that the Receiving Party gives the Disclosing Party prompt written notice of such requirement (to the extent legally permitted) and reasonable opportunity to seek a protective order or other appropriate remedy before any such disclosure is made. In the event of compelled disclosure, only the minimum amount of Confidential Information necessary to comply with the legal obligation shall be disclosed.` });
-      sections.push({ t: `${n++}. Restriction on Use (Non-Use Obligation)`, b: `Each party acknowledges that the Confidential Information is disclosed solely for the Purpose identified in this Agreement. The Receiving Party shall not use any Confidential Information for any purpose other than the Purpose, including but not limited to: (a) developing, manufacturing, marketing, or selling any product or service that competes with those of the Disclosing Party; (b) reverse engineering, decompiling, or disassembling any Confidential Information; (c) improving the Receiving Party's own internal processes, products, or services outside the scope of the Purpose; or (d) gaining any commercial advantage not expressly contemplated by this Agreement. Any use of Confidential Information outside the scope of the Purpose shall constitute a material breach of this Agreement.` });
+      sections.push({ t: `${n++}. Restriction on Use (Non-Use Obligation)`, b: `The Receiving Party acknowledges that the Confidential Information is disclosed solely for the Purpose identified in this Agreement. The Receiving Party shall not use any Confidential Information for any purpose other than the Purpose, including but not limited to: (a) developing, manufacturing, marketing, or selling any product or service that competes with those of the Disclosing Party; (b) reverse engineering, decompiling, or disassembling any Confidential Information; (c) improving the Receiving Party's own internal processes, products, or services outside the scope of the Purpose; or (d) gaining any commercial advantage not expressly contemplated by this Agreement. Any use of Confidential Information outside the scope of the Purpose shall constitute a material breach of this Agreement.` });
       sections.push({ t: `${n++}. Term and Survival`, b: `This Agreement shall remain in effect for a period of two (2) years from the Effective Date, unless terminated earlier by either party with thirty (30) days prior written notice to the other party. The obligations of confidentiality and non-use set forth in this Agreement shall survive the expiration or termination of this Agreement for an additional period of three (3) years following such expiration or termination, or for so long as the Confidential Information continues to qualify as a trade secret under applicable law, whichever period is longer.` });
       sections.push({ t: `${n++}. Return and Destruction of Materials`, b: `Upon the expiration or termination of this Agreement, or upon written request by the Disclosing Party at any time, the Receiving Party shall promptly: (a) return to the Disclosing Party all tangible materials containing or embodying Confidential Information, including all originals, copies, summaries, and excerpts thereof; (b) permanently delete and destroy all electronic copies of Confidential Information from all systems, devices, and storage media under the Receiving Party's control, including but not limited to local hard drives, portable storage devices, email servers, cloud storage services (such as Google Drive, Dropbox, iCloud, and similar platforms), and any backup or archival systems; (c) remove all Confidential Information from any collaborative platforms, shared repositories, or project management tools; and (d) within ten (10) business days of such request or termination, provide the Disclosing Party with a written certification, signed by an authorized officer or representative of the Receiving Party, confirming that all Confidential Information has been returned or permanently and irretrievably destroyed in accordance with this Section. The Receiving Party may retain one (1) archival copy of Confidential Information solely for legal compliance purposes, provided such copy remains subject to all confidentiality obligations of this Agreement.` });
       sections.push(getRemediesSection(state, n++));
       const disclosure = getWorkplaceDisclosureSection(state, n);
       if (disclosure) { sections.push(disclosure); n++; }
       sections.push({ t: `${n++}. Federal Whistleblower Immunity Notice`, b: `Pursuant to the Defend Trade Secrets Act of 2016 (18 U.S.C. § 1833(b)), the parties are hereby notified as follows: (a) An individual shall not be held criminally or civilly liable under any federal or state trade secret law for the disclosure of a trade secret that is made (i) in confidence to a federal, state, or local government official, either directly or indirectly, or to an attorney, and solely for the purpose of reporting or investigating a suspected violation of law; or (ii) in a complaint or other document filed in a lawsuit or other proceeding, if such filing is made under seal. (b) An individual who files a lawsuit for retaliation by an employer for reporting a suspected violation of law may disclose the employer's trade secrets to the attorney of the individual and use the trade secret information in the court proceeding, if the individual files any document containing the trade secret under seal and does not disclose the trade secret except pursuant to court order. Failure to provide this notice may limit the Disclosing Party's ability to recover exemplary damages or attorneys' fees in a trade secret misappropriation action.` });
-      sections.push({ t: `${n++}. No License or Ownership Transfer`, b: `Nothing in this Agreement shall be construed as granting, by implication, estoppel, or otherwise, any license or right to the Receiving Party under any patent, copyright, trademark, trade secret, or other intellectual property right of the Disclosing Party. All Confidential Information remains the exclusive property of the Disclosing Party. Neither the execution of this Agreement nor the disclosure of any Confidential Information hereunder shall constitute or imply any promise, commitment, or obligation by either party to enter into any further agreement, transaction, or business relationship.` });
+      sections.push({ t: `${n++}. No License or Ownership Transfer`, b: `Nothing in this Agreement shall be construed as granting, by implication, estoppel, or otherwise, any license or right to the Receiving Party under any patent, copyright, trademark, trade secret, or other intellectual property right of the Disclosing Party. All Confidential Information remains the exclusive property of the Disclosing Party. Neither the execution of this Agreement nor the disclosure of any Confidential Information hereunder shall constitute or imply any promise, commitment, or obligation by the Disclosing Party to enter into any further agreement, transaction, or business relationship with the Receiving Party.` });
       sections.push({ t: `${n++}. Governing Law and Jurisdiction`, b: `This Agreement shall be governed by and construed in accordance with the laws of the State of **STATE**, without regard to its conflict of laws principles. Any dispute arising out of or relating to this Agreement shall be submitted to the exclusive jurisdiction of the state and federal courts located in the State of **STATE**, and each party hereby consents to the personal jurisdiction of such courts and waives any objection based on inconvenient forum.` });
       sections.push({ t: `${n++}. Entire Agreement and Amendments`, b: `This Agreement constitutes the entire agreement between the parties concerning the subject matter hereof and supersedes all prior and contemporaneous agreements, understandings, negotiations, and discussions, whether oral or written, between the parties relating to the subject matter of this Agreement. No amendment, modification, or waiver of any provision of this Agreement shall be effective unless made in writing and signed by authorized representatives of both parties. The failure of either party to enforce any provision of this Agreement shall not constitute a waiver of that party's right to enforce that provision or any other provision in the future.` });
       return sections;
@@ -463,7 +463,7 @@
               <p style={{ fontSize: 14, color: "rgba(10,15,35,.3)", margin: "4px 0 0", fontFamily: sans }}>{new Date(viewing.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
             </div>
             <div style={{ background: autumn, borderRadius: 14, padding: 14, marginBottom: 16, border: "1px solid rgba(10,15,35,.06)" }}>
-              {[["Type", "Mutual NDA"], ["Duration", "2 years + 3 year survival"], ["Governing Law", `State of ${viewing.state}`], ["Verification", viewing.verification]].map(([k, v]) => (
+              {[["Type", "Unilateral NDA"], ["Duration", "2 years + 3 year survival"], ["Governing Law", `State of ${viewing.state}`], ["Verification", viewing.verification]].map(([k, v]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(10,15,35,.07)", fontSize: 15, fontFamily: sans }}>
                   <span style={{ color: "rgba(10,15,35,.4)" }}>{k}</span>
                   <span style={{ color: firm, fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{v}</span>
@@ -951,7 +951,7 @@
         ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
         let measuredH = margin + headH * 2 + gapH * 3;
         const fd = fmtDate(form.date);
-        const introText = `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each party may disclose Confidential Information to the other party in connection with the Purpose, and each party may act as both a Disclosing Party and a Receiving Party under this Agreement.`;
+        const introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
         const introLines = wrapText(ctx, introText, textW);
         measuredH += introLines.length * lineH + gapH * 2;
         sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
@@ -962,7 +962,7 @@
         ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
         let y = margin;
         ctx.fillStyle = "#0a0f23"; ctx.textAlign = "center";
-        ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("MUTUAL NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
+        ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
         ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#666"; ctx.fillText("Effective " + fd, W / 2, y); y += headH + gapH;
         ctx.textAlign = "left"; ctx.fillStyle = "#0a0f23"; ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
         introLines.forEach(line => { ctx.fillText(line, margin, y); y += lineH; }); y += gapH * 2;
@@ -988,7 +988,7 @@
             ctx.fillText("BIOMETRIC IDENTITY VERIFICATION", margin, y); y += lineH;
             ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#333";
             const bioDate = new Date(bio.verifiedAt).toLocaleString();
-            ctx.fillText(`Verified Party: ${form.party2} (Party B)`, margin, y); y += lineH;
+            ctx.fillText(`Verified Party: ${form.party2} (Receiving Party)`, margin, y); y += lineH;
             ctx.fillText(`Verification Method: Face ID / Touch ID (Platform Authenticator)`, margin, y); y += lineH;
             ctx.fillText(`Verification Time: ${bioDate}`, margin, y); y += lineH;
             ctx.fillText(`Credential ID: ${bio.credentialId || "N/A"}`, margin, y); y += lineH;
@@ -1009,7 +1009,7 @@
         function drawSigLabel(i, xPos) {
           ctx.strokeStyle = "#888"; ctx.lineWidth = scale; ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();
           ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
-          ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
+          ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
         }
       }, [form, sections, savedSigs]);
 
@@ -1031,14 +1031,14 @@
         const bioDate = new Date(bio.verifiedAt).toLocaleString();
         const rows = [
           ["AGREEMENT DETAILS", ""],
-          ["Disclosing Party (A)", form.party1],
-          ["Receiving Party (B)", form.party2],
+          ["Disclosing Party", form.party1],
+          ["Receiving Party", form.party2],
           ["Purpose", form.purpose],
           ["Governing Law", `State of ${form.state}`],
           ["Agreement Date", fd],
           ["", ""],
           ["IDENTITY VERIFICATION", ""],
-          ["Verified Party", `${form.party2} (Party B)`],
+          ["Verified Party", `${form.party2} (Receiving Party)`],
           ["Verification Method", "Face ID / Touch ID (Platform Authenticator)"],
           ["Authentication Protocol", "WebAuthn / FIDO2"],
           ["Verification Timestamp", bioDate],
@@ -1048,7 +1048,7 @@
           ["Session ID", bioSessionId || "N/A"],
           ["", ""],
           ["EVIDENCE CHAIN", ""],
-          ["Finger Signatures", "Captured (Party A and Party B)"],
+          ["Finger Signatures", "Captured (Disclosing Party and Receiving Party)"],
           ["Video Recording", videoURL ? "Captured (front camera)" : "Not recorded"],
           ["Biometric Auth", "Verified via device-native authenticator"],
           ["NDA Document", "Rendered as high-resolution PNG with verification stamp"],
@@ -1111,7 +1111,7 @@
           ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
           let measuredH = margin + headH * 2 + gapH * 3;
           const fd = fmtDate(form.date);
-          const introText = `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each party may disclose Confidential Information to the other party in connection with the Purpose, and each party may act as both a Disclosing Party and a Receiving Party under this Agreement.`;
+          const introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
           const introLines = wrapText(ctx, introText, textW);
           measuredH += introLines.length * lineH + gapH * 2;
           sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
@@ -1120,7 +1120,7 @@
           ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
           let y = margin;
           ctx.fillStyle = "#0a0f23"; ctx.textAlign = "center";
-          ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("MUTUAL NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
+          ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
           ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#666"; ctx.fillText("Effective " + fd, W / 2, y); y += headH + gapH;
           ctx.textAlign = "left"; ctx.fillStyle = "#0a0f23"; ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
           introLines.forEach(line => { ctx.fillText(line, margin, y); y += lineH; }); y += gapH * 2;
@@ -1140,7 +1140,7 @@
             if (ref.current) { try { ctx.drawImage(ref.current, xPos, y, sigW, sigH); } catch (e) {} }
             ctx.strokeStyle = "#888"; ctx.lineWidth = scale; ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();
             ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
-            ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Party A" : "Party B", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
+            ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
           setSavedSigs([sig1Ref.current ? sig1Ref.current.toDataURL() : null, sig2Ref.current ? sig2Ref.current.toDataURL() : null]);
           setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3);
@@ -1175,7 +1175,7 @@
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
             <div style={{ width: 40, height: 1, background: "rgba(250,228,207,.15)", margin: "0 auto 10px" }} />
-            <p style={{ fontSize: 16, color: "rgba(250,228,207,.25)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Mutual Non-Disclosure Agreement</p>
+            <p style={{ fontSize: 16, color: "rgba(250,228,207,.25)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Non-Disclosure Agreement</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div><label style={labelStyle}>Your Name</label><input style={inputStyle} placeholder="e.g. John Smith" value={form.party1} onChange={up("party1")} /></div>
@@ -1246,9 +1246,9 @@
               </div>
             )}
             <div style={{ background: "rgba(250,228,207,.03)", borderRadius: 16, border: "1px solid rgba(250,228,207,.06)", padding: "24px 18px" }}>
-              <h2 style={{ fontSize: 20, fontWeight: 400, textAlign: "center", margin: "0 0 2px", color: autumn, fontFamily: "'Instrument Serif', Georgia, serif", letterSpacing: ".04em" }}>MUTUAL NON-DISCLOSURE AGREEMENT</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 400, textAlign: "center", margin: "0 0 2px", color: autumn, fontFamily: "'Instrument Serif', Georgia, serif", letterSpacing: ".04em" }}>NON-DISCLOSURE AGREEMENT</h2>
               <p style={{ textAlign: "center", fontSize: 15, color: "rgba(250,228,207,.25)", margin: "0 0 18px", fontFamily: sans }}>Effective {fd}</p>
-              <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.6)", marginBottom: 18 }}>This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Party A") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Party B"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). Each party may disclose Confidential Information to the other party in connection with the Purpose, and each party may act as both a Disclosing Party and a Receiving Party under this Agreement.</p>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.6)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
               {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.4)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
@@ -1312,8 +1312,8 @@
               </div>
             )}
             <div style={{ background: "rgba(250,228,207,.04)", borderRadius: 16, border: "1px solid rgba(250,228,207,.08)", padding: "18px 14px" }}>
-              <SignatureCanvas label={`${form.party1} (Party A)`} canvasRef={sig1Ref} onDraw={() => setSig1Done(true)} />
-              <SignatureCanvas label={`${form.party2} (Party B)`} canvasRef={sig2Ref} onDraw={() => setSig2Done(true)} />
+              <SignatureCanvas label={`${form.party1} (Disclosing Party)`} canvasRef={sig1Ref} onDraw={() => setSig1Done(true)} />
+              <SignatureCanvas label={`${form.party2} (Receiving Party)`} canvasRef={sig2Ref} onDraw={() => setSig2Done(true)} />
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
               <button style={{ ...btnO, flex: 1, background: firm, color: autumn, boxShadow: "none", border: "none" }} onClick={() => { stopAndDiscard(); setStep(1); }}>&larr; Back</button>
@@ -1468,7 +1468,7 @@
               </div>
             )}
             <div style={{ background: "rgba(250,228,207,.03)", borderRadius: 14, padding: 18, marginBottom: 20, border: "1px solid rgba(250,228,207,.06)" }}>
-              {[["Parties", `${form.party1} & ${form.party2}`], ["Purpose", form.purpose], ["Type", "Mutual NDA"], ["Duration", "2 years + 3 year survival"], ["Governing Law", `State of ${form.state}`], ["Sections", `${sections.length}`], ["Date", fd], ["Verification", [videoURL && "Video", "Signature", bioStatus === "verified" && "Biometric"].filter(Boolean).join(" + ")]].map(([k, v]) => (
+              {[["Parties", `${form.party1} & ${form.party2}`], ["Purpose", form.purpose], ["Type", "Unilateral NDA"], ["Duration", "2 years + 3 year survival"], ["Governing Law", `State of ${form.state}`], ["Sections", `${sections.length}`], ["Date", fd], ["Verification", [videoURL && "Video", "Signature", bioStatus === "verified" && "Biometric"].filter(Boolean).join(" + ")]].map(([k, v]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid rgba(250,228,207,.05)", fontSize: 15, fontFamily: sans }}>
                   <span style={{ color: "rgba(250,228,207,.25)" }}>{k}</span>
                   <span style={{ color: autumn, fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{v}</span>
