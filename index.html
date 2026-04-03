@@ -955,6 +955,7 @@
         sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
         measuredH += 60 * scale + 120 * scale + 40 * scale;
         if (bio) measuredH += 120 * scale;
+        measuredH += 288 * scale + 31 * scale;
         measuredH += margin;
         c.height = measuredH;
         ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
@@ -1120,7 +1121,7 @@
           const introLines = wrapText(ctx, introText, textW);
           measuredH += introLines.length * lineH + gapH * 2;
           sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
-          measuredH += 60 * scale + 120 * scale + margin;
+          measuredH += 60 * scale + 120 * scale + 288 * scale + 31 * scale + margin;
           c.height = measuredH;
           ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
           let y = margin;
