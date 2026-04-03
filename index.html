@@ -438,7 +438,7 @@
        VAULT LIBRARY VIEW
        ══════════════════════════════════════════════════════════ */
 
-    function Vault({ onBack, onNewNDA }) {
+    function Vault({ onBack, onNewNDA, resetKey }) {
       const [ndas, setNdas] = useState([]);
       const [loading, setLoading] = useState(true);
       const [viewing, setViewing] = useState(null);
@@ -448,14 +448,31 @@
       const autumn = "#fae4cf";
 
       useEffect(() => { loadNdas(); }, []);
+      useEffect(() => { setViewing(null); }, [resetKey]);
       async function loadNdas() { setLoading(true); try { setNdas(await vaultGetAll()); } catch (e) {} setLoading(false); }
       async function handleDelete(id) { await vaultDelete(id); setConfirmDelete(null); setViewing(null); loadNdas(); }
 
+      const swipeRef = useRef(null);
+      useEffect(() => {
+        if (!viewing || !swipeRef.current) return;
+        let startX = 0, startY = 0;
+        const el = swipeRef.current;
+        const onStart = (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
+        const onEnd = (e) => {
+          const dx = e.changedTouches[0].clientX - startX;
+          const dy = Math.abs(e.changedTouches[0].clientY - startY);
+          if (dx > 80 && dy < dx) setViewing(null);
+        };
+        el.addEventListener("touchstart", onStart, { passive: true });
+        el.addEventListener("touchend", onEnd, { passive: true });
+        return () => { el.removeEventListener("touchstart", onStart); el.removeEventListener("touchend", onEnd); };
+      }, [viewing]);
+
       if (viewing) {
         return (
-          <div style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh" }}>
-            <button onClick={() => setViewing(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 18, fontWeight: 700, color: firm, fontFamily: sans, marginBottom: 16, padding: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke={firm} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div ref={swipeRef} style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh" }}>
+            <button onClick={() => setViewing(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 18, fontWeight: 700, color: autumn, fontFamily: sans, marginBottom: 16, padding: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               Back to Vault
             </button>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
@@ -709,6 +726,7 @@
       const params = new URLSearchParams(window.location.search);
       const verifyId = params.get("verify");
       const [view, setView] = useState("home");
+      const [vaultResetKey, setVaultResetKey] = useState(0);
 
       if (verifyId) return React.createElement(VerifyScreen, { sessionId: verifyId });
 
@@ -718,7 +736,7 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
           </button>
-          <button onClick={() => setView("vault")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => { setView("vault"); setVaultResetKey(k => k + 1); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
           </button>
@@ -728,7 +746,7 @@
       return (
         <div>
           <div style={{ paddingBottom: 70 }}>
-            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home") }) : React.createElement(NDA, { onOpenVault: () => setView("vault") })}
+            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home"), resetKey: vaultResetKey }) : React.createElement(NDA, { onOpenVault: () => setView("vault") })}
           </div>
           {tabBar}
         </div>
