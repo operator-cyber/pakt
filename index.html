@@ -514,13 +514,13 @@
         <div style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh", background: "#0a0f23" }}>
           <div style={{ textAlign: "center", marginBottom: 24, paddingTop: 8 }}>
             <img src="vault-logo.png" alt="Vault" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
-            <p style={{ fontSize: 18, color: "rgba(250,228,207,.3)", margin: 0, fontFamily: sans }}>{ndas.length} signed agreement{ndas.length !== 1 ? "s" : ""}</p>
+            <p style={{ fontSize: 18, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans }}>{ndas.length} signed agreement{ndas.length !== 1 ? "s" : ""}</p>
           </div>
-          {loading && <div style={{ textAlign: "center", padding: 40, fontSize: 18, color: "rgba(250,228,207,.3)", fontFamily: sans }}>Loading...</div>}
+          {loading && <div style={{ textAlign: "center", padding: 40, fontSize: 18, color: "rgba(250,228,207,.7)", fontFamily: sans }}>Loading...</div>}
           {!loading && ndas.length === 0 && (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <div style={{ fontSize: 60, marginBottom: 12, opacity: 0.2 }}>&#128274;</div>
-              <p style={{ fontSize: 19, color: "rgba(250,228,207,.3)", fontFamily: sans, margin: "0 0 16px", lineHeight: 1.6 }}>No agreements yet.<br/>Signed NDAs will appear here automatically.</p>
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(250,228,207,.35)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 12 }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <p style={{ fontSize: 19, color: "rgba(250,228,207,.7)", fontFamily: sans, margin: "0 0 16px", lineHeight: 1.6 }}>No agreements yet.<br/>Signed NDAs will appear here automatically.</p>
               <button onClick={onNewNDA} style={{ fontSize: 19, fontWeight: 700, color: firm, background: autumn, border: "none", borderRadius: 14, padding: "14px 32px", cursor: "pointer", fontFamily: sans, boxShadow: "0 4px 18px rgba(250,228,207,.15)" }}>Create Your First NDA</button>
             </div>
           )}
@@ -537,8 +537,8 @@
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 18, fontWeight: 700, color: autumn, fontFamily: sans, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.party1} &amp; {nda.party2}</div>
-                    <div style={{ fontSize: 15, color: "rgba(250,228,207,.4)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
-                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.2)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+                    <div style={{ fontSize: 15, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
                   </div>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.25 }}><path d="M6 3l5 5-5 5" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
@@ -715,12 +715,12 @@
       const tabBar = (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#0a0f23", borderTop: "1px solid rgba(250,228,207,.08)", paddingBottom: "env(safe-area-inset-bottom)", display: "flex" }}>
           <button onClick={() => setView("home")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.3)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.3)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
           </button>
           <button onClick={() => setView("vault")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.3)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.3)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
           </button>
         </div>
       );
@@ -1150,7 +1150,7 @@
       const autumn = "#fae4cf";
       const inputStyle = { width: "100%", padding: "16px 18px", fontSize: 19, fontWeight: 400, border: "1px solid rgba(250,228,207,.12)", borderRadius: 10, background: "rgba(250,228,207,.04)", fontFamily: "'Instrument Serif', Georgia, serif", outline: "none", boxSizing: "border-box", color: autumn, transition: "border-color .2s, background .2s" };
       const selectStyle = { ...inputStyle, appearance: "none", backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23fae4cf' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center", paddingRight: 40 };
-      const labelStyle = { display: "inline-block", fontSize: 13, fontWeight: 700, color: "rgba(250,228,207,.35)", marginBottom: 8, letterSpacing: ".14em", textTransform: "uppercase", fontFamily: sans };
+      const labelStyle = { display: "inline-block", fontSize: 13, fontWeight: 700, color: "rgba(250,228,207,.7)", marginBottom: 8, letterSpacing: ".14em", textTransform: "uppercase", fontFamily: sans };
       const btnBase = { width: "100%", padding: "17px", fontSize: 19, fontWeight: 600, border: "none", borderRadius: 12, cursor: "pointer", fontFamily: sans, letterSpacing: ".03em", transition: "transform .15s, box-shadow .15s" };
       const btnP = { ...btnBase, color: firm, background: autumn, boxShadow: "0 4px 24px rgba(250,228,207,.15)" };
       const btnO = { ...btnBase, color: autumn, background: "transparent", boxShadow: `inset 0 0 0 1.5px rgba(250,228,207,.2)` };
@@ -1161,7 +1161,7 @@
           {["Details", "Review", "Sign", "Verify"].map((s, i) => (
             <div key={s} style={{ flex: 1, textAlign: "center" }}>
               <div style={{ height: 2, borderRadius: 1, background: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.3)", marginBottom: 6, transition: "background .4s ease" }} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.5)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.7)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
             </div>
           ))}
         </div>
@@ -1173,7 +1173,7 @@
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
             <div style={{ width: 40, height: 1, background: "rgba(250,228,207,.15)", margin: "0 auto 10px" }} />
-            <p style={{ fontSize: 16, color: "rgba(250,228,207,.25)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Non-Disclosure Agreement</p>
+            <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Non-Disclosure Agreement</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div><label style={labelStyle}>Your Name</label><input style={inputStyle} placeholder="e.g. John Smith" value={form.party1} onChange={up("party1")} /></div>
@@ -1188,7 +1188,7 @@
                       <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, border: active ? "none" : "2px solid rgba(250,228,207,.3)", background: active ? autumn : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all .15s" }}>
                         {active && <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2.5 6 5 8.5 9.5 3.5" fill="none" stroke={firm} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                       </div>
-                      <span style={{ fontSize: 16, color: active ? autumn : "rgba(250,228,207,.6)", fontFamily: sans, fontWeight: active ? 600 : 400, transition: "all .15s" }}>
+                      <span style={{ fontSize: 16, color: active ? autumn : "rgba(250,228,207,.7)", fontFamily: sans, fontWeight: active ? 600 : 400, transition: "all .15s" }}>
                         {cat.label} <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 13 }}>[{cat.hint}]</span>
                       </span>
                     </div>
@@ -1199,12 +1199,12 @@
                     <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, border: form.customCategory && form.customCategory.trim() ? "none" : "2px solid rgba(250,228,207,.3)", background: form.customCategory && form.customCategory.trim() ? autumn : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {form.customCategory && form.customCategory.trim() && <svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2.5 6 5 8.5 9.5 3.5" fill="none" stroke={firm} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                     </div>
-                    <span style={{ fontSize: 16, color: form.customCategory && form.customCategory.trim() ? autumn : "rgba(250,228,207,.6)", fontFamily: sans }}>Other <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 13 }}>[something not listed]</span></span>
+                    <span style={{ fontSize: 16, color: form.customCategory && form.customCategory.trim() ? autumn : "rgba(250,228,207,.7)", fontFamily: sans }}>Other <span style={{ fontWeight: 400, opacity: 0.5, fontSize: 13 }}>[something not listed]</span></span>
                   </div>
                   {form.customCategory !== "" && <input style={{ ...inputStyle, background: "rgba(250,228,207,.08)", color: autumn, border: "2px solid rgba(250,228,207,.15)", fontSize: 18, padding: "10px 12px" }} placeholder="e.g. Recipe formulations and ingredient sourcing" value={form.customCategory.trim() === "" ? "" : form.customCategory} onChange={(e) => setForm(prev => ({ ...prev, customCategory: e.target.value }))} autoFocus />}
                 </div>
               </div>
-              <span style={{ fontSize: 13, color: "rgba(250,228,207,.2)", marginTop: 6, display: "block", fontFamily: sans, letterSpacing: ".04em" }}>Select at least one category</span>
+              <span style={{ fontSize: 13, color: "rgba(250,228,207,.7)", marginTop: 6, display: "block", fontFamily: sans, letterSpacing: ".04em" }}>Select at least one category</span>
             </div>
             <div><label style={labelStyle}>What Are You Sharing?</label><input style={inputStyle} placeholder="e.g. Discussing my app idea" value={form.purpose} onChange={up("purpose")} /></div>
             <div>
@@ -1216,7 +1216,7 @@
             </div>
             <div><label style={labelStyle}>Start Date</label><input style={{ ...inputStyle, WebkitAppearance: "none", appearance: "none", maxWidth: "100%", textAlign: "left" }} type="date" value={form.date} onChange={up("date")} /></div>
           </div>
-          <button style={{ ...btnP, marginTop: 24, opacity: canProceed ? 1 : .4, pointerEvents: canProceed ? "auto" : "none" }} onClick={() => setStep(1)}>Review Agreement &rarr;</button>
+          <button style={{ ...btnP, marginTop: 24, opacity: canProceed ? 1 : .7, pointerEvents: canProceed ? "auto" : "none" }} onClick={() => setStep(1)}>Review Agreement &rarr;</button>
         </div>
       );
 
@@ -1245,9 +1245,9 @@
             )}
             <div style={{ background: "rgba(250,228,207,.03)", borderRadius: 16, border: "1px solid rgba(250,228,207,.06)", padding: "24px 18px" }}>
               <h2 style={{ fontSize: 20, fontWeight: 400, textAlign: "center", margin: "0 0 2px", color: autumn, fontFamily: "'Instrument Serif', Georgia, serif", letterSpacing: ".04em" }}>NON-DISCLOSURE AGREEMENT</h2>
-              <p style={{ textAlign: "center", fontSize: 15, color: "rgba(250,228,207,.25)", margin: "0 0 18px", fontFamily: sans }}>Effective {fd}</p>
-              <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.6)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
-              {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.4)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
+              <p style={{ textAlign: "center", fontSize: 15, color: "rgba(250,228,207,.7)", margin: "0 0 18px", fontFamily: sans }}>Effective {fd}</p>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
+              {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.7)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
               <button style={{ ...btnO, flex: 1 }} onClick={() => setStep(0)}>&larr; Back</button>
@@ -1264,13 +1264,13 @@
             {progress}
             <div style={{ textAlign: "center", marginBottom: 24 }}>
               <h2 style={{ fontSize: 28, fontWeight: 400, color: autumn, margin: "0 0 6px", fontFamily: "'Instrument Serif', Georgia, serif" }}>Sign the Agreement</h2>
-              <p style={{ fontSize: 16, color: "rgba(250,228,207,.3)", margin: 0, fontFamily: sans }}>Both parties sign below</p>
+              <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans }}>Both parties sign below</p>
             </div>
             {supportsVideo && (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: firm, borderRadius: 14, padding: "14px 16px", marginBottom: 14, boxShadow: "0 2px 14px rgba(10,15,35,.2)" }}>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 700, color: autumn, fontFamily: sans }}>Record signing session</div>
-                  <div style={{ fontSize: 14, color: "rgba(250,228,207,.45)", fontFamily: sans, marginTop: 2 }}>Front camera · Stored on your device</div>
+                  <div style={{ fontSize: 14, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2 }}>Front camera · Stored on your device</div>
                 </div>
                 <div onClick={() => setVideoEnabled(v => !v)} style={{ width: 46, height: 27, borderRadius: 14, background: videoEnabled ? autumn : "rgba(250,228,207,.15)", position: "relative", cursor: "pointer", transition: "background .25s", flexShrink: 0 }}>
                   <div style={{ position: "absolute", top: 3.5, left: videoEnabled ? 22 : 3.5, width: 20, height: 20, borderRadius: "50%", background: videoEnabled ? firm : "rgba(250,228,207,.45)", transition: "left .25s, background .25s", boxShadow: "0 1px 5px rgba(0,0,0,.35)" }} />
@@ -1362,7 +1362,7 @@
                 {bioResult && (
                   <div style={{ background: "rgba(250,228,207,.06)", borderRadius: 12, padding: "12px 16px", display: "inline-block", marginTop: 8 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".04em", textTransform: "uppercase" }}>Biometric Attestation Recorded</div>
-                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2 }}>
                       {new Date(bioResult.verifiedAt).toLocaleString()}
                     </div>
                   </div>
@@ -1381,7 +1381,7 @@
             {bioStatus === "waiting" && (
               <div style={{ background: "rgba(250,228,207,.08)", borderRadius: 14, padding: "16px 18px", marginTop: 16, border: "1px solid rgba(250,228,207,.1)" }}>
                 <div style={{ fontSize: 15, fontWeight: 700, color: autumn, fontFamily: sans, marginBottom: 8, letterSpacing: ".02em" }}>What happens next?</div>
-                <div style={{ fontSize: 14, color: "rgba(250,228,207,.6)", fontFamily: sans, lineHeight: 1.7 }}>
+                <div style={{ fontSize: 14, color: "rgba(250,228,207,.7)", fontFamily: sans, lineHeight: 1.7 }}>
                   When the other party scans this QR code, their phone will prompt them to verify their identity using Face ID, Touch ID, or their device passcode. This creates a biometric proof of identity that gets attached to the signed NDA as an additional layer of security.<br/><br/>
                   If the other party is not physically present, you can skip this step.
                 </div>
@@ -1435,7 +1435,7 @@
                 <div style={{ padding: "13px 16px 11px", borderBottom: "1px solid rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase" }}>Biometric Verification</div>
-                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>{form.party2} &middot; {new Date(bioResult.verifiedAt).toLocaleString()}</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2 }}>{form.party2} &middot; {new Date(bioResult.verifiedAt).toLocaleString()}</div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 5, background: "#d4f0e3", borderRadius: 20, padding: "4px 10px" }}>
                     <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#2B4230"/><polyline points="2.5 5 4 6.5 7.5 3" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -1444,11 +1444,11 @@
                 </div>
                 <div style={{ padding: "10px 16px 14px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 15, fontFamily: sans }}>
-                    <span style={{ color: "rgba(250,228,207,.4)" }}>Method</span>
+                    <span style={{ color: "rgba(250,228,207,.7)" }}>Method</span>
                     <span style={{ color: autumn, fontWeight: 600 }}>Face ID / Touch ID</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 15, fontFamily: sans }}>
-                    <span style={{ color: "rgba(250,228,207,.4)" }}>Credential</span>
+                    <span style={{ color: "rgba(250,228,207,.7)" }}>Credential</span>
                     <span style={{ color: autumn, fontWeight: 600, fontSize: 13, fontFamily: "monospace" }}>{bioResult.credentialId ? bioResult.credentialId.substring(0, 16) + "..." : "N/A"}</span>
                   </div>
                 </div>
