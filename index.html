@@ -727,12 +727,13 @@
       const verifyId = params.get("verify");
       const [view, setView] = useState("home");
       const [vaultResetKey, setVaultResetKey] = useState(0);
+      const [homeResetKey, setHomeResetKey] = useState(0);
 
       if (verifyId) return React.createElement(VerifyScreen, { sessionId: verifyId });
 
       const tabBar = (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#0a0f23", borderTop: "1px solid rgba(250,228,207,.08)", paddingBottom: "env(safe-area-inset-bottom)", display: "flex" }}>
-          <button onClick={() => setView("home")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => { setView("home"); setHomeResetKey(k => k + 1); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
           </button>
@@ -746,14 +747,14 @@
       return (
         <div>
           <div style={{ paddingBottom: 70 }}>
-            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home"), resetKey: vaultResetKey }) : React.createElement(NDA, { onOpenVault: () => setView("vault") })}
+            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home"), resetKey: vaultResetKey }) : React.createElement(NDA, { onOpenVault: () => setView("vault"), resetKey: homeResetKey })}
           </div>
           {tabBar}
         </div>
       );
     }
 
-    function NDA({ onOpenVault }) {
+    function NDA({ onOpenVault, resetKey }) {
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
       const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
@@ -761,6 +762,7 @@
       useEffect(() => { formRef.current = form; window._paktForm = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
       const [sig2Done, setSig2Done] = useState(false);
+      useEffect(() => { setStep(0); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" }); setSig1Done(false); setSig2Done(false); setNdaImage(null); setReceiptImage(null); setBioSessionId(null); setBioQRImage(null); setBioStatus("waiting"); setBioResult(null); setVideoURL(null); setSavedToVault(false); }, [resetKey]);
       const [ndaImage, setNdaImage] = useState(null);
       const [generating, setGenerating] = useState(false);
       const [complianceOpen, setComplianceOpen] = useState(false);
@@ -1356,7 +1358,7 @@
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
               <button style={{ ...btnO, flex: 1, background: firm, color: autumn, boxShadow: "none", border: "none" }} onClick={() => { stopAndDiscard(); setStep(1); }}>&larr; Back</button>
-              <button style={{ ...btnG, flex: 2 }} onClick={handleComplete}>{generating ? "Generating\u2026" : "Complete \u2713"}</button>
+              <button style={{ ...btnG, flex: 2, opacity: sig1Done && sig2Done ? 1 : .7, pointerEvents: sig1Done && sig2Done ? "auto" : "none" }} onClick={handleComplete}>{generating ? "Generating\u2026" : "Complete \u2713"}</button>
             </div>
             <p style={{ fontSize: 14, color: "rgba(10,15,35,.3)", textAlign: "center", marginTop: 12, lineHeight: 1.5, fontFamily: sans }}>By signing, both parties agree to be bound by the terms of this NDA.</p>
           </div>
