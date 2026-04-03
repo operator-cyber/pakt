@@ -380,6 +380,7 @@
     function SignatureCanvas({ label, canvasRef, onDraw }) {
       const [hasDrawn, setHasDrawn] = useState(false);
       const drawingRef = useRef(false);
+      const autumn = "#fae4cf";
       useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -417,12 +418,12 @@
       return (
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: firm, opacity: 0.7, letterSpacing: ".04em", textTransform: "uppercase", fontFamily: sans }}>{label}</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: autumn, letterSpacing: ".04em", textTransform: "uppercase", fontFamily: sans }}>{label}</span>
             {hasDrawn && <button onClick={clear} style={{ fontSize: 15, color: "#c0392b", background: "none", border: "none", cursor: "pointer", fontWeight: 700, fontFamily: sans }}>Clear</button>}
           </div>
           <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", border: "2px dashed rgba(10,15,35,.2)", background: "#fdf6ef", touchAction: "none" }}>
             <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: 140, touchAction: "none", cursor: "crosshair" }} />
-            {!hasDrawn && <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: "rgba(10,15,35,.55)", fontSize: 19, fontStyle: "italic", fontFamily: "'Instrument Serif', Georgia, serif" }}>Sign here</div>}
+            {!hasDrawn && <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: "rgba(10,15,35,.4)", fontSize: 16, fontFamily: sans, textAlign: "center", padding: "0 12px" }}>{label + " - sign here"}</div>}
             <div style={{ position: "absolute", bottom: 20, left: 20, right: 20, height: 1, background: "rgba(10,15,35,.15)", pointerEvents: "none" }} />
           </div>
         </div>
@@ -503,7 +504,7 @@
                 </div>
               </div>
             ) : (
-              <button onClick={() => setConfirmDelete(viewing.id)} style={{ width: "100%", padding: 14, fontSize: 18, fontWeight: 700, border: "none", borderRadius: 14, cursor: "pointer", fontFamily: sans, color: "#80011F", background: "#9E9A8D", marginTop: 16 }}>Delete NDA</button>
+              <button onClick={() => setConfirmDelete(viewing.id)} style={{ width: "100%", padding: 14, fontSize: 18, fontWeight: 700, border: "none", borderRadius: 14, cursor: "pointer", fontFamily: sans, color: "#D62839", background: "#fae4cf", marginTop: 16 }}>Delete NDA</button>
             )}
           </div>
         );
@@ -740,7 +741,7 @@
     function NDA({ onOpenVault }) {
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
-      const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
+      const [form, setForm] = useState({ party1: "Boris Rodriguez", party2: "Allen Forrest", purpose: "NDA App Development", state: "California", date: new Date().toISOString().split("T")[0], categories: ["trade_secrets", "source_code"], customCategory: "" });
       const formRef = useRef(form);
       useEffect(() => { formRef.current = form; window._paktForm = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
@@ -1162,8 +1163,8 @@
         <div style={{ display: "flex", gap: 4, marginBottom: 28 }}>
           {["Details", "Review", "Sign", "Verify"].map((s, i) => (
             <div key={s} style={{ flex: 1, textAlign: "center" }}>
-              <div style={{ height: 2, borderRadius: 1, background: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.15)", marginBottom: 6, transition: "background .4s ease" }} />
-              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.35)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
+              <div style={{ height: 2, borderRadius: 1, background: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.3)", marginBottom: 6, transition: "background .4s ease" }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: i <= Math.min(step, 3) ? autumn : "rgba(250,228,207,.5)", textTransform: "uppercase", letterSpacing: ".16em", fontFamily: sans }}>{s}</span>
             </div>
           ))}
         </div>
