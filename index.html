@@ -513,10 +513,7 @@
       return (
         <div style={{ maxWidth: 500, margin: "0 auto", padding: "20px 16px", fontFamily: "'Instrument Serif', Georgia, serif", minHeight: "100dvh", background: "#0a0f23" }}>
           <div style={{ textAlign: "center", marginBottom: 24, paddingTop: 8 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 52, height: 52, borderRadius: 14, background: "rgba(250,228,207,.06)", marginBottom: 10 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-            </div>
-            <h1 style={{ fontSize: 35, fontWeight: 400, color: autumn, margin: "0 0 4px", fontFamily: "'Anton', sans-serif", textTransform: "uppercase", letterSpacing: ".02em" }}>Vault</h1>
+            <img src="vault-logo.png" alt="Vault" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
             <p style={{ fontSize: 18, color: "rgba(250,228,207,.3)", margin: 0, fontFamily: sans }}>{ndas.length} signed agreement{ndas.length !== 1 ? "s" : ""}</p>
           </div>
           {loading && <div style={{ textAlign: "center", padding: 40, fontSize: 18, color: "rgba(250,228,207,.3)", fontFamily: sans }}>Loading...</div>}
@@ -741,7 +738,7 @@
     function NDA({ onOpenVault }) {
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
-      const [form, setForm] = useState({ party1: "Boris Rodriguez", party2: "Allen Forrest", purpose: "NDA App Development", state: "California", date: new Date().toISOString().split("T")[0], categories: ["trade_secrets", "source_code"], customCategory: "" });
+      const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
       const formRef = useRef(form);
       useEffect(() => { formRef.current = form; window._paktForm = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
