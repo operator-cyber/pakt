@@ -993,7 +993,14 @@
             ctx.font = `italic ${11 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#888";
             ctx.fillText("Biometric attestation recorded via WebAuthn (FIDO2) protocol. Full verification receipt available separately.", margin, y);
           }
-          setNdaImage(c.toDataURL("image/png"));
+          y += 144 * scale;
+          ctx.textAlign = "center";
+          ctx.font = `bold ${31 * scale}px 'Outfit', sans-serif`; ctx.fillStyle = "#2B4230";
+          ctx.fillText("Long-press this image to save or share", W / 2, y); y += 144 * scale;
+          const trimmedNda = document.createElement("canvas");
+          trimmedNda.width = W; trimmedNda.height = y;
+          trimmedNda.getContext("2d").drawImage(c, 0, 0);
+          setNdaImage(trimmedNda.toDataURL("image/png"));
         };
         savedSigs.forEach((dataUrl, i) => {
           const xPos = margin + i * (sigW + 20 * scale);
@@ -1141,7 +1148,14 @@
             ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
           setSavedSigs([sig1Ref.current ? sig1Ref.current.toDataURL() : null, sig2Ref.current ? sig2Ref.current.toDataURL() : null]);
-          setNdaImage(c.toDataURL("image/png")); setGenerating(false); setStep(3);
+          y += sigH + 50 * scale + 144 * scale;
+          ctx.textAlign = "center";
+          ctx.font = `bold ${31 * scale}px 'Outfit', sans-serif`; ctx.fillStyle = "#2B4230";
+          ctx.fillText("Long-press this image to save or share", W / 2, y); y += 144 * scale;
+          const trimmedNda = document.createElement("canvas");
+          trimmedNda.width = W; trimmedNda.height = y;
+          trimmedNda.getContext("2d").drawImage(c, 0, 0);
+          setNdaImage(trimmedNda.toDataURL("image/png")); setGenerating(false); setStep(3);
         }, 100);
       }, [form, sections]);
 
