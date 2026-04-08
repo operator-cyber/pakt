@@ -944,6 +944,10 @@
       }, [step]);
 
       const saveToVault = useCallback(async (finalNdaImage, finalReceiptImage, finalBioResult, finalVideoURL) => {
+        let videoData = null;
+        if (finalVideoURL && finalVideoURL.blob) {
+          try { videoData = await finalVideoURL.blob.arrayBuffer(); } catch (e) {}
+        }
         const record = {
           id: generateSessionId(),
           party1: form.party1,
@@ -954,7 +958,7 @@
           categories: form.categories,
           ndaImage: finalNdaImage,
           receiptImage: finalReceiptImage || null,
-          videoData: finalVideoURL ? finalVideoURL.data : null,
+          videoData,
           videoMimeType: finalVideoURL ? finalVideoURL.mimeType : null,
           videoURL: finalVideoURL ? finalVideoURL.url : null,
           bioVerified: !!finalBioResult,
@@ -985,9 +989,7 @@
           mr.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data); };
           mr.onstop = () => {
             const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" });
-            blob.arrayBuffer().then(buf => {
-              setVideoURL({ url: URL.createObjectURL(blob), data: buf, mimeType: mimeType || "video/mp4" });
-            });
+            setVideoURL({ url: URL.createObjectURL(blob), blob, mimeType: mimeType || "video/mp4" });
           };
           mediaRecorderRef.current = mr;
           mr.start(100);
@@ -1224,11 +1226,11 @@
       }, [bioStatus, bioResult, regenerateWithBio, generateReceipt]);
 
       useEffect(() => {
-        if (step === 4 && !savedToVault && ndaImage && (videoURL === null || videoURL?.data)) {
+        if (step === 4 && !savedToVault && ndaImage) {
           setSavedToVault(true);
           saveToVault(ndaImage, receiptImage, bioResult, videoURL);
         }
-      }, [step, savedToVault, ndaImage, receiptImage, videoURL, bioResult]);
+      }, [step, savedToVault, ndaImage, receiptImage]);
 
       const generateImage = useCallback(() => {
         setGenerating(true);
