@@ -447,8 +447,21 @@
       const firm = "#0a0f23";
       const autumn = "#fae4cf";
 
+      const [viewingVideoURL, setViewingVideoURL] = useState(null);
+
       useEffect(() => { loadNdas(); }, []);
       useEffect(() => { setViewing(null); }, [resetKey]);
+      useEffect(() => {
+        let url = null;
+        if (viewing && viewing.videoData) {
+          const blob = new Blob([viewing.videoData], { type: viewing.videoMimeType || "video/mp4" });
+          url = URL.createObjectURL(blob);
+          setViewingVideoURL(url);
+        } else {
+          setViewingVideoURL(null);
+        }
+        return () => { if (url) URL.revokeObjectURL(url); };
+      }, [viewing]);
       async function loadNdas() { setLoading(true); try { setNdas(await vaultGetAll()); } catch (e) {} setLoading(false); }
       async function handleDelete(id) { await vaultDelete(id); setConfirmDelete(null); setViewing(null); loadNdas(); }
 
@@ -499,6 +512,11 @@
             const res = await fetch(nda.receiptImage);
             const blob = await res.blob();
             files.push(new File([blob], `Receipt_${name}.png`, { type: "image/png" }));
+          }
+          if (nda.videoData) {
+            const mimeType = nda.videoMimeType || "video/mp4";
+            const ext = mimeType.includes("webm") ? "webm" : "mp4";
+            files.push(new File([nda.videoData], `Video_${name}.${ext}`, { type: mimeType }));
           }
           if (nda.bioResult) {
             const blob = new Blob([JSON.stringify(nda.bioResult, null, 2)], { type: "application/json" });
@@ -564,10 +582,10 @@
                 <p style={{ fontSize: 14, color: "rgba(10,15,35,.3)", textAlign: "center", marginTop: 6, fontFamily: sans }}>Long-press to save or share</p>
               </div>
             )}
-            {viewing.videoURL && (
+            {viewingVideoURL && (
               <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(10,15,35,.35)", fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 8 }}>Witness Recording</div>
-                <video src={viewing.videoURL} controls playsInline style={{ width: "100%", display: "block", borderRadius: 12, background: "#050810" }} />
+                <video src={viewingVideoURL} controls playsInline style={{ width: "100%", display: "block", borderRadius: 12, background: "#050810" }} />
               </div>
             )}
             {viewing.receiptImage && (
@@ -936,7 +954,9 @@
           categories: form.categories,
           ndaImage: finalNdaImage,
           receiptImage: finalReceiptImage || null,
-          videoURL: finalVideoURL || null,
+          videoData: finalVideoURL ? finalVideoURL.data : null,
+          videoMimeType: finalVideoURL ? finalVideoURL.mimeType : null,
+          videoURL: finalVideoURL ? finalVideoURL.url : null,
           bioVerified: !!finalBioResult,
           bioResult: finalBioResult || null,
           verification: [finalVideoURL && "Video", "Signature", finalBioResult && "Biometric"].filter(Boolean).join(" + "),
@@ -963,7 +983,12 @@
           const mimeType = getSupportedMimeType();
           const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
           mr.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data); };
-          mr.onstop = () => { const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" }); setVideoURL(URL.createObjectURL(blob)); };
+          mr.onstop = () => {
+            const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" });
+            blob.arrayBuffer().then(buf => {
+              setVideoURL({ url: URL.createObjectURL(blob), data: buf, mimeType: mimeType || "video/mp4" });
+            });
+          };
           mediaRecorderRef.current = mr;
           mr.start(100);
           setRecording(true);
@@ -1199,11 +1224,11 @@
       }, [bioStatus, bioResult, regenerateWithBio, generateReceipt]);
 
       useEffect(() => {
-        if (step === 4 && !savedToVault && ndaImage) {
+        if (step === 4 && !savedToVault && ndaImage && (videoURL === null || videoURL?.data)) {
           setSavedToVault(true);
           saveToVault(ndaImage, receiptImage, bioResult, videoURL);
         }
-      }, [step, savedToVault, ndaImage, receiptImage]);
+      }, [step, savedToVault, ndaImage, receiptImage, videoURL, bioResult]);
 
       const generateImage = useCallback(() => {
         setGenerating(true);
@@ -1543,9 +1568,9 @@
                     <span style={{ fontSize: 11, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".08em" }}>CAPTURED</span>
                   </div>
                 </div>
-                <video src={videoURL} controls playsInline style={{ width: "100%", display: "block", background: "#050810", maxHeight: 230 }} />
+                <video src={videoURL?.url} controls playsInline style={{ width: "100%", display: "block", background: "#050810", maxHeight: 230 }} />
                 <div style={{ padding: "10px 14px" }}>
-                  <a href={videoURL} download={`Pakt_${safeName1}_${safeName2}_${form.date}.mp4`} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px", borderRadius: 10, background: "rgba(250,228,207,.06)", color: autumn, fontSize: 15, fontWeight: 600, fontFamily: sans, textDecoration: "none", letterSpacing: ".03em", border: "1px solid rgba(250,228,207,.08)" }}>
+                  <a href={videoURL?.url} download={`Pakt_${safeName1}_${safeName2}_${form.date}.mp4`} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px", borderRadius: 10, background: "rgba(250,228,207,.06)", color: autumn, fontSize: 15, fontWeight: 600, fontFamily: sans, textDecoration: "none", letterSpacing: ".03em", border: "1px solid rgba(250,228,207,.08)" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     Save Recording
                   </a>
@@ -1603,7 +1628,7 @@
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button style={{ ...btnP, flex: 1 }} onClick={() => {
-                if (videoURL) URL.revokeObjectURL(videoURL);
+                if (videoURL?.url) URL.revokeObjectURL(videoURL.url);
                 if (bioSessionId && bioListenerRef.current) db.ref("sessions/" + bioSessionId).off("value", bioListenerRef.current);
                 setStep(0); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
                 setSig1Done(false); setSig2Done(false); setNdaImage(null); setVideoURL(null);
