@@ -177,21 +177,24 @@ Mobile-first mutual NDA generator, signer, and vault. Single-file React PWA (ind
 | Assets/privacy-policy-url.txt | GitHub Pages URL for App Store Connect |
 
 ## Apple App Store Audit Status (April 2026)
-Audit performed against full Apple App Review Guidelines (Feb 2026 version).
+Red team audit performed against full Apple App Review Guidelines (Feb 2026 version, 55 pages).
 
 ### Completed
 - [x] Privacy policy (in-app + hosted at operator-cyber.github.io/pakt/privacy.html)
 - [x] Firebase data deletion (all paths now use .remove(), beforeunload cleanup)
 - [x] Scroll-to-top on step transitions
+- [x] Legal disclaimer on Review step (Guideline 1.1.6 / 5.2.1)
+- [x] Debug artifacts removed: window._paktForm, console.log (Guideline 2.3.1a)
+- [x] Video recording defaults to OFF, requires user toggle to start (Guideline 2.5.14)
+- [x] Firebase data transmission notice on Verify step (Guideline 5.1.1(ii))
 
-### Remaining Before Submission
-- [ ] Legal disclaimer ("not legal advice" notice)
-- [ ] Firebase security rules (lock down database)
-- [ ] Support URL for App Store Connect
-- [ ] Bundle JS dependencies locally (Capacitor phase)
+### Remaining Before Submission (Infrastructure)
+- [ ] **BLOCKER** Bundle JS dependencies locally (Guideline 2.5.2 — CDN scripts = auto-reject)
+- [ ] **BLOCKER** Firebase security rules (Guideline 1.6 — database currently open)
+- [ ] Support URL for App Store Connect (Guideline 1.5)
 - [ ] Capacitor project setup + native splash screen + status bar
 - [ ] App Store screenshots (all 5 steps)
-- [ ] App Review notes for Apple (detailed feature walkthrough)
+- [ ] App Review notes for Apple (detailed feature walkthrough for camera, biometrics, QR flow)
 - [ ] Age rating (4+) and category (Business or Productivity)
 
 ## Reference
