@@ -411,9 +411,9 @@
         const ctx = canvas.getContext("2d");
         ctx.scale(2, 2); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.lineWidth = 2.5; ctx.strokeStyle = "#0a0f23";
         function getPos(e) { const r = canvas.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
-        function onTouchStart(e) { e.preventDefault(); e.stopPropagation(); drawingRef.current = true; setHasDrawn(true); onDraw(); if (navigator.vibrate) navigator.vibrate(8); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
+        function onTouchStart(e) { e.preventDefault(); e.stopPropagation(); drawingRef.current = true; setHasDrawn(true); onDraw(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
         function onTouchMove(e) { if (!drawingRef.current) return; e.preventDefault(); e.stopPropagation(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
-        function onTouchEnd(e) { e.preventDefault(); drawingRef.current = false; }
+        function onTouchEnd(e) { e.preventDefault(); e.stopPropagation(); drawingRef.current = false; }
         function onMouseDown(e) { drawingRef.current = true; setHasDrawn(true); onDraw(); const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
         function onMouseMove(e) { if (!drawingRef.current) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
         function onMouseUp() { drawingRef.current = false; }
@@ -469,8 +469,8 @@
       const firm = "#0a0f23";
       const autumn = "#fae4cf";
 
-      useEffect(() => { loadNdas(); }, []);
-      useEffect(() => { setViewing(null); }, [resetKey]);
+      useEffect(() => { loadNdas(); window.scrollTo(0, 0); }, []);
+      useEffect(() => { setViewing(null); window.scrollTo(0, 0); }, [resetKey]);
       async function loadNdas() { setLoading(true); try { setNdas(await vaultGetAll()); } catch (e) {} setLoading(false); }
       async function handleDelete(id) { await vaultDelete(id); setConfirmDelete(null); setViewing(null); loadNdas(); }
 
@@ -806,11 +806,11 @@
 
       const tabBar = (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#0a0f23", borderTop: "1px solid rgba(250,228,207,.08)", paddingBottom: "env(safe-area-inset-bottom)", display: "flex" }}>
-          <button onClick={() => { setView("home"); setHomeResetKey(k => k + 1); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => { setView("home"); setHomeResetKey(k => k + 1); window.scrollTo(0, 0); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "home" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>HOME</span>
           </button>
-          <button onClick={() => { setView("vault"); setVaultResetKey(k => k + 1); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => { setView("vault"); setVaultResetKey(k => k + 1); window.scrollTo(0, 0); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
           </button>
@@ -1478,7 +1478,7 @@
       if (step === 2) {
         const supportsVideo = typeof MediaRecorder !== "undefined" && !!(navigator.mediaDevices);
         return (
-          <div key="step2" className="step-animate" onTouchStart={onSwipeStart} onTouchEnd={makeSwipeEnd(() => setStep(1))} style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
+          <div key="step2" className="step-animate" style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
             {progress}
             <div style={{ textAlign: "center", marginBottom: 24 }}>
               <h2 style={{ fontSize: 28, fontWeight: 400, color: autumn, margin: "0 0 6px", fontFamily: "'Instrument Serif', Georgia, serif" }}>Sign the Agreement</h2>
@@ -1625,7 +1625,7 @@
                 <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="6" fill="#fae4cf"/><polyline points="3 6 5 8 9 4" fill="none" stroke="#0a0f23" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 <span style={{ fontSize: 14, fontWeight: 600, color: autumn, fontFamily: sans, letterSpacing: ".04em" }}>Saved to Vault</span>
               </div>
-              <p style={{ fontSize: 15, color: "rgba(250,228,207,.7)", margin: "6px 0 0", fontFamily: sans }}>Stored securely in the app. Long-press any image to export.</p>
+              <p style={{ fontSize: 15, color: "rgba(250,228,207,.7)", margin: "6px 0 0", fontFamily: sans }}>Stored securely in the app. Visit your Vault to download all files at once.</p>
             </div>
             {ndaImage && (
               <div style={{ marginBottom: 16 }}>
