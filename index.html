@@ -289,12 +289,12 @@
     }
 
     const INFO_CATEGORIES = [
-      { key: "product_design", label: "Designs & Prototypes", hint: "unreleased work, concepts", legal: "product designs, prototypes, mockups, unpublished patent applications, and invention disclosures" },
       { key: "trade_secrets", label: "Trade Secrets & Formulas", hint: "proprietary methods, recipes", legal: "trade secrets, proprietary formulas, and processes not generally known to the public" },
       { key: "source_code", label: "Source Code & Tech Specs", hint: "software, apps", legal: "proprietary source code, algorithms, software architectures, technical specifications, and system designs" },
       { key: "business_strategy", label: "Strategy & Marketing", hint: "rollout plans, strategy", legal: "non-public business strategies, marketing plans, competitive analyses, and strategic roadmaps" },
       { key: "financial", label: "Financial Data & Projections", hint: "budgets, pricing, deals", legal: "financial statements, projections, budgets, pricing models, profit margins, and valuation data" },
       { key: "customer_vendor", label: "Customer & Vendor Data", hint: "client lists, contacts", legal: "customer and vendor lists containing non-public compiled data such as purchasing histories, negotiated pricing, contact preferences, and relationship details" },
+      { key: "product_design", label: "Designs & Prototypes", hint: "unreleased work, concepts", legal: "product designs, prototypes, mockups, unpublished patent applications, and invention disclosures" },
       { key: "personnel", label: "Personnel & HR Info", hint: "team info, salaries", legal: "employee records, compensation data, organizational structures, and human resources policies" },
     ];
 
@@ -447,95 +447,10 @@
       const firm = "#0a0f23";
       const autumn = "#fae4cf";
 
-      const [viewingVideoURL, setViewingVideoURL] = useState(null);
-
       useEffect(() => { loadNdas(); }, []);
       useEffect(() => { setViewing(null); }, [resetKey]);
-      useEffect(() => {
-        let url = null;
-        if (viewing && viewing.videoData) {
-          const blob = new Blob([viewing.videoData], { type: viewing.videoMimeType || "video/mp4" });
-          url = URL.createObjectURL(blob);
-          setViewingVideoURL(url);
-        } else {
-          setViewingVideoURL(null);
-        }
-        return () => { if (url) URL.revokeObjectURL(url); };
-      }, [viewing]);
       async function loadNdas() { setLoading(true); try { setNdas(await vaultGetAll()); } catch (e) {} setLoading(false); }
       async function handleDelete(id) { await vaultDelete(id); setConfirmDelete(null); setViewing(null); loadNdas(); }
-
-      async function handleSend(e, nda) {
-        e.stopPropagation();
-        const filename = `NDA_${nda.party1}_${nda.party2}.png`;
-        const downloadDirectly = () => {
-          if (!nda.ndaImage) return;
-          const a = document.createElement("a");
-          a.href = nda.ndaImage;
-          a.download = filename;
-          a.click();
-        };
-
-        if (!nda.ndaImage) return;
-        if (!navigator.share || !navigator.canShare) {
-          downloadDirectly();
-          return;
-        }
-
-        try {
-          const res = await fetch(nda.ndaImage);
-          const blob = await res.blob();
-          const file = new File([blob], filename, { type: "image/png" });
-          if (!navigator.canShare({ files: [file] })) {
-            downloadDirectly();
-            return;
-          }
-          await navigator.share({ title: `Signed NDA — ${nda.party1} & ${nda.party2}`, files: [file] });
-        } catch (err) {
-          if (err.name === "AbortError") return;
-          console.error(err);
-          downloadDirectly();
-        }
-      }
-
-      async function handleDownloadPackage(e, nda) {
-        e.stopPropagation();
-        try {
-          const name = `${nda.party1}_${nda.party2}`;
-          const files = [];
-          if (nda.ndaImage) {
-            const res = await fetch(nda.ndaImage);
-            const blob = await res.blob();
-            files.push(new File([blob], `NDA_${name}.png`, { type: "image/png" }));
-          }
-          if (nda.receiptImage) {
-            const res = await fetch(nda.receiptImage);
-            const blob = await res.blob();
-            files.push(new File([blob], `Receipt_${name}.png`, { type: "image/png" }));
-          }
-          if (nda.videoData) {
-            const mimeType = nda.videoMimeType || "video/mp4";
-            const ext = mimeType.includes("webm") ? "webm" : "mp4";
-            files.push(new File([nda.videoData], `Video_${name}.${ext}`, { type: mimeType }));
-          }
-          if (nda.bioResult) {
-            const blob = new Blob([JSON.stringify(nda.bioResult, null, 2)], { type: "application/json" });
-            files.push(new File([blob], `Biometric_${name}.json`, { type: "application/json" }));
-          }
-          if (navigator.share && files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-            await navigator.share({ title: `NDA Package — ${nda.party1} & ${nda.party2}`, files });
-          } else {
-            for (const file of files) {
-              const url = URL.createObjectURL(file);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = file.name;
-              a.click();
-              setTimeout(() => URL.revokeObjectURL(url), 100);
-            }
-          }
-        } catch (err) { if (err.name !== "AbortError") console.error(err); }
-      }
 
       const swipeRef = useRef(null);
       useEffect(() => {
@@ -582,10 +497,10 @@
                 <p style={{ fontSize: 14, color: "rgba(10,15,35,.3)", textAlign: "center", marginTop: 6, fontFamily: sans }}>Long-press to save or share</p>
               </div>
             )}
-            {viewingVideoURL && (
+            {viewing.videoURL && (
               <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(10,15,35,.35)", fontFamily: sans, letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 8 }}>Witness Recording</div>
-                <video src={viewingVideoURL} controls playsInline style={{ width: "100%", display: "block", borderRadius: 12, background: "#050810" }} />
+                <video src={viewing.videoURL} controls playsInline style={{ width: "100%", display: "block", borderRadius: 12, background: "#050810" }} />
               </div>
             )}
             {viewing.receiptImage && (
@@ -629,32 +544,20 @@
           {!loading && ndas.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {ndas.map(nda => (
-                <div key={nda.id} style={{ background: "rgba(250,228,207,.04)", borderRadius: 14, border: "1px solid rgba(250,228,207,.08)", overflow: "hidden" }}>
-                  <div onClick={() => setViewing(nda)} style={{ padding: "16px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 14 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "rgba(250,228,207,.15)" : "rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      {nda.bioVerified ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      ) : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      )}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: autumn, fontFamily: sans, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.party1} &amp; {nda.party2}</div>
-                      <div style={{ fontSize: 15, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
-                      <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
-                    </div>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.25 }}><path d="M6 3l5 5-5 5" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div key={nda.id} onClick={() => setViewing(nda)} style={{ background: "rgba(250,228,207,.04)", borderRadius: 14, padding: "16px 18px", border: "1px solid rgba(250,228,207,.08)", cursor: "pointer", transition: "transform .1s", display: "flex", alignItems: "center", gap: 14 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: nda.bioVerified ? "rgba(250,228,207,.15)" : "rgba(250,228,207,.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    {nda.bioVerified ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    )}
                   </div>
-                  <div style={{ display: "flex", gap: 8, padding: "0 14px 14px" }}>
-                    <button onClick={(e) => handleSend(e, nda)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 0", fontSize: 14, fontWeight: 700, fontFamily: sans, color: autumn, background: "rgba(250,228,207,.10)", border: "1px solid rgba(250,228,207,.15)", borderRadius: 10, cursor: "pointer", letterSpacing: ".03em" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                      Send
-                    </button>
-                    <button onClick={(e) => handleDownloadPackage(e, nda)} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 0", fontSize: 14, fontWeight: 700, fontFamily: sans, color: "#0a0f23", background: autumn, border: "none", borderRadius: 10, cursor: "pointer", letterSpacing: ".03em" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0a0f23" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      Download All Files
-                    </button>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: autumn, fontFamily: sans, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.party1} &amp; {nda.party2}</div>
+                    <div style={{ fontSize: 15, color: "rgba(250,228,207,.7)", fontFamily: sans, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{nda.purpose}</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 2 }}>{new Date(nda.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
                   </div>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, opacity: 0.25 }}><path d="M6 3l5 5-5 5" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               ))}
             </div>
@@ -854,6 +757,7 @@
     function NDA({ onOpenVault, resetKey }) {
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
+      const [showPrivacy, setShowPrivacy] = useState(false);
       const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
       const formRef = useRef(form);
       useEffect(() => { formRef.current = form; window._paktForm = form; }, [form]);
@@ -907,6 +811,8 @@
         return () => { if (step === 2) releaseStream(); };
       }, [step]);
 
+      useEffect(() => { window.scrollTo(0, 0); }, [step]);
+
       useEffect(() => {
         if (step !== 2) return;
         if (videoEnabled) { setVideoError(null); startRecording(); }
@@ -937,17 +843,15 @@
             setBioStatus("verified");
             setBioResult({ verifiedAt: data.verifiedAt, credentialId: data.credentialId, authenticatorType: data.authenticatorType || "platform", userAgent: data.userAgent || "unknown" });
             sessionRef.off("value", bioListenerRef.current);
-            setTimeout(() => { sessionRef.update({ status: "completed" }); }, 2000);
+            setTimeout(() => { sessionRef.remove(); }, 2000);
           }
         });
-        return () => { sessionRef.off("value", bioListenerRef.current); };
+        const cleanup = () => { sessionRef.off("value", bioListenerRef.current); sessionRef.remove(); };
+        window.addEventListener("beforeunload", cleanup);
+        return () => { window.removeEventListener("beforeunload", cleanup); sessionRef.off("value", bioListenerRef.current); if (bioStatus === "waiting") sessionRef.remove(); };
       }, [step]);
 
       const saveToVault = useCallback(async (finalNdaImage, finalReceiptImage, finalBioResult, finalVideoURL) => {
-        let videoData = null;
-        if (finalVideoURL && finalVideoURL.blob) {
-          try { videoData = await finalVideoURL.blob.arrayBuffer(); } catch (e) {}
-        }
         const record = {
           id: generateSessionId(),
           party1: form.party1,
@@ -958,9 +862,7 @@
           categories: form.categories,
           ndaImage: finalNdaImage,
           receiptImage: finalReceiptImage || null,
-          videoData,
-          videoMimeType: finalVideoURL ? finalVideoURL.mimeType : null,
-          videoURL: finalVideoURL ? finalVideoURL.url : null,
+          videoURL: finalVideoURL || null,
           bioVerified: !!finalBioResult,
           bioResult: finalBioResult || null,
           verification: [finalVideoURL && "Video", "Signature", finalBioResult && "Biometric"].filter(Boolean).join(" + "),
@@ -987,10 +889,7 @@
           const mimeType = getSupportedMimeType();
           const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
           mr.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data); };
-          mr.onstop = () => {
-            const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" });
-            setVideoURL({ url: URL.createObjectURL(blob), blob, mimeType: mimeType || "video/mp4" });
-          };
+          mr.onstop = () => { const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" }); setVideoURL(URL.createObjectURL(blob)); };
           mediaRecorderRef.current = mr;
           mr.start(100);
           setRecording(true);
@@ -1051,7 +950,7 @@
             });
             sessionRef.off("value", bioListenerRef.current);
             setTimeout(() => {
-              sessionRef.update({ status: "completed" });
+              sessionRef.remove();
             }, 2000);
           }
         });
@@ -1060,7 +959,7 @@
       const skipBiometric = useCallback(() => {
         if (bioSessionId && bioListenerRef.current) {
           db.ref("sessions/" + bioSessionId).off("value", bioListenerRef.current);
-          db.ref("sessions/" + bioSessionId).update({ status: "skipped" });
+          db.ref("sessions/" + bioSessionId).remove();
         }
         setBioStatus("skipped");
         setStep(4);
@@ -1316,6 +1215,106 @@
         </div>
       );
 
+      if (showPrivacy) return (
+        <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
+          <button onClick={() => setShowPrivacy(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: autumn, fontFamily: sans, marginBottom: 24, padding: 0 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
+          <h1 style={{ fontSize: 28, fontWeight: 400, color: autumn, marginBottom: 6, fontFamily: "'Instrument Serif', Georgia, serif" }}>Privacy Policy</h1>
+          <p style={{ fontSize: 13, color: "rgba(250,228,207,.4)", fontFamily: sans, marginBottom: 28, letterSpacing: ".04em" }}>Effective April 9, 2026</p>
+
+          <div style={{ fontSize: 15, lineHeight: 1.75, color: "rgba(250,228,207,.7)", fontFamily: sans }}>
+            <p style={{ marginBottom: 20 }}>Pakt is operated by Class of NONE LLC, a California-based company ("we," "us," or "our"). This policy describes how we handle your information when you use the Pakt app.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>What We Collect</h3>
+            <p style={{ marginBottom: 8 }}>When you create an NDA, the app processes the following information locally on your device:</p>
+            <ul style={{ paddingLeft: 20, marginBottom: 20 }}>
+              <li style={{ marginBottom: 4 }}>Party names you enter</li>
+              <li style={{ marginBottom: 4 }}>The stated purpose of the NDA</li>
+              <li style={{ marginBottom: 4 }}>Your selected jurisdiction (state)</li>
+              <li style={{ marginBottom: 4 }}>Confidential information categories you select</li>
+              <li style={{ marginBottom: 4 }}>The agreement start date</li>
+              <li style={{ marginBottom: 4 }}>Finger-drawn signatures</li>
+              <li style={{ marginBottom: 4 }}>The completed NDA document image</li>
+            </ul>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>How Your Data Is Stored</h3>
+            <p style={{ marginBottom: 20 }}>All NDA data is stored locally on your device using your browser's built-in storage (IndexedDB). Your completed documents remain on your device. We do not maintain a central database of your NDAs on our servers.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>When Data Leaves Your Device</h3>
+            <p style={{ marginBottom: 8 }}>During the identity verification step, the following data is temporarily transmitted to Firebase (a Google cloud service) to connect the two signing parties:</p>
+            <ul style={{ paddingLeft: 20, marginBottom: 8 }}>
+              <li style={{ marginBottom: 4 }}>Both party names</li>
+              <li style={{ marginBottom: 4 }}>The stated purpose of the NDA</li>
+              <li style={{ marginBottom: 4 }}>A session timestamp</li>
+              <li style={{ marginBottom: 4 }}>The verifying party's device credential ID (a random hardware-generated identifier, not biometric data)</li>
+              <li style={{ marginBottom: 4 }}>The verifying party's browser user agent string</li>
+            </ul>
+            <p style={{ marginBottom: 8 }}>This data is used solely to facilitate the real-time verification handshake between the two parties. Once verification is complete or skipped, the session record is permanently deleted from Firebase. No copy is retained on our servers.</p>
+            <p style={{ marginBottom: 20 }}>If you skip the verification step, the session record is also immediately deleted.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Camera Access and Witness Recording</h3>
+            <p style={{ marginBottom: 8 }}>If you enable the optional witness recording feature, the app will request permission to access your device's camera. You can deny this permission and continue using the app without it. When enabled:</p>
+            <ul style={{ paddingLeft: 20, marginBottom: 20 }}>
+              <li style={{ marginBottom: 4 }}>Video is captured and stored locally on your device only</li>
+              <li style={{ marginBottom: 4 }}>Recordings are never uploaded to any server</li>
+              <li style={{ marginBottom: 4 }}>A visible recording indicator is displayed while the camera is active</li>
+            </ul>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Identity Verification (Biometric)</h3>
+            <p style={{ marginBottom: 8 }}>The app uses WebAuthn, a web standard for identity verification, to allow the second party to verify their identity using Face ID, Touch ID, or a device passcode. Important details:</p>
+            <ul style={{ paddingLeft: 20, marginBottom: 20 }}>
+              <li style={{ marginBottom: 4 }}>Your actual biometric data (face scan, fingerprint) never leaves your device's secure hardware enclave</li>
+              <li style={{ marginBottom: 4 }}>The app receives only a cryptographic confirmation that verification succeeded</li>
+              <li style={{ marginBottom: 4 }}>A hardware-generated credential ID (not biometric data) is temporarily stored in Firebase and deleted when the session ends</li>
+              <li style={{ marginBottom: 4 }}>We do not collect, store, or have access to your biometric data at any time</li>
+            </ul>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Third-Party Services</h3>
+            <ul style={{ paddingLeft: 20, marginBottom: 20 }}>
+              <li style={{ marginBottom: 4 }}><strong style={{ color: autumn }}>Firebase (Google)</strong> — Used for the real-time verification handshake between signing parties. Session data is deleted immediately after use. Subject to Google's privacy policy.</li>
+              <li style={{ marginBottom: 4 }}><strong style={{ color: autumn }}>Google Fonts</strong> — Font files are loaded to display the app's typography. This transmits your device's IP address to Google's servers, as is standard for any web font service.</li>
+            </ul>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>What We Do Not Do</h3>
+            <ul style={{ paddingLeft: 20, marginBottom: 20 }}>
+              <li style={{ marginBottom: 4 }}>We do not require accounts or login</li>
+              <li style={{ marginBottom: 4 }}>We do not use analytics or tracking</li>
+              <li style={{ marginBottom: 4 }}>We do not display advertising</li>
+              <li style={{ marginBottom: 4 }}>We do not collect location data</li>
+              <li style={{ marginBottom: 4 }}>We do not sell, share, or monetize your data in any way</li>
+              <li style={{ marginBottom: 4 }}>We do not collect, store, or process biometric data</li>
+            </ul>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Data Retention</h3>
+            <p style={{ marginBottom: 8 }}><strong style={{ color: autumn }}>On your device:</strong> NDA documents, signatures, and recordings remain in your local Vault until you delete them. You have full control.</p>
+            <p style={{ marginBottom: 20 }}><strong style={{ color: autumn }}>On our servers:</strong> Firebase session data is automatically and permanently deleted within seconds of the verification completing or being skipped. In the rare event that a session is not properly closed (for example, if the app is force-quit during verification), any residual session data contains only the limited fields listed above and is not used for any purpose. We retain no server-side copy of any user data.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Data Deletion</h3>
+            <p style={{ marginBottom: 20 }}>You can delete any saved NDA from your device at any time using the Vault's delete function. Server-side data is deleted automatically as described above. For any additional privacy requests, contact us at the email below.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Children's Privacy</h3>
+            <p style={{ marginBottom: 20 }}>Pakt is not intended for use by anyone under the age of 18. We do not knowingly collect information from minors. If you believe a minor has used this app, please contact us and we will address the concern promptly.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>California Privacy Rights</h3>
+            <p style={{ marginBottom: 20 }}>If you are a California resident, you have the right to know what personal information we collect, request its deletion, and opt out of its sale. Because we do not maintain a database of user data and do not sell personal information, these rights are satisfied by the app's design. For questions, contact us at the email below.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Changes to This Policy</h3>
+            <p style={{ marginBottom: 20 }}>If we update this policy, the revised version will be included in a future app update with a new effective date. Continued use of the app after an update constitutes acceptance of the revised policy.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Governing Law</h3>
+            <p style={{ marginBottom: 20 }}>This privacy policy is governed by the laws of the State of California, United States.</p>
+
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: autumn, marginBottom: 8, fontFamily: sans }}>Contact</h3>
+            <p style={{ marginBottom: 8 }}>For privacy questions, data deletion requests, or concerns:</p>
+            <p style={{ marginBottom: 4 }}><strong style={{ color: autumn }}>Class of NONE LLC</strong></p>
+            <p style={{ marginBottom: 4 }}><strong style={{ color: autumn }}>operator@classofnone.com</strong></p>
+            <p style={{ marginBottom: 40 }}><strong style={{ color: autumn }}>Los Angeles, California</strong></p>
+          </div>
+        </div>
+      );
+
       if (step === 0) return (
         <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
           {progress}
@@ -1398,7 +1397,10 @@
               <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
               {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.7)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
             </div>
-            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+            <div style={{ textAlign: "center", marginTop: 16 }}>
+              <span onClick={() => setShowPrivacy(true)} style={{ fontSize: 13, color: "rgba(250,228,207,.4)", fontFamily: sans, textDecoration: "none", letterSpacing: ".04em", cursor: "pointer" }}>Privacy Policy</span>
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
               <button style={{ ...btnO, flex: 1 }} onClick={() => setStep(0)}>&larr; Back</button>
               <button style={{ ...btnP, flex: 2 }} onClick={() => setStep(2)}>Sign &rarr;</button>
             </div>
@@ -1570,9 +1572,9 @@
                     <span style={{ fontSize: 11, fontWeight: 700, color: autumn, fontFamily: sans, letterSpacing: ".08em" }}>CAPTURED</span>
                   </div>
                 </div>
-                <video src={videoURL?.url} controls playsInline style={{ width: "100%", display: "block", background: "#050810", maxHeight: 230 }} />
+                <video src={videoURL} controls playsInline style={{ width: "100%", display: "block", background: "#050810", maxHeight: 230 }} />
                 <div style={{ padding: "10px 14px" }}>
-                  <a href={videoURL?.url} download={`Pakt_${safeName1}_${safeName2}_${form.date}.mp4`} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px", borderRadius: 10, background: "rgba(250,228,207,.06)", color: autumn, fontSize: 15, fontWeight: 600, fontFamily: sans, textDecoration: "none", letterSpacing: ".03em", border: "1px solid rgba(250,228,207,.08)" }}>
+                  <a href={videoURL} download={`Pakt_${safeName1}_${safeName2}_${form.date}.mp4`} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px", borderRadius: 10, background: "rgba(250,228,207,.06)", color: autumn, fontSize: 15, fontWeight: 600, fontFamily: sans, textDecoration: "none", letterSpacing: ".03em", border: "1px solid rgba(250,228,207,.08)" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     Save Recording
                   </a>
@@ -1630,8 +1632,8 @@
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button style={{ ...btnP, flex: 1 }} onClick={() => {
-                if (videoURL?.url) URL.revokeObjectURL(videoURL.url);
-                if (bioSessionId && bioListenerRef.current) db.ref("sessions/" + bioSessionId).off("value", bioListenerRef.current);
+                if (videoURL) URL.revokeObjectURL(videoURL);
+                if (bioSessionId) { if (bioListenerRef.current) db.ref("sessions/" + bioSessionId).off("value", bioListenerRef.current); db.ref("sessions/" + bioSessionId).remove(); }
                 setStep(0); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
                 setSig1Done(false); setSig2Done(false); setNdaImage(null); setVideoURL(null);
                 setVideoError(null); setStreamReady(false); setRecording(false);
