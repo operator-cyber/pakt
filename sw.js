@@ -1,4 +1,4 @@
-const CACHE = 'pakt-v18';
+const CACHE = 'pakt-v15';
 const SHELL = [
   './',
   './index.html',
@@ -7,18 +7,6 @@ const SHELL = [
   './app-icon-512x512.png',
   './apple-touch-icon.png',
   './pakt-logo.png',
-  './lib/react.production.min.js',
-  './lib/react-dom.production.min.js',
-  './lib/babel.min.js',
-  './lib/qrcode.min.js',
-  './lib/firebase-app-compat.js',
-  './lib/firebase-database-compat.js',
-  './lib/firebase-auth-compat.js',
-  './lib/firebase-firestore-compat.js',
-  './lib/firebase-storage-compat.js',
-  './lib/InstrumentSerif-Regular.woff2',
-  './lib/InstrumentSerif-Italic.woff2',
-  './lib/Outfit-Variable.woff2',
 ];
 
 self.addEventListener('install', e => {
