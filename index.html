@@ -9,14 +9,36 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <title>Pakt</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="lib/react.production.min.js"></script>
+  <script src="lib/react-dom.production.min.js"></script>
+  <script src="lib/babel.min.js"></script>
+  <script src="lib/qrcode.min.js"></script>
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-database-compat.js"></script>
+  <script src="lib/firebase-auth-compat.js"></script>
+  <script src="lib/firebase-firestore-compat.js"></script>
   <style>
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url('lib/InstrumentSerif-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: url('lib/InstrumentSerif-Italic.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('lib/Outfit-Variable.woff2') format('woff2');
+  font-display: swap;
+}
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; background: #0a0f23; overscroll-behavior-x: none; }
     #root { min-height: 100dvh; }
@@ -61,6 +83,8 @@
 
     const fbApp = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
+    const firestore = firebase.firestore();
 
     function generateSessionId() {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
