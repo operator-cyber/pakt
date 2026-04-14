@@ -8,8 +8,8 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Firebase Authentication | Add user auth as first screen; every Pro feature depends on knowing who the user is | AUTH-01 through AUTH-06 | 4 |
-| 2 | Firestore Schema + Cloud Storage | Backend data model for cloud NDA storage, usage counting, remote signing | CLOUD-01 through CLOUD-06, LIMIT-01 through LIMIT-05 | 5 |
+| 1 | Firebase Authentication | AUTH-01 through AUTH-06 | Complete |  |
+| 2 | Firestore Schema + Cloud Storage | Complete | CLOUD-01 through CLOUD-06, LIMIT-01 through LIMIT-05 | 5 |
 | 3 | NDC + Bilateral NDA Templates | Two additional agreement types, Pro-only, with agreement type selector | TMPL-01 through TMPL-07 | 4 |
 | 4 | Remote Signing Flow | User A sends NDA via link; User B signs on web with no app install | REMOTE-01 through REMOTE-12 | 5 |
 | 5 | StoreKit Subscription + Paywall | Gate Pro features behind $4.99/month auto-renewing subscription | SUB-01 through SUB-09 | 4 |
@@ -23,12 +23,12 @@
 
 **Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
 
-**Plans:** 3 plans
+**Plans:** 3/3 plans executed
 
 Plans:
-- [ ] 01-01-PLAN.md — Bundle all CDN dependencies locally (JS, fonts) and upgrade Firebase SDK to v12.12.0
-- [ ] 01-02-PLAN.md — Initialize Capacitor iOS project with Firebase Auth plugin and OAuth configuration
-- [ ] 01-03-PLAN.md — Implement login screen, auth gate, session persistence, Firestore user profile, and profile sheet
+- [x] 01-01-PLAN.md — Bundle all CDN dependencies locally (JS, fonts) and upgrade Firebase SDK to v12.12.0
+- [x] 01-02-PLAN.md — Initialize Capacitor iOS project with Firebase Auth plugin and OAuth configuration
+- [x] 01-03-PLAN.md — Implement login screen, auth gate, session persistence, Firestore user profile, and profile sheet
 
 **Success Criteria:**
 1. User can sign in with Apple and see their name displayed
@@ -59,6 +59,11 @@ Plans:
 5. Firestore rules reject cross-user data access
 
 **Dependencies:** Phase 1 (auth) — all queries scoped to authenticated UID
+
+**Plans:**
+- [x] 02-01-PLAN.md — Create Firestore database, define schema, deploy security rules
+- [x] 02-02-PLAN.md — Cloud Storage upload on NDA completion (images + video)
+- [x] 02-03-PLAN.md — Usage counting, free tier limits (2/month), upgrade prompt
 
 ---
 
@@ -138,4 +143,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-04-13*
-*Last updated: 2026-04-13 after Phase 1 planning complete*
+*Last updated: 2026-04-14 — Phase 2 complete, ready for Phase 3*

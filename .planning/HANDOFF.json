@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-04-14T08:28:59.855Z",
+  "phase": "02",
+  "phase_name": "firestore-schema",
+  "phase_dir": ".planning/phases/02-firestore-schema",
+  "plan": 3,
+  "task": 4,
+  "total_tasks": 4,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "02-01: Create Firestore DB + security rules", "status": "done"},
+    {"id": 2, "name": "02-02: Cloud Storage upload on NDA completion", "status": "done"},
+    {"id": 3, "name": "02-03: Usage counting + free tier limits + upgrade prompt", "status": "done"}
+  ],
+  "remaining_tasks": [],
+  "blockers": [],
+  "human_actions_pending": [],
+  "decisions": [
+    {"decision": "writeUserProfile uses check-then-write instead of set({merge:true})", "rationale": "Firestore rules block client updates to tier field; merge:true includes tier in affectedKeys even when value unchanged", "phase": "02"},
+    {"decision": "atLimit early return moved after all React hooks", "rationale": "Original placement before useMemo hooks violated React rules of hooks, causing #300 crash when monthlyUsage changed from 0 to 2", "phase": "02"}
+  ],
+  "uncommitted_files": [
+    ".planning/ROADMAP.md",
+    ".planning/STATE.md",
+    "CLAUDE.MD",
+    "index.html",
+    "sw.js",
+    "firestore.rules",
+    "storage.rules",
+    ".planning/phases/02-firestore-schema/02-01-SUMMARY.md",
+    ".planning/phases/02-firestore-schema/02-02-SUMMARY.md",
+    ".planning/phases/02-firestore-schema/02-03-SUMMARY.md",
+    "lib/firebase-storage-compat.js",
+    "capacitor.config.json",
+    "GoogleService-Info.plist",
+    "package.json",
+    "package-lock.json"
+  ],
+  "next_action": "Commit all Phase 2 work, then plan Phase 3 (NDC + Bilateral NDA Templates — TMPL-01 through TMPL-07)",
+  "context_notes": "Phase 2 fully verified on iOS simulator. Cloud upload, usage counting, upgrade prompt all working. Phase 3 plans do not exist yet — need to create 03-CONTEXT.md and plan files. Firestore security rules are deployed in Firebase Console (not CLI). Test NDA data exists in Firestore (3 NDAs from this session's testing)."
+}
