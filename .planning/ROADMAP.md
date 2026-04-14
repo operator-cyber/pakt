@@ -23,6 +23,13 @@
 
 **Requirements:** AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, AUTH-06
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Bundle all CDN dependencies locally (JS, fonts) and upgrade Firebase SDK to v12.12.0
+- [ ] 01-02-PLAN.md — Initialize Capacitor iOS project with Firebase Auth plugin and OAuth configuration
+- [ ] 01-03-PLAN.md — Implement login screen, auth gate, session persistence, Firestore user profile, and profile sheet
+
 **Success Criteria:**
 1. User can sign in with Apple and see their name displayed
 2. User can sign in with Google and see their name displayed
@@ -131,4 +138,4 @@
 
 ---
 *Roadmap created: 2026-04-13*
-*Last updated: 2026-04-13 after milestone v2.0 initialization*
+*Last updated: 2026-04-13 after Phase 1 planning complete*
