@@ -17,6 +17,7 @@
   <script src="lib/firebase-database-compat.js"></script>
   <script src="lib/firebase-auth-compat.js"></script>
   <script src="lib/firebase-firestore-compat.js"></script>
+  <script src="lib/firebase-storage-compat.js"></script>
   <style>
 @font-face {
   font-family: 'Instrument Serif';
@@ -54,6 +55,7 @@
     @keyframes grainShift { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-5%,-10%)} 30%{transform:translate(3%,-15%)} 50%{transform:translate(12%,9%)} 70%{transform:translate(9%,4%)} 90%{transform:translate(-1%,7%)} }
     @keyframes stepFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .step-animate { animation: stepFadeIn .3s ease-out both; }
+    @keyframes profileSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     #root::before {
       content: ""; position: fixed; inset: -50%; width: 200%; height: 200%; z-index: 9999; pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
@@ -85,6 +87,144 @@
     const db = firebase.database();
     const auth = firebase.auth();
     const firestore = firebase.firestore();
+    const storage = firebase.storage();
+
+    /* ══════════════════════════════════════════════════════════
+       AUTH FUNCTIONS
+       ══════════════════════════════════════════════════════════ */
+
+    const signInWithApple = async () => {
+      if (typeof Capacitor === 'undefined' || !Capacitor.Plugins?.FirebaseAuthentication) {
+        console.warn('Auth requires native Capacitor environment');
+        return;
+      }
+      const { FirebaseAuthentication } = Capacitor.Plugins;
+      const result = await FirebaseAuthentication.signInWithApple({
+        skipNativeAuth: true,
+      });
+      const provider = new firebase.auth.OAuthProvider('apple.com');
+      const credential = provider.credential({
+        idToken: result.credential?.idToken,
+        rawNonce: result.credential?.nonce,
+      });
+      await firebase.auth().signInWithCredential(credential);
+    };
+
+    const signInWithGoogle = async () => {
+      if (typeof Capacitor === 'undefined' || !Capacitor.Plugins?.FirebaseAuthentication) {
+        console.warn('Auth requires native Capacitor environment');
+        return;
+      }
+      const { FirebaseAuthentication } = Capacitor.Plugins;
+      const result = await FirebaseAuthentication.signInWithGoogle();
+      const credential = firebase.auth.GoogleAuthProvider.credential(
+        result.credential?.idToken
+      );
+      await firebase.auth().signInWithCredential(credential);
+    };
+
+    const writeUserProfile = async (user) => {
+      const docRef = firestore.collection('users').doc(user.uid);
+      const doc = await docRef.get();
+      if (doc.exists) {
+        await docRef.update({
+          displayName: user.displayName || '',
+          email: user.email || '',
+        });
+      } else {
+        await docRef.set({
+          uid: user.uid,
+          displayName: user.displayName || '',
+          email: user.email || '',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          tier: 'free',
+          subscriptionExpiry: null
+        });
+      }
+    };
+
+    const signOutUser = async () => {
+      if (typeof Capacitor !== 'undefined' && Capacitor.Plugins?.FirebaseAuthentication) {
+        const { FirebaseAuthentication } = Capacitor.Plugins;
+        await FirebaseAuthentication.signOut();
+      }
+      await firebase.auth().signOut();
+    };
+
+    function dataURLtoBlob(dataURL) {
+      const parts = dataURL.split(',');
+      const mime = parts[0].match(/:(.*?);/)[1];
+      const raw = atob(parts[1]);
+      const arr = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    }
+
+    const uploadNdaToCloud = async (ndaId, record, videoBlob) => {
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      const basePath = `users/${user.uid}/ndas/${ndaId}`;
+
+      let ndaImagePath = null;
+      if (record.ndaImage) {
+        const ndaBlob = dataURLtoBlob(record.ndaImage);
+        const ndaRef = storage.ref(`${basePath}/nda.png`);
+        await ndaRef.put(ndaBlob);
+        ndaImagePath = ndaRef.fullPath;
+      }
+
+      let receiptImagePath = null;
+      if (record.receiptImage) {
+        const receiptBlob = dataURLtoBlob(record.receiptImage);
+        const receiptRef = storage.ref(`${basePath}/receipt.png`);
+        await receiptRef.put(receiptBlob);
+        receiptImagePath = receiptRef.fullPath;
+      }
+
+      let videoPath = null;
+      if (videoBlob) {
+        const videoRef = storage.ref(`${basePath}/video.mp4`);
+        await videoRef.put(videoBlob);
+        videoPath = videoRef.fullPath;
+      }
+
+      await firestore.collection('users').doc(user.uid)
+        .collection('ndas').doc(ndaId).set({
+          party1: record.party1,
+          party2: record.party2,
+          purpose: record.purpose,
+          state: record.state,
+          date: record.date,
+          categories: record.categories,
+          type: 'nda',
+          ndaImagePath: ndaImagePath,
+          receiptImagePath: receiptImagePath,
+          videoPath: videoPath,
+          bioVerified: record.bioVerified,
+          bioResult: record.bioResult,
+          verification: record.verification,
+          status: 'complete',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    };
+
+    const FREE_NDA_LIMIT = 2;
+
+    const getMonthlyUsage = async (uid) => {
+      const now = new Date();
+      const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const snapshot = await firestore.collection('users').doc(uid)
+        .collection('ndas')
+        .where('createdAt', '>=', firebase.firestore.Timestamp.fromDate(firstOfMonth))
+        .get();
+      return snapshot.size;
+    };
+
+    const getUserTier = async (uid) => {
+      const doc = await firestore.collection('users').doc(uid).get();
+      if (doc.exists) return doc.data().tier || 'free';
+      return 'free';
+    };
 
     function generateSessionId() {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -819,6 +959,181 @@
     }
 
     /* ══════════════════════════════════════════════════════════
+       LOGIN SCREEN
+       ══════════════════════════════════════════════════════════ */
+
+    function LoginScreen() {
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+
+      const handleApple = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          await signInWithApple();
+        } catch (err) {
+          console.error('Apple sign-in error:', err);
+          setError(true);
+          setLoading(false);
+        }
+      };
+
+      const handleGoogle = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          await signInWithGoogle();
+        } catch (err) {
+          console.error('Google sign-in error:', err);
+          setError(true);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#0a0f23', padding: '0 32px', paddingBottom: 'calc(60px + env(safe-area-inset-bottom))' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src="pakt-logo.png" alt="PAKT" style={{ width: 217 }} />
+          </div>
+
+          {loading ? (
+            <div style={{ color: '#fae4cf', fontFamily: "'Outfit', sans-serif", fontSize: 14, letterSpacing: '.05em' }}>
+              Signing in...
+            </div>
+          ) : (
+            <div style={{ width: '100%', maxWidth: 320, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <button onClick={handleApple} style={{
+                width: '100%', height: 50, borderRadius: 12,
+                background: '#000', color: '#f7f6f3',
+                border: 'none', cursor: 'pointer',
+                fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
+                fontSize: 17, fontWeight: 500,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="#f7f6f3"><path d="M13.21 9.48c-.02-1.75 1.43-2.59 1.49-2.63a3.23 3.23 0 00-2.54-1.3c-1.08-.11-2.1.63-2.65.63-.55 0-1.4-.62-2.3-.6A3.39 3.39 0 004.34 7.2c-1.22 2.12-.31 5.27.88 6.99.58.84 1.27 1.79 2.18 1.76.87-.04 1.2-.56 2.26-.56 1.05 0 1.35.56 2.27.54.94-.01 1.53-.86 2.1-1.7a7.5 7.5 0 00.96-1.96 3.08 3.08 0 01-1.78-2.79zm-1.67-5.13A3.13 3.13 0 0012.27 2a3.19 3.19 0 00-2.06 1.07 2.99 2.99 0 00-.75 2.17 2.64 2.64 0 002.08-1.89z"/></svg>
+                Sign in with Apple
+              </button>
+
+              <button onClick={handleGoogle} style={{
+                width: '100%', height: 50, borderRadius: 12,
+                background: '#f7f6f3', color: '#3c4043',
+                border: '1px solid #dadce0', cursor: 'pointer',
+                fontFamily: "'Roboto', 'Outfit', sans-serif",
+                fontSize: 16, fontWeight: 500,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10
+              }}>
+                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2a10.3 10.3 0 00-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.91A8.78 8.78 0 0017.64 9.2z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26a5.4 5.4 0 01-8.09-2.84H1.02v2.33A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.96 10.71a5.4 5.4 0 010-3.42V4.96H1.02a9 9 0 000 8.08l2.94-2.33z"/><path fill="#EA4335" d="M9 3.58a4.86 4.86 0 013.44 1.35l2.58-2.59A8.65 8.65 0 009 0 9 9 0 001.02 4.96l2.94 2.33A5.36 5.36 0 019 3.58z"/></svg>
+                Sign in with Google
+              </button>
+
+              {error && (
+                <div style={{ textAlign: 'center', marginTop: 16 }}>
+                  <p style={{ color: '#fae4cf', fontFamily: "'Outfit', sans-serif", fontSize: 14, marginBottom: 12, opacity: 0.8 }}>
+                    Unable to sign in. Check your connection and try again.
+                  </p>
+                  <button onClick={() => setError(null)} style={{
+                    background: 'none', border: '1px solid rgba(250,228,207,.3)',
+                    color: '#fae4cf', padding: '8px 24px', borderRadius: 8,
+                    fontFamily: "'Outfit', sans-serif", fontSize: 14, cursor: 'pointer'
+                  }}>
+                    Retry
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       PROFILE SHEET
+       ══════════════════════════════════════════════════════════ */
+
+    function ProfileSheet({ user, onClose, onSignOut, monthlyUsage, userTier }) {
+      return (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 10000 }} onClick={onClose}>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.5)' }} />
+          <div onClick={e => e.stopPropagation()} style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0,
+            background: '#0a0f23', borderTop: '1px solid rgba(250,228,207,.1)',
+            borderRadius: '20px 20px 0 0', padding: '24px 24px calc(24px + env(safe-area-inset-bottom))',
+            animation: 'profileSlideUp .25s ease-out',
+          }}>
+            <div style={{ width: 36, height: 4, background: 'rgba(250,228,207,.2)', borderRadius: 2, margin: '0 auto 20px' }} />
+            <p style={{ color: '#fae4cf', fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 22, marginBottom: 4 }}>
+              {user.displayName || 'Pakt User'}
+            </p>
+            <p style={{ color: 'rgba(250,228,207,.5)', fontFamily: "'Outfit', sans-serif", fontSize: 13, marginBottom: 20 }}>
+              {user.email || ''}
+            </p>
+            <div style={{
+              background: 'rgba(250,228,207,.05)', borderRadius: 12,
+              padding: 16, marginBottom: 20,
+              border: '1px solid rgba(250,228,207,.08)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(250,228,207,.5)', fontWeight: 600, letterSpacing: '.05em', textTransform: 'uppercase' }}>
+                  This Month
+                </span>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: userTier === 'pro' ? '#34d399' : '#fae4cf', fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase' }}>
+                  {userTier === 'pro' ? 'PRO' : 'FREE'}
+                </span>
+              </div>
+              <p style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 28, color: '#fae4cf', marginBottom: 4 }}>
+                {userTier === 'pro' ? monthlyUsage : `${monthlyUsage} / ${FREE_NDA_LIMIT}`}
+              </p>
+              <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(250,228,207,.4)' }}>
+                {userTier === 'pro' ? 'Unlimited NDAs' : 'NDAs created'}
+              </p>
+            </div>
+            <button onClick={onSignOut} style={{
+              width: '100%', padding: '14px 0', borderRadius: 12,
+              background: 'none', border: '1px solid rgba(250,228,207,.15)',
+              color: '#fae4cf', fontFamily: "'Outfit', sans-serif",
+              fontSize: 15, fontWeight: 500, cursor: 'pointer',
+              letterSpacing: '.03em'
+            }}>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       UPGRADE PROMPT
+       ══════════════════════════════════════════════════════════ */
+
+    function UpgradePrompt({ usage, limit }) {
+      return (
+        <div style={{ minHeight: '60dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', textAlign: 'center' }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(250,228,207,.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fae4cf" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <h2 style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: 26, color: '#fae4cf', marginBottom: 8 }}>
+            Monthly Limit Reached
+          </h2>
+          <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: 'rgba(250,228,207,.6)', lineHeight: 1.5, marginBottom: 24, maxWidth: 280 }}>
+            You have used {usage} of {limit} free NDAs this month. Upgrade to Pro for unlimited NDAs, bilateral agreements, and remote signing.
+          </p>
+          <button style={{
+            width: '100%', maxWidth: 280, padding: '14px 0', borderRadius: 12,
+            background: '#fae4cf', color: '#0a0f23',
+            border: 'none', cursor: 'pointer',
+            fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 600,
+            letterSpacing: '.02em'
+          }}>
+            Upgrade to Pro
+          </button>
+          <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: 'rgba(250,228,207,.35)', marginTop: 12 }}>
+            $4.99/month
+          </p>
+        </div>
+      );
+    }
+
+    /* ══════════════════════════════════════════════════════════
        MAIN APP (Router)
        ══════════════════════════════════════════════════════════ */
 
@@ -828,8 +1143,68 @@
       const [view, setView] = useState("home");
       const [vaultResetKey, setVaultResetKey] = useState(0);
       const [homeResetKey, setHomeResetKey] = useState(0);
+      const [user, setUser] = useState(null);
+      const [authChecked, setAuthChecked] = useState(false);
+      const [showProfile, setShowProfile] = useState(false);
+      const [monthlyUsage, setMonthlyUsage] = useState(0);
+      const [userTier, setUserTier] = useState('free');
+
+      const hideSplash = () => {
+        try {
+          if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.SplashScreen) {
+            Capacitor.Plugins.SplashScreen.hide();
+          }
+        } catch (e) {}
+      };
+
+      useEffect(() => {
+        let settled = false;
+        const fallback = setTimeout(() => {
+          if (!settled) {
+            settled = true;
+            setAuthChecked(true);
+            hideSplash();
+          }
+        }, 5000);
+        const unsubscribe = firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+          settled = true;
+          clearTimeout(fallback);
+          setUser(firebaseUser);
+          setAuthChecked(true);
+          if (firebaseUser) {
+            try { await writeUserProfile(firebaseUser); } catch (e) { console.error('Profile write error:', e); }
+          }
+          hideSplash();
+        });
+        return () => { unsubscribe(); clearTimeout(fallback); };
+      }, []);
+
+      useEffect(() => {
+        if (!user) return;
+        const fetchUsage = async () => {
+          try {
+            const [usage, tier] = await Promise.all([
+              getMonthlyUsage(user.uid),
+              getUserTier(user.uid)
+            ]);
+            setMonthlyUsage(usage);
+            setUserTier(tier);
+          } catch (e) {
+            console.error('Usage fetch error:', e);
+          }
+        };
+        fetchUsage();
+      }, [user]);
+
+      if (!authChecked) return null;
+      if (!user) return React.createElement(LoginScreen);
 
       if (verifyId) return React.createElement(VerifyScreen, { sessionId: verifyId });
+
+      const handleSignOut = async () => {
+        setShowProfile(false);
+        try { await signOutUser(); } catch (e) { console.error('Sign-out error:', e); }
+      };
 
       const tabBar = (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100, background: "#0a0f23", borderTop: "1px solid rgba(250,228,207,.08)", paddingBottom: "env(safe-area-inset-bottom)", display: "flex" }}>
@@ -841,20 +1216,25 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
             <span style={{ fontSize: 10, fontWeight: 700, color: view === "vault" ? "#fae4cf" : "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>VAULT</span>
           </button>
+          <button onClick={() => setShowProfile(true)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "10px 0 8px", background: "none", border: "none", cursor: "pointer" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(250,228,207,.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(250,228,207,.7)", fontFamily: "'Outfit', sans-serif", letterSpacing: ".06em" }}>ACCOUNT</span>
+          </button>
         </div>
       );
 
       return (
         <div>
+          {showProfile && React.createElement(ProfileSheet, { user: user, onClose: () => setShowProfile(false), onSignOut: handleSignOut, monthlyUsage: monthlyUsage, userTier: userTier })}
           <div style={{ paddingBottom: 70 }}>
-            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home"), resetKey: vaultResetKey }) : React.createElement(NDA, { onOpenVault: () => setView("vault"), resetKey: homeResetKey })}
+            {view === "vault" ? React.createElement(Vault, { onBack: () => setView("home"), onNewNDA: () => setView("home"), resetKey: vaultResetKey }) : React.createElement(NDA, { onOpenVault: () => setView("vault"), resetKey: homeResetKey, onNdaCreated: () => setMonthlyUsage(prev => prev + 1), monthlyUsage: monthlyUsage, userTier: userTier })}
           </div>
           {tabBar}
         </div>
       );
     }
 
-    function NDA({ onOpenVault, resetKey }) {
+    function NDA({ onOpenVault, resetKey, onNdaCreated, monthlyUsage, userTier }) {
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
       const [showPrivacy, setShowPrivacy] = useState(false);
@@ -877,6 +1257,7 @@
       const mediaRecorderRef = useRef(null);
       const streamRef = useRef(null);
       const chunksRef = useRef([]);
+      const videoBlobRef = useRef(null);
       const previewRef = useRef(null);
 
       const [bioSessionId, setBioSessionId] = useState(null);
@@ -892,6 +1273,8 @@
 
       const up = (f) => (e) => setForm(prev => ({ ...prev, [f]: e.target.value }));
       const toggleCat = (key) => setForm(prev => ({ ...prev, categories: prev.categories.includes(key) ? prev.categories.filter(k => k !== key) : [...prev.categories, key] }));
+      const atLimit = userTier !== 'pro' && monthlyUsage >= FREE_NDA_LIMIT;
+
       const canProceed = form.party1.trim() && form.party2.trim() && form.purpose.trim() && form.state && form.state !== "" && (form.categories.length > 0 || (form.customCategory && form.customCategory.trim()));
       const sections = useMemo(() => buildSections(form.state, form.categories, form.customCategory), [form.state, form.categories, form.customCategory]);
       const compliance = useMemo(() => getComplianceItems(form.state), [form.state]);
@@ -952,8 +1335,9 @@
       }, [step]);
 
       const saveToVault = useCallback(async (finalNdaImage, finalReceiptImage, finalBioResult, finalVideoURL) => {
+        const ndaId = generateSessionId();
         const record = {
-          id: generateSessionId(),
+          id: ndaId,
           party1: form.party1,
           party2: form.party2,
           purpose: form.purpose,
@@ -970,7 +1354,14 @@
         };
         await vaultSave(record);
         setVaultCount(prev => prev + 1);
-      }, [form]);
+        if (onNdaCreated) onNdaCreated();
+        try {
+          await uploadNdaToCloud(ndaId, record, videoBlobRef.current);
+        } catch (e) {
+          console.error('Cloud upload error:', e);
+        }
+        videoBlobRef.current = null;
+      }, [form, onNdaCreated]);
 
       function releaseStream() {
         if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
@@ -989,7 +1380,7 @@
           const mimeType = getSupportedMimeType();
           const mr = new MediaRecorder(stream, mimeType ? { mimeType } : {});
           mr.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data); };
-          mr.onstop = () => { const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" }); setVideoURL(URL.createObjectURL(blob)); };
+          mr.onstop = () => { const blob = new Blob(chunksRef.current, { type: mimeType || "video/mp4" }); videoBlobRef.current = blob; setVideoURL(URL.createObjectURL(blob)); };
           mediaRecorderRef.current = mr;
           mr.start(100);
           setRecording(true);
@@ -1294,6 +1685,10 @@
         const dy = Math.abs(e.changedTouches[0].clientY - swipeBackRef.current.startY);
         if (dx > 80 && dy < dx) goBack();
       };
+
+      if (step === 0 && atLimit) {
+        return React.createElement(UpgradePrompt, { usage: monthlyUsage, limit: FREE_NDA_LIMIT });
+      }
 
       const progress = (
         <div style={{ display: "flex", gap: 4, marginBottom: 28 }}>

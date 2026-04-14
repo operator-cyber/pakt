@@ -10,7 +10,7 @@ Mobile-first mutual NDA generator, signer, and vault. Single-file React PWA (ind
 - **React 18** loaded from CDN (unpkg.com) — must be bundled locally for Capacitor wrap
 - **Firebase Realtime Database** for biometric verification handshake only (project: pakt-76a51)
 - **IndexedDB** ("PaktVault") for local NDA storage
-- **Service Worker** (sw.js, cache version v14) for offline/PWA capability
+- **Service Worker** (sw.js, cache version v15) for offline/PWA capability
 - **No build system** — runs via python3 -m http.server 8080
 - **GitHub repo:** github.com/operator-cyber/pakt (branch: remote-signing)
 - **GitHub Pages:** operator-cyber.github.io/pakt/ (serves from main branch)
@@ -185,7 +185,7 @@ Red team audit performed against full Apple App Review Guidelines (Feb 2026 vers
 - [x] Scroll-to-top on step transitions
 - [x] Legal disclaimer on Review step (Guideline 1.1.6 / 5.2.1)
 - [x] Debug artifacts removed: window._paktForm, console.log (Guideline 2.3.1a)
-- [x] Video recording defaults to OFF, requires user toggle to start (Guideline 2.5.14)
+- [x] Video recording defaults to ON — iOS native camera permission dialog IS the explicit consent (Guideline 2.5.14)
 - [x] Firebase data transmission notice on Verify step (Guideline 5.1.1(ii))
 
 ### Remaining Before Submission (Infrastructure)
@@ -196,6 +196,56 @@ Red team audit performed against full Apple App Review Guidelines (Feb 2026 vers
 - [ ] App Store screenshots (all 5 steps)
 - [ ] App Review notes for Apple (detailed feature walkthrough for camera, biometrics, QR flow)
 - [ ] Age rating (4+) and category (Business or Productivity)
+
+## Capacitor Phase — Next Session Priorities (April 2026)
+
+### Phase 1A: Bundle Dependencies Locally (FIRST — do before anything else)
+- Download to `Projects/NDA App/lib/`: react.production.min.js, react-dom.production.min.js, babel.min.js, firebase-app.js, firebase-database.js, qrcode.min.js
+- Download fonts to lib/: InstrumentSerif-Regular.woff2, InstrumentSerif-Italic.woff2, Outfit-Variable.woff2
+- Replace all CDN `<script src>` and `<link>` tags in index.html with local paths
+- Add `@font-face` declarations in `<style>` block, remove Google Fonts `<link>` tags
+- Add fonts to sw.js SHELL array, bump cache to v16
+
+### Phase 1B: Capacitor Project Setup
+```
+npm init -y
+npm install @capacitor/core @capacitor/cli @capacitor/ios
+npx cap init "Pakt" "com.classofnone.pakt" --web-dir=.
+npx cap add ios
+npx cap sync
+npx cap open ios
+```
+- Plugins: @capacitor/status-bar, @capacitor/splash-screen, @capacitor/haptics, @capacitor/filesystem
+- Bundle ID: com.classofnone.pakt | Version: 1.0.0 | Deployment target: iOS 16.0
+- Status bar: UIStatusBarStyleLightContent
+
+### Phase 1C: Firebase Security Rules (5 min in Firebase Console)
+```json
+{ "rules": { "sessions": { "$sessionId": { ".read": true, ".write": true, ".validate": "newData.hasChildren(['partyA', 'partyB', 'timestamp'])" } } } }
+```
+
+### Phase 1D: Step 3→4 Layout Jump
+Fix via Capacitor native transition (NOT a web loading screen). Implement after Capacitor shell is working.
+
+### Key Decision (locked)
+Step 3→4 layout jump = Capacitor native transition. Do NOT add a web loading screen. Native transition sits outside the WebView as a real iOS view.
+
+---
+
+## Subscription Tier — Roadmap (Next Build Phase After Capacitor)
+
+### Features
+- **Remote NDA signing:** Party B receives a link. Camera turns on. Signature box appears. Biometric auth happens remotely. Party B does NOT need the app installed.
+- **Bilateral NDAs:** Mutual NDA where both parties are simultaneously Disclosing and Receiving Party
+- **NDCAs:** Non-disclosure compensation agreements
+- **Unlimited NDAs:** Free tier gets N NDAs, paid tier is unlimited
+
+### Pricing
+- $9.99/month
+- Lower annual option (exact price TBD)
+- Apple IAP integration
+
+---
 
 ## Reference
 See Context/ folder for: 50 State Nuances, App Store Monetization Research, Pricing Strategy Research, PAKT Brain Dump Expansion.

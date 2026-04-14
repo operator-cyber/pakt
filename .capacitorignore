@@ -1,0 +1,9 @@
+.planning/
+Context/
+Skills/
+Assets/
+nda-signer-v2.2.jsx
+*.md
+node_modules/
+ios/
+.git/

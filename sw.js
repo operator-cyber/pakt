@@ -1,4 +1,4 @@
-const CACHE = 'pakt-v16';
+const CACHE = 'pakt-v18';
 const SHELL = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const SHELL = [
   './lib/firebase-database-compat.js',
   './lib/firebase-auth-compat.js',
   './lib/firebase-firestore-compat.js',
+  './lib/firebase-storage-compat.js',
   './lib/InstrumentSerif-Regular.woff2',
   './lib/InstrumentSerif-Italic.woff2',
   './lib/Outfit-Variable.woff2',

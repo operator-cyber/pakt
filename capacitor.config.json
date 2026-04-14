@@ -1,0 +1,19 @@
+{
+  "appId": "com.classofnone.pakt",
+  "appName": "Pakt",
+  "webDir": "www",
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["apple.com", "google.com"]
+    },
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#0a0f23"
+    },
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 2000
+    }
+  }
+}
