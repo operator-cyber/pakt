@@ -390,130 +390,6 @@
       "Wyoming":            { tier: 3, utsa: true, bondWaiver: true, statute: null, notes: ["Non-competes banned for most employees except key executive personnel (2025/2026)."] },
     };
 
-    const NDCA_STATE_DATA = {
-      "Alabama":              { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: true, notes: ["2-year statutory presumption of reasonableness (Ala. Code 8-1-190).", "Courts authorized to reform overbroad agreements."], statute: "Ala. Code 8-1-190" },
-      "Alaska":               { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Common law reasonableness test; 1-2 years typical.", "Courts follow reformation rule for overbroad terms."], statute: null },
-      "Arizona":              { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Strict blue pencil: courts strike overbroad clauses but cannot rewrite.", "HB 2361 (2026) introduced to ban non-competes; status pending."], statute: null },
-      "Arkansas":             { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: true, notes: ["2-year statutory presumption of reasonableness.", "Physicians protected by S.B. 139 (effective March 2025)."], statute: "Ark. Code 4-75-101" },
-      "California":           { banned: true, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Non-competes banned outright under B&P Code 16600 for nearly all employment contexts.", "SB 699/AB 1076 (2024) strengthened ban and added penalties.", "Narrow exceptions for sale of business or dissolution of partnership/LLC."], statute: "Cal. Bus. & Prof. Code 16600" },
-      "Colorado":             { banned: false, maxDuration: null, minCompensation: "$130,014", bluePencil: false, notes: ["Banned for workers earning below $130,014 (2026); $78,008.40 for non-solicits.", "14-day notice required for existing workers; notice before offer acceptance for new hires.", "Mandatory attorney fees if employer enforces an illegal non-compete."], statute: "C.R.S. 8-2-113" },
-      "Connecticut":          { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Raised Bill 5492 (2026) proposes wage floors (2x min wage for employees) and 1-year cap.", "10 business day review period proposed."], statute: null },
-      "Delaware":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Increasing judicial scrutiny but generally upheld for narrowly tailored covenants.", "Preferred choice-of-law venue for national firms."], statute: null },
-      "District of Columbia": { banned: false, maxDuration: "1 year", minCompensation: "$162,164", bluePencil: true, notes: ["Highest wage threshold in the U.S.: $162,164 (2026); $270,274 for medical specialists.", "1 year max for employees; 2 years for medical specialists.", "14-day notice required before employment or effective date."], statute: "D.C. Code 32-581.01" },
-      "Florida":              { banned: false, maxDuration: "4 years", minCompensation: null, bluePencil: true, notes: ["CHOICE Act (2025) created presumption of enforceability for high-earners.", "Up to 4 years for covered high-wage earners.", "Mandatory reformation under 542.335; 7-day review period required."], statute: "Fla. Stat. 542.335; 542.41" },
-      "Georgia":              { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: true, notes: ["2 years presumptively reasonable under Restrictive Covenants Act (2011).", "Courts may modify overbroad terms."], statute: "O.C.G.A. 13-8-50" },
-      "Hawaii":               { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Non-competes banned for technology workers (software developers, designers, etc.).", "Generally enforceable for other industries."], statute: "HRS 480-4" },
-      "Idaho":                { banned: false, maxDuration: "18 months", minCompensation: null, bluePencil: true, notes: ["18-month statutory presumption of reasonableness.", "Courts shall reform overbroad agreements.", "Presumption of irreparable harm for breaches by key employees."], statute: "Idaho Code 44-2701" },
-      "Illinois":             { banned: false, maxDuration: null, minCompensation: "$75,000", bluePencil: true, notes: ["Banned for workers earning under $75,000 (2026); $45,000 for non-solicits.", "2 years continued employment or adequate alternative consideration required.", "14-day notice before start date or execution."], statute: "820 ILCS 90/1" },
-      "Indiana":              { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Strict blue pencil: courts strike overbroad terms but cannot rewrite.", "Physician non-competes banned (effective July 2025).", "SB 132 (2026) proposes $150,000 floor."], statute: null },
-      "Iowa":                 { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Standard common-law reasonableness test.", "Reformation permitted."], statute: null },
-      "Kansas":               { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Stable jurisdiction relying on robust case law.", "Courts may modify overbroad agreements."], statute: null },
-      "Kentucky":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Middle-of-the-road approach; continued employment is sufficient consideration.", "Reformation permitted."], statute: null },
-      "Louisiana":            { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: false, notes: ["Strict statutory adherence required (La. R.S. 23:921).", "Must explicitly list parishes or municipalities by name.", "Courts void agreements that fail to list parishes."], statute: "La. R.S. 23:921" },
-      "Maine":                { banned: false, maxDuration: null, minCompensation: "$63,840", bluePencil: false, notes: ["Banned for workers earning under $63,840 (2026; 400% of federal poverty level).", "Courts generally avoid reformation.", "Offer must be made at least 3 days before signing."], statute: "26 M.R.S.A. 599-A" },
-      "Maryland":             { banned: false, maxDuration: null, minCompensation: "$49,920", bluePencil: true, notes: ["Banned for workers earning under $49,920 (effective July 2026).", "Threshold linked to 150% of state minimum wage ($16/hr).", "Specific protections for nurses and veterinary technicians."], statute: "Md. Code Ann., Lab. & Empl. 3-716" },
-      "Massachusetts":        { banned: false, maxDuration: "12 months", minCompensation: "$35,568", bluePencil: true, notes: ["Garden leave required: 50% of highest base salary during restriction.", "12-month max (24 months if employee breached fiduciary duty).", "10 business day notice before employment start."], statute: "M.G.L. c. 149, 24L" },
-      "Michigan":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Statutory requirement for courts to reform overbroad terms.", "Ban bills introduced in 2025 but did not pass."], statute: "MCL 445.774a" },
-      "Minnesota":            { banned: true, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["All employment non-competes entered after July 1, 2023 are void.", "Covers both employees and independent contractors.", "Narrow exceptions for sale of business or dissolution."], statute: "Minn. Stat. 181.988" },
-      "Mississippi":          { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Traditional common law rule of reason.", "Healthcare non-compete ban bill failed in 2026."], statute: null },
-      "Missouri":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Generally enforceable; judicial reformation common.", "HB 2184 (2026) proposed to ban physician non-competes."], statute: null },
-      "Montana":              { banned: true, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Banned outright for employment context.", "Expanded ban in 2025/2026 to all physicians and professional nurses.", "Narrow exceptions for sale of business."], statute: "Mont. Code Ann. 28-2-703" },
-      "Nebraska":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["No blue penciling: if any part is overbroad, entire agreement is void.", "Requires high precision in drafting."], statute: null },
-      "Nevada":               { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Banned for all hourly-wage workers.", "Unenforceable against employees terminated without cause.", "Mandatory reformation required by NRS 613.195."], statute: "NRS 613.195" },
-      "New Hampshire":        { banned: false, maxDuration: null, minCompensation: "$30,160", bluePencil: true, notes: ["Banned for workers earning under $30,160 (2026).", "HB 1188 (2026) proposes increase to over $75,000.", "Notice required before or with employment offer."], statute: "RSA 275:70" },
-      "New Jersey":           { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Major reform pending in 2026 (SB 1407/AB 1829).", "Proposed $151,000 threshold for executives; ban for others.", "30-day advance notice proposed."], statute: null },
-      "New Mexico":           { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Healthcare practitioners subject to statutory ban.", "Generally enforceable for other sectors."], statute: "N.M. Stat. Ann. 24-1I-1" },
-      "New York":             { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["No comprehensive statute; 2023 total ban vetoed.", "S-8185 (2026) proposes $250,000 threshold.", "30-day notice and 12-month cap proposed."], statute: null },
-      "North Carolina":       { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Strict blue pencil: courts strike but cannot rewrite.", "Continued employment is NOT sufficient consideration; requires new value.", "HB 269 (2025) proposed $75,000 ban threshold."], statute: null },
-      "North Dakota":         { banned: true, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["All non-competes banned (N.D. Cent. Code 9-08-06).", "Narrow exceptions for sale of business or partnership dissolution."], statute: "N.D.C.C. 9-08-06" },
-      "Ohio":                 { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Courts have broad discretion to rewrite agreements.", "Full ban bill pending in 2026."], statute: null },
-      "Oklahoma":             { banned: true, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Non-competes banned outright (15 O.S. 217).", "Narrow non-solicitation of established customers sometimes permitted.", "Exceptions for sale of business."], statute: "15 O.S. 217" },
-      "Oregon":               { banned: false, maxDuration: "12 months", minCompensation: "$119,541", bluePencil: false, notes: ["Banned for workers earning under $119,541 (2026); 12-month statutory cap.", "Agreements failing statutory criteria are void (not voidable).", "2-week notice before employment; signed copy after exit.", "SB 951 (2025) banned non-competes for medical practitioners."], statute: "ORS 653.295" },
-      "Pennsylvania":         { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Healthcare non-competes limited to 12 months (effective January 2025).", "Continued employment is NOT sufficient consideration; requires new value.", "Reformation permitted."], statute: null },
-      "Rhode Island":         { banned: false, maxDuration: null, minCompensation: "$39,900", bluePencil: true, notes: ["Banned for workers earning under $39,900 (2026; 250% of federal poverty level).", "Total ban bill reported favorably in 2026.", "Undergraduate/graduate interns and employees 18 or younger exempt."], statute: "R.I. Gen. Laws 28-59-1" },
-      "South Carolina":       { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["Strict common law test focused on geographic scope.", "Overbroad agreements typically voided entirely."], statute: null },
-      "South Dakota":         { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: true, notes: ["2-year statutory presumption; 3 years for sale of business (2026).", "Statutory modification authorized."], statute: "SDCL 53-9-11" },
-      "Tennessee":            { banned: false, maxDuration: "2 years", minCompensation: null, bluePencil: true, notes: ["2 years presumptively reasonable for physicians.", "Ban bills pending in 2026."], statute: null },
-      "Texas":                { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Must be ancillary to otherwise enforceable agreement (e.g., NDA).", "Mandatory reformation under statute.", "Physicians must be allowed buyout and patient choice."], statute: "Tex. Bus. & Com. Code 15.50" },
-      "Utah":                 { banned: false, maxDuration: "1 year", minCompensation: null, bluePencil: true, notes: ["1-year statutory cap on employment non-competes.", "HB 203 (2026) proposes $155,000 threshold and 25-mile geographic limit."], statute: "Utah Code 34-51-201" },
-      "Vermont":              { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["HB 305 (2026) proposes ban for workers earning under $70,000.", "Would also ban non-competes in franchise agreements."], statute: null },
-      "Virginia":             { banned: false, maxDuration: null, minCompensation: "$78,365", bluePencil: false, notes: ["Banned for workers earning under $78,364.52 (2026 average weekly wage).", "Overbroad agreements voided entirely.", "SB 128 (2026) proposes healthcare professional ban."], statute: "Va. Code 40.1-28.7:8" },
-      "Washington":           { banned: true, maxDuration: "18 months", minCompensation: "$126,859", bluePencil: true, notes: ["ESHB 1155 signed: all employment non-competes void as of June 30, 2027.", "During transition (2026): income threshold of $126,858.83 for employees.", "Independent consideration required if signed after employment.", "Written disclosure required by time of offer acceptance."], statute: "RCW 49.62; ESHB 1155" },
-      "West Virginia":        { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["Stable reasonableness standard.", "Focus on legitimate interests without undue hardship."], statute: null },
-      "Wisconsin":            { banned: false, maxDuration: null, minCompensation: null, bluePencil: false, notes: ["All-or-nothing rule: single unreasonable provision voids entire agreement.", "Requires extreme precision in drafting.", "Healthcare ban bills failed in 2026."], statute: "Wis. Stat. 103.465" },
-      "Wyoming":              { banned: false, maxDuration: null, minCompensation: null, bluePencil: true, notes: ["2025 reform (effective July 2025) voids non-competes for nearly all workers.", "Only executive/management employees and sale of business are exempt."], statute: null },
-    };
-
-    function buildNdcaSections(state, formData) {
-      let n = 1;
-      const sections = [];
-      const stateInfo = NDCA_STATE_DATA[state] || {};
-
-      sections.push({ t: `${n++}. Restricted Activities`, b: `Party B agrees not to engage in the following activities: ${formData.restrictedActivities || "[Not specified]"}. This restriction applies to direct and indirect participation, including but not limited to employment, consulting, ownership, or partnership in any competing enterprise. For the avoidance of doubt, the restrictions set forth herein apply to Party B's engagement in any capacity that would involve the performance of services substantially similar to those performed for Party A or that would involve the use or disclosure of Confidential Information obtained from Party A.` });
-      sections.push({ t: `${n++}. Geographic Scope`, b: `The restrictions set forth in this Agreement shall apply within the following geographic area: ${formData.geographicScope || "[Not specified]"}. The Parties acknowledge that this geographic limitation is reasonable and necessary to protect the legitimate business interests of Party A, including but not limited to trade secrets, customer relationships, and goodwill. Party B agrees that the specified geographic area reflects the scope of Party A's business operations and Party B's involvement therein.` });
-
-      let timePeriodBody = `The non-compete obligations shall remain in effect for a period of ${formData.timePeriod || "[Not specified]"} from the Effective Date or the date of termination of the relationship between the Parties, whichever occurs later. During this period, Party B shall refrain from engaging in any of the Restricted Activities within the specified Geographic Scope.`;
-      if (stateInfo.maxDuration && formData.timePeriod) {
-        const selectedMonths = formData.timePeriod === "6 months" ? 6 : formData.timePeriod === "1 year" ? 12 : formData.timePeriod === "2 years" ? 24 : 0;
-        const maxText = stateInfo.maxDuration;
-        const maxMonths = maxText.includes("18") ? 18 : maxText.includes("1 year") || maxText === "12 months" ? 12 : maxText.includes("2 year") ? 24 : maxText.includes("4 year") ? 48 : 0;
-        if (maxMonths > 0 && selectedMonths > maxMonths) {
-          timePeriodBody += ` Note: The State of ${state} limits non-compete duration to ${maxText}. The enforceability of the selected ${formData.timePeriod} period may be limited.`;
-        }
-      }
-      sections.push({ t: `${n++}. Time Period`, b: timePeriodBody });
-
-      let considerationBody = `In exchange for the non-compete obligations accepted by Party B, Party A provides the following consideration: ${formData.consideration || "[Not specified]"}. The Parties acknowledge that this consideration is adequate and sufficient to support the enforceability of this Agreement.`;
-      if (stateInfo.minCompensation) {
-        considerationBody += ` Note: The State of ${state} requires minimum compensation of ${stateInfo.minCompensation} for non-compete enforceability.`;
-      }
-      sections.push({ t: `${n++}. Consideration`, b: considerationBody });
-
-      let severabilityBody;
-      if (stateInfo.bluePencil) {
-        severabilityBody = `If any provision of this Agreement is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect. The Parties agree that any such court shall have the authority to reform, modify, or limit the scope, duration, or geographic area of any provision found to be overbroad or unreasonable so as to render such provision enforceable to the maximum extent permitted by applicable law, and the Agreement as so reformed shall remain in full force and effect.`;
-      } else {
-        severabilityBody = `If any provision of this Agreement is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect. The Parties acknowledge that the court shall not reform or modify the unenforceable provision but shall instead sever it from this Agreement entirely. Each restrictive covenant contained herein is intended to be a separate and independent obligation, and the invalidity of any one covenant shall not affect the enforceability of any other covenant.`;
-      }
-      sections.push({ t: `${n++}. Severability`, b: severabilityBody });
-
-      sections.push({ t: `${n++}. Remedies`, b: `The Parties acknowledge and agree that any breach or threatened breach of this Agreement may cause Party A immediate and irreparable harm for which monetary damages alone would be an inadequate remedy. Accordingly, in the event of any such breach or threatened breach, Party A shall be entitled to seek equitable relief, including temporary restraining orders, preliminary and permanent injunctions, and specific performance, without the necessity of proving actual damages, in addition to all other remedies available at law or in equity. In any action to enforce this Agreement, the prevailing party shall be entitled to recover its reasonable attorneys' fees, court costs, and other litigation expenses from the non-prevailing party. Nothing in this section shall be construed to limit either Party's ability to seek any other remedies available under applicable law.` });
-      sections.push({ t: `${n++}. Governing Law and Jurisdiction`, b: `This Agreement shall be governed by and construed in accordance with the laws of the State of **STATE**, without regard to its conflict of laws principles. Any dispute arising out of or relating to this Agreement shall be submitted to the exclusive jurisdiction of the state and federal courts located in the State of **STATE**, and each Party hereby consents to the personal jurisdiction of such courts and waives any objection based on inconvenient forum.` });
-      sections.push({ t: `${n++}. Entire Agreement and Amendments`, b: `This Agreement constitutes the entire agreement between the Parties concerning the subject matter hereof and supersedes all prior and contemporaneous agreements, understandings, negotiations, and discussions, whether oral or written, between the Parties relating to the subject matter of this Agreement. No amendment, modification, or waiver of any provision of this Agreement shall be effective unless made in writing and signed by authorized representatives of both Parties. The failure of either Party to enforce any provision of this Agreement shall not constitute a waiver of that Party's right to enforce that provision or any other provision in the future.` });
-
-      return sections;
-    }
-
-    function getNdcaComplianceItems(state) {
-      const data = NDCA_STATE_DATA[state];
-      if (!data) return [];
-      const items = [];
-      if (data.banned) {
-        items.push({ ok: false, label: "Non-Compete Enforceability", detail: "Non-competes are generally prohibited in this state" });
-      } else if (data.minCompensation) {
-        items.push({ ok: false, label: "Non-Compete Enforceability", detail: `Restricted to workers earning above ${data.minCompensation}` });
-      } else {
-        items.push({ ok: true, label: "Non-Compete Enforceability", detail: "Generally enforceable in this state" });
-      }
-      if (data.maxDuration) {
-        items.push({ ok: true, label: "Maximum Duration", detail: `State limits non-compete to ${data.maxDuration}` });
-      }
-      if (data.minCompensation) {
-        items.push({ ok: false, label: "Compensation Threshold", detail: `Minimum ${data.minCompensation} annual compensation required` });
-      }
-      if (data.bluePencil) {
-        items.push({ ok: true, label: "Blue Pencil Doctrine", detail: "Courts may reform overbroad provisions" });
-      } else {
-        items.push({ ok: false, label: "Blue Pencil Doctrine", detail: "Courts will not reform overbroad provisions; agreement must be precise" });
-      }
-      if (data.statute) {
-        items.push({ ok: true, label: "Governing Statute", detail: data.statute });
-      } else {
-        items.push({ ok: true, label: "Governing Standard", detail: "Common law reasonableness test" });
-      }
-      return items;
-    }
-
     /* ══════════════════════════════════════════════════════════
        DYNAMIC SECTION BUILDERS
        ══════════════════════════════════════════════════════════ */
@@ -1434,13 +1310,10 @@
       const canProceed = form.party1.trim() && form.party2.trim() && form.purpose.trim() && form.state && form.state !== "" && (form.categories.length > 0 || (form.customCategory && form.customCategory.trim()));
       const sections = useMemo(() => {
         if (agreementType === 'bilateral') return buildBilateralSections(form.state, form.categories, form.customCategory);
-        if (agreementType === 'ndca') return buildNdcaSections(form.state, form);
+        if (agreementType === 'ndca') return [];
         return buildSections(form.state, form.categories, form.customCategory);
       }, [form.state, form.categories, form.customCategory, agreementType]);
-      const compliance = useMemo(() => {
-        if (agreementType === 'ndca') return getNdcaComplianceItems(form.state);
-        return getComplianceItems(form.state);
-      }, [form.state, agreementType]);
+      const compliance = useMemo(() => getComplianceItems(form.state), [form.state]);
       const stateData = STATE_DATA[form.state] || null;
 
       useEffect(() => {
@@ -1632,7 +1505,7 @@
         const introText = agreementType === 'bilateral'
           ? `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.`
           : agreementType === 'ndca'
-          ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. In connection with the business relationship between the Parties, Party B agrees to the non-compete restrictions described herein in exchange for the consideration specified below. The Parties agree to the terms and conditions set forth in this Agreement.`
+          ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. This document was generated with placeholder legal framework pending state-specific research data.`
           : `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
         const introLines = wrapText(ctx, introText, textW);
         measuredH += introLines.length * lineH + gapH * 2;
@@ -1800,7 +1673,7 @@
           const introText = agreementType === 'bilateral'
             ? `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.`
             : agreementType === 'ndca'
-            ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. In connection with the business relationship between the Parties, Party B agrees to the non-compete restrictions described herein in exchange for the consideration specified below. The Parties agree to the terms and conditions set forth in this Agreement.`
+            ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. This document was generated with placeholder legal framework pending state-specific research data.`
             : `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
           const introLines = wrapText(ctx, introText, textW);
           measuredH += introLines.length * lineH + gapH * 2;
@@ -2138,47 +2011,18 @@
                 {notesOpen && <div style={{ padding: "0 16px 14px" }}>{stateData.notes.map((note, i) => (<div key={i} style={{ fontSize: 15, color: "rgba(10,15,35,.7)", marginBottom: i < stateData.notes.length - 1 ? 6 : 0, lineHeight: 1.5, fontFamily: sans, paddingLeft: 14, position: "relative" }}><span style={{ position: "absolute", left: 0, color: firm, opacity: 0.35 }}>•</span>{note}</div>))}</div>}
               </div>
             )}
-            {agreementType === 'ndca' && NDCA_STATE_DATA[form.state]?.banned && (
-              <div style={{
-                background: "rgba(192,57,43,.08)",
-                borderRadius: 14,
-                padding: "16px 18px",
-                marginBottom: 16,
-                border: "1px solid rgba(192,57,43,.2)",
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 12
-              }}>
-                <svg width="20" height="20" viewBox="0 0 20 20" style={{ flexShrink: 0, marginTop: 2 }}>
-                  <circle cx="10" cy="10" r="9" fill="none" stroke="#c0392b" strokeWidth="1.5"/>
-                  <path d="M10 6v5M10 13.5v.5" stroke="#c0392b" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#c0392b", fontFamily: sans, marginBottom: 4 }}>
-                    Enforceability Warning
-                  </div>
-                  <div style={{ fontSize: 14, color: "rgba(192,57,43,.8)", fontFamily: sans, lineHeight: 1.5 }}>
-                    The State of {form.state} generally prohibits non-compete agreements{NDCA_STATE_DATA[form.state].statute ? ` (${NDCA_STATE_DATA[form.state].statute})` : ''}. This document may not be enforceable in this jurisdiction. Consult a licensed attorney before relying on this agreement.
-                  </div>
-                </div>
-              </div>
-            )}
             <div style={{ background: "rgba(250,228,207,.03)", borderRadius: 16, border: "1px solid rgba(250,228,207,.06)", padding: "24px 18px" }}>
               <h2 style={{ fontSize: 20, fontWeight: 400, textAlign: "center", margin: "0 0 2px", color: autumn, fontFamily: "'Instrument Serif', Georgia, serif", letterSpacing: ".04em" }}>{agreementType === 'bilateral' ? "MUTUAL NON-DISCLOSURE AGREEMENT" : agreementType === 'ndca' ? "NON-DISCLOSURE & NON-COMPETE AGREEMENT" : "NON-DISCLOSURE AGREEMENT"}</h2>
               <p style={{ textAlign: "center", fontSize: 15, color: "rgba(250,228,207,.7)", margin: "0 0 18px", fontFamily: sans }}>Effective {fd}</p>
               {agreementType === 'ndca' ? (
-                <>
-                  <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Party A") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Party B"), collectively referred to as the "Parties." In connection with the business relationship between the Parties, Party B agrees to the non-compete restrictions described herein in exchange for the consideration specified below. The Parties agree to the terms and conditions set forth in this Agreement.</p>
-                  {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.7)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
-                </>
-              ) : agreementType === 'bilateral' ? (
-                <>
-                  <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Party A") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Party B"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.</p>
-                  {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.7)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
-                </>
+                <div style={{ textAlign: "center", padding: "40px 0", fontFamily: sans, fontSize: 16, color: "rgba(250,228,207,.5)", fontStyle: "italic" }}>NDCA legal text pending research data</div>
               ) : (
                 <>
-                  <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
+                  {agreementType === 'bilateral' ? (
+                    <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Party A") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Party B"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.</p>
+                  ) : (
+                    <p style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(250,228,207,.7)", marginBottom: 18 }}>This Non-Disclosure Agreement ("Agreement") is entered into as of <strong style={{ color: autumn }}>{fd}</strong> by and between <strong style={{ color: autumn }}>{form.party1}</strong> ("Disclosing Party") and <strong style={{ color: autumn }}>{form.party2}</strong> ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: <strong style={{ color: autumn }}>{form.purpose}</strong> (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.</p>
+                  )}
                   {sections.map((s, i) => (<div key={i} style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, margin: "0 0 4px", color: autumn, fontFamily: sans, letterSpacing: ".02em" }}>{s.t}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: "rgba(250,228,207,.7)", margin: 0 }}>{s.b.replace(/\*\*STATE\*\*/g, form.state)}</p></div>))}
                 </>
               )}
