@@ -1501,7 +1501,12 @@
         ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
         let measuredH = margin + headH * 2 + gapH * 3;
         const fd = fmtDate(form.date);
-        const introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
+        const headerText = agreementType === 'bilateral' ? "MUTUAL NON-DISCLOSURE AGREEMENT" : agreementType === 'ndca' ? "NON-DISCLOSURE & NON-COMPETE AGREEMENT" : "NON-DISCLOSURE AGREEMENT";
+        const introText = agreementType === 'bilateral'
+          ? `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.`
+          : agreementType === 'ndca'
+          ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. This document was generated with placeholder legal framework pending state-specific research data.`
+          : `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
         const introLines = wrapText(ctx, introText, textW);
         measuredH += introLines.length * lineH + gapH * 2;
         sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
@@ -1513,7 +1518,7 @@
         ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
         let y = margin;
         ctx.fillStyle = "#0a0f23"; ctx.textAlign = "center";
-        ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
+        ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText(headerText, W / 2, y); y += headH;
         ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#666"; ctx.fillText("Effective " + fd, W / 2, y); y += headH + gapH;
         ctx.textAlign = "left"; ctx.fillStyle = "#0a0f23"; ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
         introLines.forEach(line => { ctx.fillText(line, margin, y); y += lineH; }); y += gapH * 2;
@@ -1539,7 +1544,7 @@
             ctx.fillText("BIOMETRIC IDENTITY VERIFICATION", margin, y); y += lineH;
             ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#333";
             const bioDate = new Date(bio.verifiedAt).toLocaleString();
-            ctx.fillText(`Verified Party: ${form.party2} (Receiving Party)`, margin, y); y += lineH;
+            ctx.fillText(`Verified Party: ${form.party2} (${agreementType === 'nda' ? 'Receiving Party' : 'Party B'})`, margin, y); y += lineH;
             ctx.fillText(`Verification Method: Face ID / Touch ID (Platform Authenticator)`, margin, y); y += lineH;
             ctx.fillText(`Verification Time: ${bioDate}`, margin, y); y += lineH;
             ctx.fillText(`Credential ID: ${bio.credentialId || "N/A"}`, margin, y); y += lineH;
@@ -1564,9 +1569,9 @@
         function drawSigLabel(i, xPos) {
           ctx.strokeStyle = "#888"; ctx.lineWidth = scale; ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();
           ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
-          ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
+          ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? (agreementType === 'nda' ? "Disclosing Party" : "Party A") : (agreementType === 'nda' ? "Receiving Party" : "Party B"), xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
         }
-      }, [form, sections, savedSigs]);
+      }, [form, sections, savedSigs, agreementType]);
 
       const generateReceipt = useCallback((bio) => {
         const scale = 3, W = 650 * scale, margin = 50 * scale, textW = W - margin * 2;
@@ -1664,7 +1669,12 @@
           ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
           let measuredH = margin + headH * 2 + gapH * 3;
           const fd = fmtDate(form.date);
-          const introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
+          const headerText = agreementType === 'bilateral' ? "MUTUAL NON-DISCLOSURE AGREEMENT" : agreementType === 'ndca' ? "NON-DISCLOSURE & NON-COMPETE AGREEMENT" : "NON-DISCLOSURE AGREEMENT";
+          const introText = agreementType === 'bilateral'
+            ? `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). Each Party intends to disclose certain Confidential Information to the other Party in connection with the Purpose, and each Party agrees to protect such information under the terms set forth below.`
+            : agreementType === 'ndca'
+            ? `This Non-Disclosure & Non-Compete Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), collectively referred to as the "Parties." Party B agrees to the non-compete restrictions described herein in exchange for the consideration provided. This document was generated with placeholder legal framework pending state-specific research data.`
+            : `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), collectively referred to as the "Parties," for the purpose of: ${form.purpose} (the "Purpose"). The Disclosing Party intends to disclose certain Confidential Information to the Receiving Party in connection with the Purpose, and the Receiving Party agrees to protect such information under the terms set forth below.`;
           const introLines = wrapText(ctx, introText, textW);
           measuredH += introLines.length * lineH + gapH * 2;
           sections.forEach(s => { const body = s.b.replace(/\*\*STATE\*\*/g, form.state); ctx.font = `bold ${15 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += lineH + 4 * scale; ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; measuredH += wrapText(ctx, body, textW).length * lineH + sectionGap; });
@@ -1673,7 +1683,7 @@
           ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, c.height);
           let y = margin;
           ctx.fillStyle = "#0a0f23"; ctx.textAlign = "center";
-          ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText("NON-DISCLOSURE AGREEMENT", W / 2, y); y += headH;
+          ctx.font = `bold ${23 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillText(headerText, W / 2, y); y += headH;
           ctx.font = `${14 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#666"; ctx.fillText("Effective " + fd, W / 2, y); y += headH + gapH;
           ctx.textAlign = "left"; ctx.fillStyle = "#0a0f23"; ctx.font = `${15 * scale}px 'Instrument Serif', Georgia, serif`;
           introLines.forEach(line => { ctx.fillText(line, margin, y); y += lineH; }); y += gapH * 2;
@@ -1693,7 +1703,7 @@
             if (ref.current) { try { ctx.drawImage(ref.current, xPos, y, sigW, sigH); } catch (e) {} }
             ctx.strokeStyle = "#888"; ctx.lineWidth = scale; ctx.beginPath(); ctx.moveTo(xPos, y + sigH + 5 * scale); ctx.lineTo(xPos + sigW, y + sigH + 5 * scale); ctx.stroke();
             ctx.font = `${13 * scale}px 'Instrument Serif', Georgia, serif`; ctx.fillStyle = "#0a0f23"; ctx.fillText(i === 0 ? form.party1 : form.party2, xPos, y + sigH + 22 * scale);
-            ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? "Disclosing Party" : "Receiving Party", xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
+            ctx.fillStyle = "#888"; ctx.fillText(i === 0 ? (agreementType === 'nda' ? "Disclosing Party" : "Party A") : (agreementType === 'nda' ? "Receiving Party" : "Party B"), xPos, y + sigH + 36 * scale); ctx.fillText("Date: " + fd, xPos, y + sigH + 50 * scale);
           });
           setSavedSigs([sig1Ref.current ? sig1Ref.current.toDataURL() : null, sig2Ref.current ? sig2Ref.current.toDataURL() : null]);
           y += sigH + 50 * scale + 80 * scale;
@@ -1702,7 +1712,7 @@
           trimmedNda.getContext("2d").drawImage(c, 0, 0);
           setNdaImage(trimmedNda.toDataURL("image/png")); setGenerating(false); setStep(3);
         }, 100);
-      }, [form, sections]);
+      }, [form, sections, agreementType]);
 
       const sans = "'Outfit', sans-serif";
       const firm = "#0a0f23";
