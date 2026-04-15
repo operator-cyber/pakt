@@ -69,9 +69,16 @@ Plans:
 
 ### Phase 3: NDC + Bilateral NDA Templates
 
-**Goal:** Add two additional agreement types available only to Pro tier users.
+**Goal:** Add two additional agreement types (Bilateral NDA and NDCA) available only to Pro tier users, with agreement type selector and state-aware NDCA enforceability.
 
 **Requirements:** TMPL-01, TMPL-02, TMPL-03, TMPL-04, TMPL-05, TMPL-06, TMPL-07
+
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Agreement type selector, NDCA form fields, bilateral NDA legal text (buildBilateralSections)
+- [ ] 03-02-PLAN.md — Wire agreement type through full pipeline (sign, verify, complete, Firestore, vault, canvas)
+- [ ] 03-03-PLAN.md — NDCA legal text engine (NDCA_STATE_DATA, buildNdcaSections, enforceability warnings) + human verification
 
 **Success Criteria:**
 1. Pro user can create a Non-Compete with state-aware enforceability notices
@@ -143,4 +150,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-04-13*
-*Last updated: 2026-04-14 — Phase 2 complete, ready for Phase 3*
+*Last updated: 2026-04-14 — Phase 3 planned (3 plans, 3 waves)*
