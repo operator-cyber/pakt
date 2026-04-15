@@ -340,9 +340,9 @@ h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weig
     if (!token) { showExpired('Invalid Link', 'No signing token found in this URL.'); return; }
 
     try {
-      const snap = await rtdb.ref('signingRequests/' + token).once('value');
-      const data = snap.val();
-      if (!data) { showExpired('Link Not Found', 'This signing link does not exist or has already been used.'); return; }
+      const res = await fetch(`https://pakt-76a51-default-rtdb.firebaseio.com/signingRequests/${token}.json`);
+      const data = await res.json();
+      if (!data || data.error) { showExpired('Link Not Found', 'This signing link does not exist or has already been used.'); return; }
       if (data.status === 'complete') { showExpired('Already Signed', 'This agreement has already been signed.'); return; }
       if (Date.now() > data.expiry) { showExpired('Link Expired', 'This signing link expired after 7 days. Ask the sender to create a new one.'); return; }
 
@@ -585,12 +585,12 @@ h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weig
         party2VideoPath = videoRef.fullPath;
       }
 
-      // Update RTDB with party2 sig path and status
-      await rtdb.ref('signingRequests/' + token).update({
-        status: 'complete',
-        party2SigPath,
-        party2VideoPath,
-        completedAt: firebase.database.ServerValue.TIMESTAMP,
+      // Update RTDB with party2 sig path and status via REST
+      const existing = await (await fetch(`https://pakt-76a51-default-rtdb.firebaseio.com/signingRequests/${token}.json`)).json();
+      await fetch(`https://pakt-76a51-default-rtdb.firebaseio.com/signingRequests/${token}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...existing, status: 'complete', party2SigPath, party2VideoPath, completedAt: { '.sv': 'timestamp' } }),
       });
 
       // Show complete screen

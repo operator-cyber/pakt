@@ -76,9 +76,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Agreement type selector, NDCA form fields, bilateral NDA legal text (buildBilateralSections)
-- [ ] 03-02-PLAN.md — Wire agreement type through full pipeline (sign, verify, complete, Firestore, vault, canvas)
-- [ ] 03-03-PLAN.md — NDCA legal text engine (NDCA_STATE_DATA, buildNdcaSections, enforceability warnings) + human verification
+- [x] 03-01-PLAN.md — Agreement type selector, NDCA form fields, bilateral NDA legal text (buildBilateralSections)
+- [x] 03-02-PLAN.md — Wire agreement type through full pipeline (sign, verify, complete, Firestore, vault, canvas)
+- [x] 03-03-PLAN.md — NDCA legal text engine (NDCA_STATE_DATA, buildNdcaSections, enforceability warnings) + human verification
 
 **Success Criteria:**
 1. Pro user can create a Non-Compete with state-aware enforceability notices

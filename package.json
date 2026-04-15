@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build:web": "rm -rf www && mkdir -p www/lib && cp index.html sw.js manifest.json privacy.html pakt-logo.png vault-logo.png apple-touch-icon.png app-icon-192x192.png app-icon-512x512.png www/ && cp lib/* www/lib/",
-    "cap:sync": "npm run build:web && npx cap sync",
+    "cap:sync": "npm run build:web && npx cap sync && touch ios/App/App/GoogleService-Info.plist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

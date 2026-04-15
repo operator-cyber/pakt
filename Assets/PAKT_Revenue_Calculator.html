@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PAKT Revenue Calculator</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root {
+    --firm: #0A0F23;
+    --autumn: #FAE4CF;
+    --green: #1D9E75;
+    --blue: #378ADD;
+    --red: #E24B4A;
+    --gray: #888780;
+    --bg: #FAE4CF;
+    --card: #ffffff;
+    --text: #0A0F23;
+    --muted: #5a5850;
+    --border: rgba(10,15,35,0.08);
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0A0F23;
+      --card: #141828;
+      --text: #FAE4CF;
+      --muted: #a09a8e;
+      --border: rgba(250,228,207,0.1);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--bg); color: var(--text); min-height: 100dvh; padding: 0 0 2rem; -webkit-text-size-adjust: 100%; }
+  .header { background: var(--firm); color: var(--autumn); padding: 20px 20px 16px; text-align: center; }
+  .header h1 { font-size: 22px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; font-family: system-ui, sans-serif; }
+  .header p { font-size: 13px; opacity: 0.6; margin-top: 4px; font-family: system-ui, sans-serif; }
+  .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+  .section { margin-bottom: 20px; }
+  .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: system-ui, sans-serif; font-weight: 600; margin-bottom: 10px; }
+  .slider-group { margin-bottom: 16px; }
+  .slider-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .slider-label span { font-size: 14px; color: var(--muted); font-family: system-ui, sans-serif; }
+  .slider-label .val { font-size: 18px; font-weight: 700; color: var(--text); font-family: system-ui, sans-serif; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--border); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--firm); cursor: pointer; border: 3px solid var(--autumn); }
+  @media (prefers-color-scheme: dark) {
+    input[type=range]::-webkit-slider-thumb { background: var(--autumn); border-color: var(--firm); }
+    input[type=range] { background: rgba(250,228,207,0.15); }
+  }
+  .toggle-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tog { flex: 1; padding: 10px 8px; font-size: 12px; font-family: system-ui, sans-serif; font-weight: 600; border: 2px solid var(--border); border-radius: var(--radius); background: transparent; color: var(--muted); cursor: pointer; text-align: center; transition: all 0.2s; }
+  .tog.active { background: var(--firm); color: var(--autumn); border-color: var(--firm); }
+  @media (prefers-color-scheme: dark) { .tog.active { background: var(--autumn); color: var(--firm); border-color: var(--autumn); } }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .metric { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .metric.highlight { border: 2px solid var(--green); }
+  .metric-label { font-size: 11px; color: var(--muted); font-family: system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric-value { font-size: 24px; font-weight: 700; margin-top: 4px; font-family: system-ui, sans-serif; }
+  .metric-value.green { color: var(--green); }
+  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: system-ui, sans-serif; }
+  .bar-wrap { margin-bottom: 16px; }
+  .bar { height: 36px; border-radius: var(--radius); overflow: hidden; display: flex; }
+  .bar-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; font-family: system-ui, sans-serif; color: #fff; transition: width 0.3s; min-width: 0; }
+  .bar-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 12px; color: var(--muted); font-family: system-ui, sans-serif; }
+  .bar-legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .breakdown { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .breakdown-header { padding: 14px 16px 10px; font-size: 13px; font-weight: 700; font-family: system-ui, sans-serif; }
+  .row { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 13px; font-family: system-ui, sans-serif; border-top: 1px solid var(--border); }
+  .row .lbl { color: var(--muted); }
+  .row.total { background: rgba(29,158,117,0.08); font-weight: 700; }
+  .row.total .lbl { color: var(--text); }
+  .milestones { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .ms { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .ms:active { transform: scale(0.97); }
+  .ms-num { font-size: 18px; font-weight: 700; font-family: system-ui, sans-serif; }
+  .ms-label { font-size: 10px; color: var(--muted); font-family: system-ui, sans-serif; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .ms-rev { font-size: 12px; color: var(--green); font-family: system-ui, sans-serif; font-weight: 600; margin-top: 6px; }
+  .scale-table { width: 100%; }
+  .scale-table .row:first-child { border-top: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PAKT</h1>
+  <p>Revenue calculator</p>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-title">Quick targets</div>
+    <div class="milestones">
+      <div class="ms" onclick="setUsers(500)">
+        <div class="ms-num">500</div>
+        <div class="ms-label">Rent covered</div>
+        <div class="ms-rev" id="ms-500"></div>
+      </div>
+      <div class="ms" onclick="setUsers(1000)">
+        <div class="ms-num">1,000</div>
+        <div class="ms-label">First target</div>
+        <div class="ms-rev" id="ms-1000"></div>
+      </div>
+      <div class="ms" onclick="setUsers(5000)">
+        <div class="ms-num">5,000</div>
+        <div class="ms-label">Real business</div>
+        <div class="ms-rev" id="ms-5000"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Adjust</div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Pro subscribers</span><span class="val" id="usersV">1,000</span></div>
+      <input type="range" min="50" max="10000" step="50" value="1000" id="users" oninput="calc()">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Investor cut</span><span class="val" id="invV">5%</span></div>
+      <input type="range" min="0" max="15" step="1" value="5" id="inv" oninput="calc()">
+    </div>
+    <div class="toggle-row">
+      <button class="tog active" id="y1" onclick="setYear(1)">Year 1 · Apple 30%</button>
+      <button class="tog" id="y2" onclick="setYear(2)">Year 2+ · Apple 15%</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Monthly numbers</div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Gross revenue</div><div class="metric-value" id="m-gross"></div></div>
+      <div class="metric highlight"><div class="metric-label">You keep</div><div class="metric-value green" id="m-you"></div></div>
+      <div class="metric"><div class="metric-label">Investor gets</div><div class="metric-value" id="m-inv"></div></div>
+      <div class="metric"><div class="metric-label">Apple takes</div><div class="metric-value" id="m-apple"></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Revenue split</div>
+    <div class="bar-wrap">
+      <div class="bar" id="bar"></div>
+      <div class="bar-legend">
+        <span><span class="dot" style="background:var(--green);"></span>You</span>
+        <span><span class="dot" style="background:var(--blue);"></span>Investor</span>
+        <span><span class="dot" style="background:var(--red);"></span>Apple</span>
+        <span><span class="dot" style="background:var(--gray);"></span>Firebase</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Per $4.99 subscription</div>
+    <div class="breakdown">
+      <div id="per-sub"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Subscribers needed</div>
+    <div class="breakdown">
+      <div id="targets"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Scaling table</div>
+    <div class="breakdown">
+      <div class="scale-table" id="scale"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PRICE = 4.99;
+const FB_PER_USER = 0.003;
+let appleRate = 0.30;
+
+function setYear(y) {
+  appleRate = y === 1 ? 0.30 : 0.15;
+  document.getElementById('y1').classList.toggle('active', y === 1);
+  document.getElementById('y2').classList.toggle('active', y === 2);
+  calc();
+}
+
+function setUsers(n) {
+  document.getElementById('users').value = n;
+  calc();
+}
+
+function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+function fmtI(n) { return '$' + Math.round(n).toLocaleString(); }
+
+function usersFor(target, invPct) {
+  const perUser = PRICE * (1 - appleRate) * (1 - invPct) - FB_PER_USER;
+  return Math.ceil(target / perUser);
+}
+
+function r(label, value, isTotal) {
+  return '<div class="row' + (isTotal ? ' total' : '') + '"><span class="lbl">' + label + '</span><span>' + value + '</span></div>';
+}
+
+function calc() {
+  const users = parseInt(document.getElementById('users').value);
+  const invPct = parseInt(document.getElementById('inv').value) / 100;
+  document.getElementById('usersV').textContent = users.toLocaleString();
+  document.getElementById('invV').textContent = Math.round(invPct * 100) + '%';
+
+  const gross = users * PRICE;
+  const appleTake = gross * appleRate;
+  const investorTake = gross * invPct;
+  const firebase = users * FB_PER_USER;
+  const youKeep = gross - appleTake - investorTake - firebase;
+
+  document.getElementById('m-gross').textContent = fmtI(gross);
+  document.getElementById('m-you').textContent = fmtI(youKeep);
+  document.getElementById('m-inv').textContent = fmtI(investorTake);
+  document.getElementById('m-apple').textContent = fmtI(appleTake);
+
+  const youPct = (youKeep / gross * 100);
+  const invPctBar = (invPct * 100);
+  const applePct = (appleRate * 100);
+  const fbPct = Math.max(100 - youPct - invPctBar - applePct, 0.5);
+
+  document.getElementById('bar').innerHTML =
+    seg(youPct, 'var(--green)', Math.round(youPct) + '%') +
+    seg(invPctBar, 'var(--blue)', invPctBar > 3 ? Math.round(invPctBar) + '%' : '') +
+    seg(applePct, 'var(--red)', Math.round(applePct) + '%') +
+    seg(fbPct, 'var(--gray)', '');
+
+  const pApple = PRICE * appleRate;
+  const pInv = PRICE * invPct;
+  const pFb = FB_PER_USER;
+  const pYou = PRICE - pApple - pInv - pFb;
+
+  document.getElementById('per-sub').innerHTML =
+    r('Subscription price', '$4.99') +
+    r('Apple (' + Math.round(appleRate * 100) + '%)', '-' + fmt(pApple)) +
+    r('Investor (' + Math.round(invPct * 100) + '%)', '-' + fmt(pInv)) +
+    r('Firebase', '-' + fmt(pFb)) +
+    r('You keep', fmt(pYou), true);
+
+  document.getElementById('targets').innerHTML =
+    r('Cover rent ($3,500/mo)', usersFor(3500, invPct).toLocaleString() + ' subs') +
+    r('Cost of living ($4,000/mo)', usersFor(4000, invPct).toLocaleString() + ' subs') +
+    r('Comfortable ($6,000/mo)', usersFor(6000, invPct).toLocaleString() + ' subs') +
+    r('$10K/mo', usersFor(10000, invPct).toLocaleString() + ' subs');
+
+  const tiers = [100, 250, 500, 1000, 2000, 5000, 10000];
+  document.getElementById('scale').innerHTML = tiers.map(function(t) {
+    const g = t * PRICE;
+    const a = g * appleRate;
+    const i = g * invPct;
+    const f = t * FB_PER_USER;
+    const y = g - a - i - f;
+    return r(t.toLocaleString() + ' subs', fmtI(y) + '/mo to you');
+  }).join('');
+
+  [500, 1000, 5000].forEach(function(t) {
+    const g = t * PRICE;
+    const a = g * appleRate;
+    const i = g * invPct;
+    const f = t * FB_PER_USER;
+    const y = g - a - i - f;
+    document.getElementById('ms-' + t).textContent = fmtI(y) + '/mo';
+  });
+}
+
+function seg(pct, color, label) {
+  return '<div class="bar-seg" style="width:' + pct + '%;background:' + color + ';">' + label + '</div>';
+}
+
+calc();
+</script>
+</body>
+</html>

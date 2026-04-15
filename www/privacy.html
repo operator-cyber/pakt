@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pakt Privacy Policy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0f23;
+      color: rgba(250,228,207,.7);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      padding: 24px 16px 60px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 500px; margin: 0 auto; }
+    h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: #fae4cf;
+      margin-bottom: 6px;
+    }
+    .date { font-size: 13px; color: rgba(250,228,207,.4); letter-spacing: .04em; margin-bottom: 28px; }
+    h3 { font-size: 16px; font-weight: 700; color: #fae4cf; margin-bottom: 8px; }
+    p { margin-bottom: 20px; }
+    ul { padding-left: 20px; margin-bottom: 20px; }
+    li { margin-bottom: 4px; }
+    strong { color: #fae4cf; }
+    .contact strong { display: block; margin-bottom: 4px; }
+    a { color: #fae4cf; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Privacy Policy</h1>
+    <p class="date">Effective April 9, 2026</p>
+
+    <p>Pakt is operated by Class of NONE LLC, a California-based company ("we," "us," or "our"). This policy describes how we handle your information when you use the Pakt app.</p>
+
+    <h3>What We Collect</h3>
+    <p>When you create an NDA, the app processes the following information locally on your device:</p>
+    <ul>
+      <li>Party names you enter</li>
+      <li>The stated purpose of the NDA</li>
+      <li>Your selected jurisdiction (state)</li>
+      <li>Confidential information categories you select</li>
+      <li>The agreement start date</li>
+      <li>Finger-drawn signatures</li>
+      <li>The completed NDA document image</li>
+    </ul>
+
+    <h3>How Your Data Is Stored</h3>
+    <p>All NDA data is stored locally on your device using your browser's built-in storage (IndexedDB). Your completed documents remain on your device. We do not maintain a central database of your NDAs on our servers.</p>
+
+    <h3>When Data Leaves Your Device</h3>
+    <p>During the identity verification step, the following data is temporarily transmitted to Firebase (a Google cloud service) to connect the two signing parties:</p>
+    <ul>
+      <li>Both party names</li>
+      <li>The stated purpose of the NDA</li>
+      <li>A session timestamp</li>
+      <li>The verifying party's device credential ID (a random hardware-generated identifier, not biometric data)</li>
+      <li>The verifying party's browser user agent string</li>
+    </ul>
+    <p>This data is used solely to facilitate the real-time verification handshake between the two parties. Once verification is complete or skipped, the session record is permanently deleted from Firebase. No copy is retained on our servers.</p>
+    <p>If you skip the verification step, the session record is also immediately deleted.</p>
+
+    <h3>Camera Access and Witness Recording</h3>
+    <p>If you enable the optional witness recording feature, the app will request permission to access your device's camera. You can deny this permission and continue using the app without it. When enabled:</p>
+    <ul>
+      <li>Video is captured and stored locally on your device only</li>
+      <li>Recordings are never uploaded to any server</li>
+      <li>A visible recording indicator is displayed while the camera is active</li>
+    </ul>
+
+    <h3>Identity Verification (Biometric)</h3>
+    <p>The app uses WebAuthn, a web standard for identity verification, to allow the second party to verify their identity using Face ID, Touch ID, or a device passcode. Important details:</p>
+    <ul>
+      <li>Your actual biometric data (face scan, fingerprint) never leaves your device's secure hardware enclave</li>
+      <li>The app receives only a cryptographic confirmation that verification succeeded</li>
+      <li>A hardware-generated credential ID (not biometric data) is temporarily stored in Firebase and deleted when the session ends</li>
+      <li>We do not collect, store, or have access to your biometric data at any time</li>
+    </ul>
+
+    <h3>Third-Party Services</h3>
+    <ul>
+      <li><strong>Firebase (Google)</strong> — Used for the real-time verification handshake between signing parties. Session data is deleted immediately after use. Subject to Google's privacy policy.</li>
+      <li><strong>Google Fonts</strong> — Font files are loaded to display the app's typography. This transmits your device's IP address to Google's servers, as is standard for any web font service.</li>
+    </ul>
+
+    <h3>What We Do Not Do</h3>
+    <ul>
+      <li>We do not require accounts or login</li>
+      <li>We do not use analytics or tracking</li>
+      <li>We do not display advertising</li>
+      <li>We do not collect location data</li>
+      <li>We do not sell, share, or monetize your data in any way</li>
+      <li>We do not collect, store, or process biometric data</li>
+    </ul>
+
+    <h3>Data Retention</h3>
+    <p><strong>On your device:</strong> NDA documents, signatures, and recordings remain in your local Vault until you delete them. You have full control.</p>
+    <p><strong>On our servers:</strong> Firebase session data is automatically and permanently deleted within seconds of the verification completing or being skipped. In the rare event that a session is not properly closed (for example, if the app is force-quit during verification), any residual session data contains only the limited fields listed above and is not used for any purpose. We retain no server-side copy of any user data.</p>
+
+    <h3>Data Deletion</h3>
+    <p>You can delete any saved NDA from your device at any time using the Vault's delete function. Server-side data is deleted automatically as described above. For any additional privacy requests, contact us at the email below.</p>
+
+    <h3>Children's Privacy</h3>
+    <p>Pakt is not intended for use by anyone under the age of 18. We do not knowingly collect information from minors. If you believe a minor has used this app, please contact us and we will address the concern promptly.</p>
+
+    <h3>California Privacy Rights</h3>
+    <p>If you are a California resident, you have the right to know what personal information we collect, request its deletion, and opt out of its sale. Because we do not maintain a database of user data and do not sell personal information, these rights are satisfied by the app's design. For questions, contact us at the email below.</p>
+
+    <h3>Changes to This Policy</h3>
+    <p>If we update this policy, the revised version will be included in a future app update with a new effective date. Continued use of the app after an update constitutes acceptance of the revised policy.</p>
+
+    <h3>Governing Law</h3>
+    <p>This privacy policy is governed by the laws of the State of California, United States.</p>
+
+    <h3>Contact</h3>
+    <p>For privacy questions, data deletion requests, or concerns:</p>
+    <div class="contact">
+      <strong>Class of NONE LLC</strong>
+      <strong>operator@classofnone.com</strong>
+      <strong>Los Angeles, California</strong>
+    </div>
+  </div>
+</body>
+</html>

@@ -20,7 +20,7 @@ progress:
 Phase: 04 (remote-signing-flow) — COMPLETE
 Plan: 3 of 3 complete
 Status: Remote signing fully deployed — Firebase rules, sign.html, index.html send/receive flow
-Last activity: 2026-04-15 -- Phase 04 complete, Firebase Hosting deployed at pakt-76a51.web.app
+Last activity: 2026-04-15 -- Phase 04 remote signing debugging: all RTDB ops converted to REST fetch (SDK broken in WKWebView), form pre-filled for testing, cap sync done, awaiting test confirmation
 
 ## Project Reference
 

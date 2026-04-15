@@ -1,5 +1,9 @@
 # Pakt NDA App
 
+## Standing Authorizations
+
+- **Git push to `operator-cyber/pakt` main branch** — pre-authorized for all sessions. Push without confirmation whenever deploying to GitHub Pages or syncing the repo.
+
 On startup, read project context from /Users/borisrodriguez/Documents/Obsidian Vault/projects/nda-app/CLAUDE.md for accumulated knowledge, decisions, open questions, and recent session history.
 
 Mobile-first mutual NDA generator, signer, and vault. Single-file React PWA (index.html, ~1650 lines). Next phase: Capacitor wrap for iOS App Store.
