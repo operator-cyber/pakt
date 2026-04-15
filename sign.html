@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Sign Agreement — Pakt</title>
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-database-compat.js"></script>
+  <script src="lib/firebase-storage-compat.js"></script>
+  <style>
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url('lib/InstrumentSerif-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: url('lib/InstrumentSerif-Italic.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('lib/Outfit-Variable.woff2') format('woff2');
+  font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: #0a0f23; }
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+  -webkit-font-smoothing: antialiased;
+  color: #fae4cf;
+  font-family: 'Outfit', sans-serif;
+}
+::-webkit-scrollbar { width: 0; }
+::selection { background: rgba(250,228,207,.25); }
+input::placeholder, textarea::placeholder { color: rgba(10,15,35,.3); }
+.page { max-width: 500px; margin: 0 auto; padding: 28px 18px; min-height: 100dvh; }
+.logo { width: 160px; height: auto; display: block; margin: 0 auto 24px; }
+.divider { width: 40px; height: 1px; background: rgba(250,228,207,.15); margin: 0 auto 16px; }
+h1 { font-family: 'Instrument Serif', Georgia, serif; font-size: 26px; font-weight: 400; color: #fae4cf; text-align: center; margin-bottom: 8px; }
+h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; color: #fae4cf; margin-bottom: 6px; }
+.subtitle { font-size: 15px; color: rgba(250,228,207,.6); text-align: center; margin-bottom: 28px; font-weight: 300; letter-spacing: .04em; }
+.card { background: rgba(250,228,207,.04); border: 1px solid rgba(250,228,207,.1); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.label { font-size: 11px; font-weight: 700; color: rgba(250,228,207,.5); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.value { font-size: 16px; color: #fae4cf; font-family: 'Instrument Serif', Georgia, serif; }
+.nda-section { margin-bottom: 18px; }
+.nda-section-title { font-size: 14px; font-weight: 700; color: #fae4cf; font-family: 'Outfit', sans-serif; margin-bottom: 6px; letter-spacing: .02em; }
+.nda-section-body { font-size: 14px; color: rgba(250,228,207,.8); font-family: 'Instrument Serif', Georgia, serif; line-height: 1.75; }
+.nda-text { background: rgba(250,228,207,.03); border: 1px solid rgba(250,228,207,.07); border-radius: 12px; padding: 20px; margin-bottom: 18px; max-height: 380px; overflow-y: auto; }
+.sig-pad-wrap { background: rgba(250,228,207,.06); border: 1px solid rgba(250,228,207,.12); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.sig-label { font-size: 13px; font-weight: 700; color: rgba(250,228,207,.6); margin-bottom: 8px; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+.sig-canvas { display: block; width: 100%; border-radius: 8px; background: #fff; touch-action: none; cursor: crosshair; }
+.clear-btn { font-size: 12px; font-weight: 700; color: rgba(250,228,207,.5); background: none; border: none; cursor: pointer; padding: 0; letter-spacing: .08em; }
+.btn { width: 100%; padding: 17px; font-size: 18px; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; font-family: 'Outfit', sans-serif; letter-spacing: .03em; transition: opacity .15s; }
+.btn-primary { background: #fae4cf; color: #0a0f23; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-outline { background: transparent; color: #fae4cf; box-shadow: inset 0 0 0 1.5px rgba(250,228,207,.2); }
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2.5px solid rgba(10,15,35,.2); border-top-color: #0a0f23; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.badge-pending { display: inline-flex; align-items: center; gap: 6px; background: rgba(250,228,207,.08); border: 1px solid rgba(250,228,207,.15); border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 700; color: rgba(250,228,207,.8); letter-spacing: .06em; }
+.badge-success { display: inline-flex; align-items: center; gap: 6px; background: rgba(43,66,48,.3); border: 1px solid rgba(43,66,48,.5); border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 700; color: #a8d5b5; letter-spacing: .06em; }
+.info-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(250,228,207,.06); font-size: 15px; }
+.info-row:last-child { border-bottom: none; }
+.info-key { color: rgba(250,228,207,.55); }
+.info-val { color: #fae4cf; font-weight: 600; text-align: right; max-width: 58%; }
+#state-loading, #state-expired, #state-review, #state-sign, #state-submitting, #state-complete { display: none; }
+.party1-sig-img { width: 100%; border-radius: 8px; background: #fff; display: block; max-height: 80px; object-fit: contain; }
+.scroll-hint { font-size: 13px; color: rgba(250,228,207,.4); text-align: center; margin: 10px 0 16px; letter-spacing: .04em; }
+.video-toggle { display: flex; align-items: center; justify-content: space-between; background: rgba(250,228,207,.04); border: 1px solid rgba(250,228,207,.08); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+.toggle-track { width: 42px; height: 25px; border-radius: 13px; background: rgba(250,228,207,.15); position: relative; cursor: pointer; transition: background .25s; flex-shrink: 0; }
+.toggle-track.on { background: #fae4cf; }
+.toggle-knob { position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: rgba(250,228,207,.5); transition: left .25s, background .25s; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.toggle-track.on .toggle-knob { left: 20px; background: #0a0f23; }
+.rec-indicator { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(250,228,207,.6); font-weight: 600; letter-spacing: .08em; }
+.rec-dot { width: 7px; height: 7px; border-radius: 50%; background: #c0392b; animation: recPulse 1.4s ease-in-out infinite; }
+@keyframes recPulse { 0%,100%{opacity:1}50%{opacity:.3} }
+.video-preview-wrap { border-radius: 12px; overflow: hidden; background: #050810; margin-bottom: 14px; position: relative; }
+.video-preview { width: 100%; height: 160px; object-fit: cover; display: block; transform: scaleX(-1); }
+.grain { position: fixed; inset: -50%; width: 200%; height: 200%; z-index: 9999; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"); }
+  </style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- LOADING -->
+<div id="state-loading" class="page" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <img src="pakt-logo.png" class="logo" alt="Pakt" />
+  <div class="divider"></div>
+  <p style="color:rgba(250,228,207,.5);font-size:15px;letter-spacing:.06em;">Loading agreement…</p>
+</div>
+
+<!-- EXPIRED / NOT FOUND -->
+<div id="state-expired" class="page">
+  <img src="pakt-logo.png" class="logo" alt="Pakt" />
+  <div class="divider"></div>
+  <div style="text-align:center;padding:20px 0;">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.2);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+    </div>
+    <h1 id="expired-title">Link Expired</h1>
+    <p class="subtitle" id="expired-msg">This signing link has expired or is no longer valid.</p>
+  </div>
+  <div class="card">
+    <p style="font-size:14px;color:rgba(250,228,207,.6);line-height:1.7;">Signing links expire after 7 days. Ask the sender to generate a new link from their Pakt app.</p>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div id="state-review" class="page">
+  <img src="pakt-logo.png" class="logo" alt="Pakt" />
+  <div class="divider"></div>
+  <h1 id="review-title">Review Agreement</h1>
+  <p class="subtitle" id="review-subtitle">Read the full agreement before signing</p>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="info-row"><span class="info-key">Agreement</span><span class="info-val" id="review-type">Non-Disclosure Agreement</span></div>
+    <div class="info-row"><span class="info-key">From</span><span class="info-val" id="review-party1"></span></div>
+    <div class="info-row"><span class="info-key">To</span><span class="info-val" id="review-party2"></span></div>
+    <div class="info-row"><span class="info-key">Governing Law</span><span class="info-val" id="review-state"></span></div>
+    <div class="info-row"><span class="info-key">Effective Date</span><span class="info-val" id="review-date"></span></div>
+  </div>
+
+  <div class="nda-text" id="review-nda-body"></div>
+
+  <div style="margin-bottom:16px;" id="party1-sig-section">
+    <p class="label">Signed by <span id="review-party1-name"></span></p>
+    <div style="background:#fff;border-radius:10px;padding:8px;">
+      <img id="party1-sig-img" src="" alt="Signature" class="party1-sig-img" />
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="goToSign()">Sign Agreement &rarr;</button>
+  <p style="font-size:13px;color:rgba(250,228,207,.35);text-align:center;margin-top:12px;line-height:1.6;">By continuing, you confirm you have read and understood the full agreement above.</p>
+</div>
+
+<!-- SIGN -->
+<div id="state-sign" class="page">
+  <div style="margin-bottom:20px;text-align:center;">
+    <h1>Your Signature</h1>
+    <p class="subtitle" id="sign-subtitle">Draw your signature below</p>
+  </div>
+
+  <div id="video-toggle-wrap" class="video-toggle">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#fae4cf;">Record signing session</div>
+      <div style="font-size:13px;color:rgba(250,228,207,.5);margin-top:2px;">Front camera · Stored locally</div>
+    </div>
+    <div class="toggle-track" id="video-toggle-track" onclick="toggleVideo()">
+      <div class="toggle-knob"></div>
+    </div>
+  </div>
+
+  <div id="video-error-msg" style="display:none;background:rgba(192,57,43,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:14px;color:#c0392b;"></div>
+
+  <div id="video-preview-wrap" class="video-preview-wrap" style="display:none;">
+    <video id="video-preview" class="video-preview" autoplay muted playsinline></video>
+    <div id="rec-indicator" class="rec-indicator" style="display:none;position:absolute;top:10px;right:10px;background:rgba(5,8,16,.72);border-radius:20px;padding:4px 9px;">
+      <div class="rec-dot"></div>
+      <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.12em;">REC</span>
+    </div>
+  </div>
+
+  <div class="sig-pad-wrap">
+    <div class="sig-label">
+      <span id="sig-party-label">Your Signature</span>
+      <button class="clear-btn" onclick="clearSig()">Clear</button>
+    </div>
+    <canvas id="sig-canvas" class="sig-canvas" height="140"></canvas>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:4px;">
+    <button class="btn btn-outline" style="flex:1;" onclick="goToReview()">&larr; Back</button>
+    <button class="btn btn-primary" id="sign-submit-btn" style="flex:2;opacity:.6;pointer-events:none;" onclick="submitSignature()">Complete &checkmark;</button>
+  </div>
+  <p style="font-size:13px;color:rgba(250,228,207,.35);text-align:center;margin-top:12px;line-height:1.6;">By signing, you agree to be bound by the terms of this agreement.</p>
+</div>
+
+<!-- SUBMITTING -->
+<div id="state-submitting" class="page" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <img src="pakt-logo.png" class="logo" alt="Pakt" />
+  <div class="divider"></div>
+  <p style="color:rgba(250,228,207,.6);font-size:15px;letter-spacing:.06em;">Submitting signature…</p>
+  <div style="margin-top:16px;width:32px;height:32px;border:2.5px solid rgba(250,228,207,.15);border-top-color:#fae4cf;border-radius:50%;animation:spin .7s linear infinite;"></div>
+</div>
+
+<!-- COMPLETE -->
+<div id="state-complete" class="page">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="width:72px;height:72px;border-radius:50%;background:#2B4230;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 6px 28px rgba(43,66,48,.3);">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1>Agreement Signed</h1>
+    <p class="subtitle">Your signature has been submitted. The other party will receive a notification.</p>
+  </div>
+
+  <div class="card">
+    <div class="info-row"><span class="info-key">Agreement</span><span class="info-val" id="complete-type"></span></div>
+    <div class="info-row"><span class="info-key">From</span><span class="info-val" id="complete-party1"></span></div>
+    <div class="info-row"><span class="info-key">Signed by</span><span class="info-val" id="complete-party2"></span></div>
+    <div class="info-row"><span class="info-key">Date</span><span class="info-val" id="complete-date"></span></div>
+  </div>
+
+  <div style="background:rgba(43,66,48,.15);border:1px solid rgba(43,66,48,.3);border-radius:14px;padding:18px;margin-top:4px;">
+    <p style="font-size:15px;color:rgba(250,228,207,.7);line-height:1.7;">The signed agreement will be saved to the sender's vault. They can share a copy with you directly.</p>
+  </div>
+
+  <div style="margin-top:20px;text-align:center;">
+    <p style="font-size:13px;color:rgba(250,228,207,.35);">Powered by <strong style="color:rgba(250,228,207,.5);">Pakt</strong> — Create your own NDAs at pakt-76a51.web.app</p>
+  </div>
+</div>
+
+<script>
+  /* ── Firebase ── */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBnmvhAJU871hY3P9tz0dK5x6JYc4L62Xs",
+    authDomain: "pakt-76a51.firebaseapp.com",
+    databaseURL: "https://pakt-76a51-default-rtdb.firebaseio.com",
+    projectId: "pakt-76a51",
+    storageBucket: "pakt-76a51.firebasestorage.app",
+    messagingSenderId: "1008850103409",
+    appId: "1:1008850103409:web:28f6e25743bb5c2997ffd0"
+  };
+  const fbApp = firebase.initializeApp(firebaseConfig);
+  const rtdb = firebase.database();
+  const storage = firebase.storage();
+
+  /* ── State ── */
+  let signingData = null;
+  let sigDrawn = false;
+  let videoEnabled = false;
+  let stream = null;
+  let mediaRecorder = null;
+  let videoChunks = [];
+  let videoBlob = null;
+
+  /* ── Legal section builders (shared with index.html) ── */
+  const INFO_CATEGORIES = [
+    { key: "trade_secrets", legal: "trade secrets, proprietary formulas, and processes not generally known to the public" },
+    { key: "source_code", legal: "proprietary source code, algorithms, software architectures, technical specifications, and system designs" },
+    { key: "business_strategy", legal: "non-public business strategies, marketing plans, competitive analyses, and strategic roadmaps" },
+    { key: "financial", legal: "financial statements, projections, budgets, pricing models, profit margins, and valuation data" },
+    { key: "customer_vendor", legal: "customer and vendor lists containing non-public compiled data such as purchasing histories, negotiated pricing, contact preferences, and relationship details" },
+    { key: "product_design", legal: "product designs, prototypes, mockups, unpublished patent applications, and invention disclosures" },
+    { key: "personnel", legal: "employee records, compensation data, organizational structures, and human resources policies" },
+  ];
+  function buildCatText(keys, custom) {
+    const parts = INFO_CATEGORIES.filter(c => (keys||[]).includes(c.key)).map(c => c.legal);
+    if (custom && custom.trim()) parts.push(custom.trim());
+    if (!parts.length) return "";
+    if (parts.length === 1) return parts[0];
+    return parts.slice(0,-1).join("; ") + "; and " + parts[parts.length-1];
+  }
+  function fmtDate(d) {
+    return new Date(d + "T12:00:00").toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
+  }
+  function ndaTypeLabel(t) {
+    if (t === 'bilateral') return "Mutual Non-Disclosure Agreement";
+    if (t === 'ncnda') return "Non-Circumvention and Non-Disclosure Agreement";
+    return "Non-Disclosure Agreement";
+  }
+
+  function buildNdaSections(form) {
+    const catText = buildCatText(form.categories, form.customCategory);
+    const catClause = catText ? `Confidential Information includes, but is not limited to, the following categories: ${catText}.` : `Confidential Information includes any proprietary information relating to the Purpose.`;
+    const s = form.state || "[State]";
+    return [
+      { t: "1. Definition of Confidential Information", b: `"Confidential Information" means any non-public information disclosed by the Disclosing Party to the Receiving Party in connection with the Purpose (defined above), whether orally, in writing, electronically, or by any other means. ${catClause} This Agreement shall not be construed to restrict or limit any party's ability to engage in any lawful profession, trade, or business.` },
+      { t: "2. Obligations of the Receiving Party", b: `The Receiving Party agrees to: (a) hold all Confidential Information in strict confidence; (b) not disclose Confidential Information to any third party without prior written consent; (c) use Confidential Information solely for the Purpose stated in this Agreement.` },
+      { t: "3. Exclusions from Confidential Information", b: `Confidential Information does not include information that: (a) is or becomes publicly available through no fault of the Receiving Party; (b) was already in the Receiving Party's lawful possession prior to disclosure; (c) is independently developed without reference to Confidential Information; or (d) is required to be disclosed by law.` },
+      { t: "4. Restriction on Use", b: `The Receiving Party acknowledges that the Confidential Information is disclosed solely for the Purpose. The Receiving Party shall not use any Confidential Information for any purpose other than the Purpose.` },
+      { t: "5. Term and Survival", b: `This Agreement shall remain in effect for two (2) years from the Effective Date. Confidentiality obligations shall survive for an additional three (3) years following expiration or termination.` },
+      { t: "6. Return and Destruction of Materials", b: `Upon expiration or termination, or upon written request, the Receiving Party shall promptly return or permanently destroy all Confidential Information and certify such destruction in writing.` },
+      { t: "7. Remedies", b: `The parties acknowledge that breach may cause irreparable harm. The Disclosing Party shall be entitled to seek equitable relief, including injunctive relief, without the necessity of proving actual damages. The prevailing party in any enforcement action shall be entitled to recover reasonable attorneys' fees.` },
+      { t: "8. Governing Law and Jurisdiction", b: `This Agreement shall be governed by the laws of the State of ${s}, without regard to its conflict of laws principles. Disputes shall be submitted to the exclusive jurisdiction of courts located in the State of ${s}.` },
+      { t: "9. Entire Agreement and Amendments", b: `This Agreement constitutes the entire agreement between the parties concerning the subject matter hereof and supersedes all prior agreements. No amendment shall be effective unless made in writing and signed by authorized representatives of both parties.` },
+    ];
+  }
+
+  function buildBilateralSections(form) {
+    const catText = buildCatText(form.categories, form.customCategory);
+    const catClause = catText ? `Confidential Information includes, but is not limited to, the following categories: ${catText}.` : `Confidential Information includes any proprietary information relating to the Purpose.`;
+    const s = form.state || "[State]";
+    return [
+      { t: "1. Definition of Confidential Information", b: `"Confidential Information" means any non-public information disclosed by either Party to the other in connection with the Purpose, whether orally, in writing, or electronically. ${catClause}` },
+      { t: "2. Mutual Obligations of Confidentiality", b: `Each Party agrees to: (a) hold all Confidential Information received from the other Party in strict confidence; (b) not disclose Confidential Information to any third party without prior written consent of the disclosing Party; (c) use Confidential Information solely for the Purpose.` },
+      { t: "3. Exclusions from Confidential Information", b: `Confidential Information does not include information that: (a) is or becomes publicly available through no fault of the receiving Party; (b) was already in the receiving Party's lawful possession; (c) is independently developed; or (d) is required to be disclosed by law.` },
+      { t: "4. Mutual Non-Use Obligation", b: `Neither Party shall use any Confidential Information received from the other Party for any purpose other than the Purpose.` },
+      { t: "5. Term and Survival", b: `This Agreement shall remain in effect for two (2) years from the Effective Date, with confidentiality obligations surviving for an additional three (3) years.` },
+      { t: "6. Return and Destruction of Materials", b: `Upon expiration or request, each Party shall return or destroy all Confidential Information received from the other Party and certify such action.` },
+      { t: "7. Remedies", b: `Breach may cause irreparable harm. Either Party shall be entitled to seek equitable relief without proving actual damages. The prevailing party in any enforcement action shall recover reasonable attorneys' fees.` },
+      { t: "8. Governing Law and Jurisdiction", b: `This Agreement shall be governed by the laws of the State of ${s}. Disputes shall be submitted to the exclusive jurisdiction of courts located in the State of ${s}.` },
+      { t: "9. Entire Agreement", b: `This Agreement constitutes the entire agreement between the Parties and supersedes all prior agreements regarding its subject matter.` },
+    ];
+  }
+
+  function buildNcndaSections(form) {
+    const s = form.state || "[State]";
+    const term = form.nonCircumventionTerm || "[Not specified]";
+    const deal = form.dealDescription || "[Not specified]";
+    return [
+      { t: "1. Protected Relationship and Introductions", b: `The Parties agree that this Agreement protects the following deal, business relationship, or introduction: ${deal}. The Discloser has invested time, resources, and goodwill in establishing this relationship.` },
+      { t: "2. Non-Circumvention", b: `The Recipient agrees not to directly or indirectly contact, solicit, negotiate with, or enter into any transaction with any party introduced by the Discloser without the prior written consent of the Discloser. The Recipient shall not take any action designed to circumvent the Discloser's role or obtain the economic benefit of any transaction facilitated by the Discloser's introduction.` },
+      { t: "3. Non-Disclosure", b: `All information disclosed in connection with the protected relationship shall be held in strict confidence and shall not be disclosed to any third party without prior written consent. The Recipient shall use such information solely for evaluating or pursuing the specific opportunity described in Section 1.` },
+      { t: "4. Exclusions from Confidentiality", b: `Obligations do not apply to information that: (a) is publicly available through no fault of the Recipient; (b) was lawfully known before disclosure; (c) is independently developed; or (d) is required to be disclosed by law.` },
+      { t: "5. Term", b: `The non-circumvention and non-disclosure obligations shall remain in full force for ${term} from the Effective Date.` },
+      { t: "6. Remedies", b: `Any breach may cause immediate and irreparable harm. The non-breaching Party shall be entitled to seek equitable relief without proving actual damages. The prevailing Party shall recover reasonable attorneys' fees and litigation expenses.` },
+      { t: "7. Governing Law and Jurisdiction", b: `This Agreement shall be governed by the laws of the State of ${s}. Disputes shall be submitted to the exclusive jurisdiction of courts in ${s}.` },
+      { t: "8. Severability", b: `If any provision is found invalid or unenforceable, the remaining provisions shall continue in full force.` },
+      { t: "9. Entire Agreement and Amendments", b: `This Agreement constitutes the entire agreement and supersedes all prior agreements regarding its subject matter.` },
+    ];
+  }
+
+  function getSections(data) {
+    if (data.agreementType === 'bilateral') return buildBilateralSections(data.form);
+    if (data.agreementType === 'ncnda') return buildNcndaSections(data.form);
+    return buildNdaSections(data.form);
+  }
+
+  /* ── Utility ── */
+  function show(id) {
+    ['state-loading','state-expired','state-review','state-sign','state-submitting','state-complete']
+      .forEach(s => document.getElementById(s).style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  /* ── Init ── */
+  window.addEventListener('load', async () => {
+    show('state-loading');
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (!token) { showExpired('Invalid Link', 'No signing token found in this URL.'); return; }
+
+    try {
+      const snap = await rtdb.ref('signingRequests/' + token).once('value');
+      const data = snap.val();
+      if (!data) { showExpired('Link Not Found', 'This signing link does not exist or has already been used.'); return; }
+      if (data.status === 'complete') { showExpired('Already Signed', 'This agreement has already been signed.'); return; }
+      if (Date.now() > data.expiry) { showExpired('Link Expired', 'This signing link expired after 7 days. Ask the sender to create a new one.'); return; }
+
+      signingData = { ...data, token };
+      populateReview(data);
+      show('state-review');
+    } catch (e) {
+      showExpired('Error', 'Could not load the signing request. Please try again.');
+      console.error(e);
+    }
+  });
+
+  function showExpired(title, msg) {
+    document.getElementById('expired-title').textContent = title;
+    document.getElementById('expired-msg').textContent = msg;
+    show('state-expired');
+  }
+
+  function populateReview(data) {
+    const form = data.form;
+    const typeLabel = ndaTypeLabel(data.agreementType);
+    document.getElementById('review-title').textContent = 'Review Agreement';
+    document.getElementById('review-subtitle').textContent = `${form.party1} has sent you this agreement to sign`;
+    document.getElementById('review-type').textContent = typeLabel;
+    document.getElementById('review-party1').textContent = form.party1;
+    document.getElementById('review-party2').textContent = form.party2;
+    document.getElementById('review-state').textContent = 'State of ' + (form.state || '—');
+    document.getElementById('review-date').textContent = fmtDate(form.date);
+    document.getElementById('review-party1-name').textContent = form.party1;
+
+    // Build NDA text
+    const fd = fmtDate(form.date);
+    const sections = getSections(data);
+    let introText = '';
+    if (data.agreementType === 'bilateral') {
+      introText = `This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Party A") and ${form.party2} ("Party B"), for the purpose of: ${form.purpose} (the "Purpose").`;
+    } else if (data.agreementType === 'ncnda') {
+      introText = `This Non-Circumvention and Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Discloser") and ${form.party2} ("Recipient").`;
+    } else {
+      introText = `This Non-Disclosure Agreement ("Agreement") is entered into as of ${fd} by and between ${form.party1} ("Disclosing Party") and ${form.party2} ("Receiving Party"), for the purpose of: ${form.purpose} (the "Purpose").`;
+    }
+
+    const ndaBody = document.getElementById('review-nda-body');
+    ndaBody.innerHTML = '';
+    const intro = document.createElement('div');
+    intro.className = 'nda-section';
+    const introP = document.createElement('p');
+    introP.className = 'nda-section-body';
+    introP.textContent = introText;
+    intro.appendChild(introP);
+    ndaBody.appendChild(intro);
+
+    sections.forEach(s => {
+      const sec = document.createElement('div');
+      sec.className = 'nda-section';
+      const title = document.createElement('div');
+      title.className = 'nda-section-title';
+      title.textContent = s.t;
+      const body = document.createElement('p');
+      body.className = 'nda-section-body';
+      body.textContent = s.b;
+      sec.appendChild(title);
+      sec.appendChild(body);
+      ndaBody.appendChild(sec);
+    });
+
+    // Load party1 signature image from Storage
+    const party1SigPath = data.party1SigPath;
+    if (party1SigPath) {
+      storage.ref(party1SigPath).getDownloadURL().then(url => {
+        document.getElementById('party1-sig-img').src = url;
+      }).catch(() => {
+        document.getElementById('party1-sig-section').style.display = 'none';
+      });
+    } else {
+      document.getElementById('party1-sig-section').style.display = 'none';
+    }
+
+    document.getElementById('sign-subtitle').textContent = `Sign as ${form.party2}`;
+    document.getElementById('sig-party-label').textContent = form.party2;
+  }
+
+  function goToSign() { show('state-sign'); initSigCanvas(); }
+  function goToReview() {
+    releaseCamera();
+    show('state-review');
+  }
+
+  /* ── Signature canvas ── */
+  let sigCtx = null;
+  let drawing = false;
+
+  function initSigCanvas() {
+    const canvas = document.getElementById('sig-canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 140 * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '140px';
+    sigCtx = canvas.getContext('2d');
+    sigCtx.scale(dpr, dpr);
+    sigCtx.strokeStyle = '#0a0f23';
+    sigCtx.lineWidth = 2;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+    sigDrawn = false;
+    updateSubmitBtn();
+
+    canvas.addEventListener('touchstart', onSigStart, { passive: false });
+    canvas.addEventListener('touchmove', onSigMove, { passive: false });
+    canvas.addEventListener('touchend', onSigEnd, { passive: false });
+    canvas.addEventListener('mousedown', onSigStart);
+    canvas.addEventListener('mousemove', onSigMove);
+    canvas.addEventListener('mouseup', onSigEnd);
+  }
+
+  function getPos(e) {
+    const canvas = document.getElementById('sig-canvas');
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches) {
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    }
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function onSigStart(e) {
+    e.preventDefault();
+    drawing = true;
+    const p = getPos(e);
+    sigCtx.beginPath();
+    sigCtx.moveTo(p.x, p.y);
+  }
+
+  function onSigMove(e) {
+    e.preventDefault();
+    if (!drawing) return;
+    const p = getPos(e);
+    sigCtx.lineTo(p.x, p.y);
+    sigCtx.stroke();
+    if (!sigDrawn) { sigDrawn = true; updateSubmitBtn(); }
+  }
+
+  function onSigEnd(e) {
+    e.preventDefault();
+    drawing = false;
+  }
+
+  function clearSig() {
+    const canvas = document.getElementById('sig-canvas');
+    sigCtx.clearRect(0, 0, canvas.width / (window.devicePixelRatio||1), canvas.height / (window.devicePixelRatio||1));
+    sigDrawn = false;
+    updateSubmitBtn();
+  }
+
+  function updateSubmitBtn() {
+    const btn = document.getElementById('sign-submit-btn');
+    btn.style.opacity = sigDrawn ? '1' : '0.6';
+    btn.style.pointerEvents = sigDrawn ? 'auto' : 'none';
+  }
+
+  /* ── Video ── */
+  function toggleVideo() {
+    videoEnabled = !videoEnabled;
+    const track = document.getElementById('video-toggle-track');
+    track.classList.toggle('on', videoEnabled);
+    if (videoEnabled) startCamera(); else releaseCamera();
+  }
+
+  async function startCamera() {
+    if (!navigator.mediaDevices || typeof MediaRecorder === 'undefined') {
+      showVideoError('Camera not available on this device.');
+      videoEnabled = false;
+      document.getElementById('video-toggle-track').classList.remove('on');
+      return;
+    }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+      const preview = document.getElementById('video-preview');
+      preview.srcObject = stream;
+      preview.play().catch(() => {});
+      document.getElementById('video-preview-wrap').style.display = 'block';
+      const types = ['video/mp4;codecs=h264','video/mp4','video/webm;codecs=vp9,opus','video/webm'];
+      const mimeType = types.find(t => { try { return MediaRecorder.isTypeSupported(t); } catch { return false; } }) || null;
+      videoChunks = [];
+      mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) videoChunks.push(e.data); };
+      mediaRecorder.onstop = () => { videoBlob = new Blob(videoChunks, { type: mimeType || 'video/mp4' }); };
+      mediaRecorder.start(100);
+      document.getElementById('rec-indicator').style.display = 'flex';
+      document.getElementById('video-error-msg').style.display = 'none';
+    } catch (err) {
+      const msg = err.name === 'NotAllowedError' ? 'Camera permission denied.' : 'Camera unavailable.';
+      showVideoError(msg);
+      videoEnabled = false;
+      document.getElementById('video-toggle-track').classList.remove('on');
+    }
+  }
+
+  function releaseCamera() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    document.getElementById('video-preview-wrap').style.display = 'none';
+    document.getElementById('rec-indicator').style.display = 'none';
+  }
+
+  function showVideoError(msg) {
+    const el = document.getElementById('video-error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  /* ── Submit ── */
+  async function submitSignature() {
+    if (!sigDrawn || !signingData) return;
+    show('state-submitting');
+
+    try {
+      // Stop camera if recording
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        await new Promise(resolve => { mediaRecorder.onstop = () => resolve(); mediaRecorder.stop(); });
+      }
+      releaseCamera();
+
+      const token = signingData.token;
+      const canvas = document.getElementById('sig-canvas');
+      const sigDataUrl = canvas.toDataURL('image/png');
+
+      // Upload party2 signature to Storage
+      const sigBlob = dataURLtoBlob(sigDataUrl);
+      const party2SigRef = storage.ref(`signingRequests/${token}/party2sig.png`);
+      await party2SigRef.put(sigBlob);
+      const party2SigPath = party2SigRef.fullPath;
+
+      // Upload video if captured
+      let party2VideoPath = null;
+      if (videoBlob) {
+        const videoRef = storage.ref(`signingRequests/${token}/party2video.mp4`);
+        await videoRef.put(videoBlob);
+        party2VideoPath = videoRef.fullPath;
+      }
+
+      // Update RTDB with party2 sig path and status
+      await rtdb.ref('signingRequests/' + token).update({
+        status: 'complete',
+        party2SigPath,
+        party2VideoPath,
+        completedAt: firebase.database.ServerValue.TIMESTAMP,
+      });
+
+      // Show complete screen
+      const form = signingData.form;
+      document.getElementById('complete-type').textContent = ndaTypeLabel(signingData.agreementType);
+      document.getElementById('complete-party1').textContent = form.party1;
+      document.getElementById('complete-party2').textContent = form.party2;
+      document.getElementById('complete-date').textContent = fmtDate(form.date);
+      show('state-complete');
+
+    } catch (e) {
+      console.error(e);
+      alert('Something went wrong. Please try again.');
+      show('state-sign');
+    }
+  }
+
+  function dataURLtoBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const raw = atob(parts[1]);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+</script>
+</body>
+</html>

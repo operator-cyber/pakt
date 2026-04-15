@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-15T06:00:00.000Z"
-last_activity: 2026-04-15 -- Phase 03 complete — NCNDA swap done, all three agreement types functional
+last_updated: "2026-04-15T18:00:00.000Z"
+last_activity: 2026-04-15 -- Phase 04 complete — Remote signing deployed, Firebase Hosting live
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
   completed_plans: 9
   percent: 100
@@ -17,10 +17,10 @@ progress:
 
 ## Current Position
 
-Phase: 03 (ndc-bilateral-nda-templates) — COMPLETE
+Phase: 04 (remote-signing-flow) — COMPLETE
 Plan: 3 of 3 complete
-Status: All three agreement types implemented and committed
-Last activity: 2026-04-15 -- NCNDA swap executed, Phase 03 complete
+Status: Remote signing fully deployed — Firebase rules, sign.html, index.html send/receive flow
+Last activity: 2026-04-15 -- Phase 04 complete, Firebase Hosting deployed at pakt-76a51.web.app
 
 ## Project Reference
 
@@ -44,9 +44,13 @@ See: .planning/PROJECT.md (updated 2026-04-13)
 - writeUserProfile uses check-then-write pattern (avoids Firestore rules conflict on tier field)
 - atLimit check placed after all hooks (React rules of hooks compliance)
 - 3-tab nav: HOME, VAULT, ACCOUNT
-- Service worker at pakt-v19
+- Service worker at pakt-v20
 - v1.0 snapshot preserved on branch `v1.0-complete`
 - Brief source: .planning/PAKT_Pro_Tier_GSD_Milestone_Brief.md
 - Phase 03 complete: Pro type selector (3 cards), Bilateral NDA (mutual language), NCNDA (non-circumvention, enforceable all 50 states, no employment relationship required)
 - NDCA → NCNDA swap rationale: non-competes are employer-employee instruments, void/restricted in 15+ states, wrong for freelancer market. NCNDA protects deal introductions under standard contract law.
 - agreementType values: 'nda', 'bilateral', 'ncnda' (old 'ndca' vault records display as "Non-Circumvention Agreement" for backward compat)
+- Phase 04 complete: Remote signing flow end-to-end. User A signs → uploads sig to Storage + writes RTDB signingRequests/{token} → share link to User B → sign.html (hosted at pakt-76a51.web.app/sign.html) shows NDA, collects sig, uploads, sets status='complete' → Vault RTDB listener detects completion → downloads both sigs → regenerates full NDA PNG → saves to Firestore/Storage → cleans RTDB
+- generateNdaPng() extracted as global async function so Vault completion handler can call it outside React component
+- RTDB signingRequests/{token}: public read/write (token = UUID, unguessable = security). Expiry 72h enforced in sign.html
+- Storage signingRequests/{token}/: public read/write. Users/{uid}/ path requires Firebase Auth.

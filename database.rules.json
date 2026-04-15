@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "sessions": {
+      "$sessionId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['party1', 'party2', 'status'])"
+      }
+    },
+    "signingRequests": {
+      "$token": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['party1', 'party2', 'agreementType', 'status', 'expiry'])"
+      }
+    }
+  }
+}
