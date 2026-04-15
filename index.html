@@ -1238,12 +1238,20 @@
       const [step, setStep] = useState(0);
       const [vaultCount, setVaultCount] = useState(0);
       const [showPrivacy, setShowPrivacy] = useState(false);
-      const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" });
+      const [agreementType, setAgreementType] = useState(null);
+      const [form, setForm] = useState({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "", restrictedActivities: "", geographicScope: "", timePeriod: "", consideration: "" });
       const formRef = useRef(form);
       useEffect(() => { formRef.current = form; }, [form]);
       const [sig1Done, setSig1Done] = useState(false);
       const [sig2Done, setSig2Done] = useState(false);
-      useEffect(() => { setStep(0); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "" }); setSig1Done(false); setSig2Done(false); setNdaImage(null); setReceiptImage(null); setBioSessionId(null); setBioQRImage(null); setBioStatus("waiting"); setBioResult(null); setVideoURL(null); setSavedToVault(false); }, [resetKey]);
+      useEffect(() => { setStep(0); setAgreementType(null); setForm({ party1: "", party2: "", purpose: "", state: "", date: new Date().toISOString().split("T")[0], categories: [], customCategory: "", restrictedActivities: "", geographicScope: "", timePeriod: "", consideration: "" }); setSig1Done(false); setSig2Done(false); setNdaImage(null); setReceiptImage(null); setBioSessionId(null); setBioQRImage(null); setBioStatus("waiting"); setBioResult(null); setVideoURL(null); setSavedToVault(false); }, [resetKey]);
+
+      // Free users skip the type selector — auto-set to unilateral NDA
+      useEffect(() => {
+        if (step === 0 && agreementType === null && userTier !== 'pro') {
+          setAgreementType('nda');
+        }
+      }, [step, agreementType, userTier]);
       const [ndaImage, setNdaImage] = useState(null);
       const [generating, setGenerating] = useState(false);
       const [complianceOpen, setComplianceOpen] = useState(false);
@@ -1701,6 +1709,37 @@
         </div>
       );
 
+      // Agreement type selector for Pro users
+      if (step === 0 && agreementType === null && userTier === 'pro') {
+        const typeCards = [
+          { type: 'nda', title: 'Non-Disclosure Agreement', subtitle: 'One party discloses, one party receives' },
+          { type: 'bilateral', title: 'Mutual NDA', subtitle: 'Both parties disclose and receive' },
+          { type: 'ndca', title: 'Non-Compete Agreement', subtitle: 'Restrict competitive activities' },
+        ];
+        return (
+          <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
+            {progress}
+            <div style={{ textAlign: "center", marginBottom: 36 }}>
+              <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
+              <div style={{ width: 40, height: 1, background: "rgba(250,228,207,.15)", margin: "0 auto 10px" }} />
+              <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Select Agreement Type</p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {typeCards.map(card => (
+                <div key={card.type} onClick={() => setAgreementType(card.type)} style={{ background: "rgba(250,228,207,.04)", borderRadius: 16, border: "1px solid rgba(250,228,207,.12)", padding: "20px 18px", cursor: "pointer", transition: "border-color .2s, background .2s", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 600, color: autumn, fontFamily: sans }}>{card.title}</div>
+                    <div style={{ fontSize: 14, color: "rgba(250,228,207,.5)", fontFamily: sans, marginTop: 4 }}>{card.subtitle}</div>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+
       if (showPrivacy) return (
         <div style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
           <button onClick={() => setShowPrivacy(false)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, color: autumn, fontFamily: sans, marginBottom: 24, padding: 0 }}>
@@ -1801,13 +1840,69 @@
         </div>
       );
 
-      if (step === 0) return (
-        <div key="step0" className="step-animate" style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
+      if (step === 0 && agreementType === 'ndca') return (
+        <div key="step0-ndca" className="step-animate" style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
           {progress}
+          {userTier === 'pro' && (
+            <button onClick={() => setAgreementType(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: autumn, fontFamily: sans, marginBottom: 16, padding: 0, opacity: 0.7 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              Change Type
+            </button>
+          )}
           <div style={{ textAlign: "center", marginBottom: 36 }}>
             <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
             <div style={{ width: 40, height: 1, background: "rgba(250,228,207,.15)", margin: "0 auto 10px" }} />
-            <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Non-Disclosure Agreement</p>
+            <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>Non-Disclosure & Non-Compete Agreement</p>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div><label style={labelStyle}>Your Name</label><input style={inputStyle} placeholder="e.g. John Smith" value={form.party1} onChange={up("party1")} /></div>
+            <div><label style={labelStyle}>Their Name</label><input style={inputStyle} placeholder="e.g. Sarah Johnson" value={form.party2} onChange={up("party2")} /></div>
+            <div>
+              <label style={labelStyle}>Restricted Activities</label>
+              <textarea style={{ ...inputStyle, resize: "vertical" }} placeholder="e.g. Developing competing software products within the same market segment" rows={3} value={form.restrictedActivities} onChange={(e) => setForm(prev => ({...prev, restrictedActivities: e.target.value}))} />
+              <span style={{ fontSize: 13, color: "rgba(250,228,207,.5)", marginTop: 4, display: "block", fontFamily: sans }}>Describe the activities being restricted</span>
+            </div>
+            <div><label style={labelStyle}>Geographic Scope</label><input style={inputStyle} placeholder="e.g. State of California, United States, or Worldwide" value={form.geographicScope} onChange={(e) => setForm(prev => ({...prev, geographicScope: e.target.value}))} /></div>
+            <div>
+              <label style={labelStyle}>Restriction Period</label>
+              <select style={selectStyle} value={form.timePeriod} onChange={(e) => setForm(prev => ({...prev, timePeriod: e.target.value}))}>
+                <option value="">Select a period...</option>
+                <option value="6 months">6 months</option>
+                <option value="1 year">1 year</option>
+                <option value="2 years">2 years</option>
+              </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Consideration / Compensation</label>
+              <textarea style={{ ...inputStyle, resize: "vertical" }} placeholder="e.g. Employment with Company XYZ and access to proprietary training" rows={3} value={form.consideration} onChange={(e) => setForm(prev => ({...prev, consideration: e.target.value}))} />
+              <span style={{ fontSize: 13, color: "rgba(250,228,207,.5)", marginTop: 4, display: "block", fontFamily: sans }}>What the restricted party receives in exchange</span>
+            </div>
+            <div>
+              <label style={labelStyle}>Governing State</label>
+              <select style={selectStyle} value={form.state} onChange={up("state")}>
+                <option value="">Select a state...</option>
+                {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div><label style={labelStyle}>Start Date</label><input style={{ ...inputStyle, WebkitAppearance: "none", appearance: "none", maxWidth: "100%", textAlign: "left" }} type="date" value={form.date} onChange={up("date")} /></div>
+          </div>
+          <button style={{ ...btnP, marginTop: 24, opacity: (form.party1.trim() && form.party2.trim() && form.restrictedActivities.trim() && form.geographicScope.trim() && form.timePeriod && form.state && form.consideration.trim()) ? 1 : .7, pointerEvents: (form.party1.trim() && form.party2.trim() && form.restrictedActivities.trim() && form.geographicScope.trim() && form.timePeriod && form.state && form.consideration.trim()) ? "auto" : "none" }} onClick={() => setStep(1)}>Review Agreement &rarr;</button>
+        </div>
+      );
+
+      if (step === 0) return (
+        <div key="step0" className="step-animate" style={{ maxWidth: 500, margin: "0 auto", padding: "24px 16px", fontFamily: "'Instrument Serif', Georgia, serif", background: firm, minHeight: "100dvh" }}>
+          {progress}
+          {userTier === 'pro' && (
+            <button onClick={() => setAgreementType(null)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: autumn, fontFamily: sans, marginBottom: 16, padding: 0, opacity: 0.7 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={autumn} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              Change Type
+            </button>
+          )}
+          <div style={{ textAlign: "center", marginBottom: 36 }}>
+            <img src="pakt-logo.png" alt="Pakt" style={{ width: 200, height: "auto", margin: "0 auto 8px", display: "block" }} />
+            <div style={{ width: 40, height: 1, background: "rgba(250,228,207,.15)", margin: "0 auto 10px" }} />
+            <p style={{ fontSize: 16, color: "rgba(250,228,207,.7)", margin: 0, fontFamily: sans, letterSpacing: ".06em", fontWeight: 300 }}>{agreementType === 'bilateral' ? 'Mutual Non-Disclosure Agreement' : 'Non-Disclosure Agreement'}</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div><label style={labelStyle}>Your Name</label><input style={inputStyle} placeholder="e.g. John Smith" value={form.party1} onChange={up("party1")} /></div>
