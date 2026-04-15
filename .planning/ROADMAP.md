@@ -83,7 +83,7 @@ Plans:
 **Success Criteria:**
 1. Pro user can create a Non-Compete with state-aware enforceability notices
 2. Pro user can create a Bilateral NDA with mutual language throughout
-3. Free user sees NDC and Bilateral locked with Pro badge
+3. Free user sees NDA only — NDC and Bilateral are invisible (no locked cards, no Pro badge)
 4. Selected agreement type flows through entire pipeline (details > review > sign > done)
 
 **Dependencies:** Phase 2 (Firestore schema supports type field)
